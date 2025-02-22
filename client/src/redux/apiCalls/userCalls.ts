@@ -7,7 +7,7 @@ import {
   logoutSuccess,
   resetAll,
   startFetch,
-} from "../userSlice.js";
+} from "../slices/userSlice.js";
 import { toast } from "react-toastify";
 import to from "await-to-js";
 

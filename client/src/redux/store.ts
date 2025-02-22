@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "./userSlice";
-import auxiliaryReducer from "./auxiliarySlice";
+import userReducer from "./slices/userSlice";
+import auxiliaryReducer from "./slices/auxiliarySlice";
+import boxSlice from "./slices/boxSlice";
 
 import {
   FLUSH,
@@ -34,6 +35,7 @@ export const store = configureStore({
   // all the reducers are kept here
   reducer: {
     persistedReducer,
+    boxSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -42,5 +44,8 @@ export const store = configureStore({
       },
     }),
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export const persistor = persistStore(store);

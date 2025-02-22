@@ -1,9 +1,0 @@
-.box {
-    background-color: black; /* Initial background color */
-    transition: background-color 1000ms ease-out; /*Transition for mouse leave*/
-}
-
-.box:hover {
-    background-color:  theme('colors.AC_Orange'); /* Instant change to orange on hover */
-    transition: none; /* No transition for mouse enter */
-}

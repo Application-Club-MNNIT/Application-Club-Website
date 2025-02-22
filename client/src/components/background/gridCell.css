@@ -1,0 +1,26 @@
+.box {
+  background-color: black; /* Initial background color */
+  transition: background-color 400ms ease-out; /*Transition for mouse leave*/
+}
+
+.box1 {
+  background-color: theme("colors.AC_Orange"); /* Initial background color */
+  transition: background-color 400ms ease-out; /*Transition for mouse leave*/
+}
+
+.box2 {
+  background-color: rgb(163, 101, 7); /* Initial background color */
+  transition: background-color 400ms ease-out; /*Transition for mouse leave*/
+}
+
+.box3 {
+  background-color: rgb(94, 60, 8); /* Initial background color */
+  transition: background-color 400ms ease-out; /*Transition for mouse leave*/
+}
+
+.box:hover {
+  background-color: theme(
+    "colors.AC_Orange"
+  ); /* Instant change to orange on hover */
+  transition: none; /* No transition for mouse enter */
+}

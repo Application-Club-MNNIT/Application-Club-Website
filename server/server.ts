@@ -10,7 +10,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const DB = process.env.DATABASE.replace(
   "<password>",
   process.env.DATABASE_PASSWORD
