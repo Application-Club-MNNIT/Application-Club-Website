@@ -1,6 +1,6 @@
 import React, {useRef} from "react";
-import AnimatedWrapper from "./AnimatedWrapper";
-import {MouseEffectBackground} from "./MouseEffectBackground.js";
+import AnimatedWrapper from "../components/AnimatedWrapper";
+import {MouseEffectBackground} from "../components/MouseEffectBackground";
 
 const OTPVerification = () => {
     const inputRefs = useRef([]);
@@ -48,6 +48,7 @@ const OTPVerification = () => {
                                     onChange={(e) => handleChange(e, index)}
                                     onKeyDown={(e) => handleKeyDown(e, index)}
                                     onFocus={() => handleFocus(index)}
+                                    placeholder="0"
                                     className="w-12 h-12 bg-neutral-800 border border-none text-center text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-AC_Green"
                                 />
                             ))}
