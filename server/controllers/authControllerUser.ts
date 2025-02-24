@@ -2,10 +2,11 @@ import catchAsync from "../util/catchAsync";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import AppError from "../util/appError";
 import User from "../model/UserModel";
-import {Request, Response, NextFunction} from "express";
+import {Request, Response, NextFunction, CookieOptions} from "express";
 import {IUser} from "../model/UserModel";
 import {sendEmail} from "../util/email";
 import {RequestWithUser} from "../types";
+import {log} from "node:util";
 
 //returns a jwt token created using given id
 const signToken = (id: any) => {
@@ -91,7 +92,7 @@ const verifyEmail = catchAsync(async (req: Request, res: Response, next: NextFun
     const email = req.body.email;
     const otp = req.body.otp;
 
-    const user = await User.findOne({email: email}).select("-leetcode -password +otp");
+    const user = await User.findOne({email: email}).select("-password +otp");
     console.log(user)
     if (!user) return next(new AppError("No user with this email id!", 401));
     if (user.verified) return next(new AppError("User is already verified!", 401));
@@ -152,42 +153,41 @@ const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Re
     next();
 })];
 
+const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const loginCredential: string = req.body.loginCredential;
+    const password: string = req.body.password;
 
-// login: catchAsync(async (req, res, next) => {
-//     let {email, password} = req.body;
-//
-//     //check if email and password exists => user entered these fields
-//     if (!email || !password) {
-//         return next(new AppError("Please provide email and password", 400));
-//     }
-//
-//     //check if user exists and password is correct
-//     //we have restricted the default selection of password, so we explicitly select password
-//     let user = await User.findOne({email: email}).select("+password");
-//     if (!user || !(await user.correctPassword(password, user.password)))
-//         return next(new AppError("Incorrect email or password!", 401));
-//
-//     createSendToken(user, 200, res);
-// }),
-//
-// logout: catchAsync(async (req, res, next) => {
-//     const options =
-//         process.env.NODE_ENV === "development"
-//             ? {
-//                 expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-//                 httpOnly: true,
-//                 secure: false,
-//             }
-//             : {
-//                 expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-//                 secure: true,
-//                 domain: process.env.DOMAIN,
-//             };
-//     res.cookie("jwt", "", options).json({
-//         status: "success",
-//         message: "cookie deleted",
-//     });
-// }),
+    //check if email and password exists => user entered these fields
+    if (!loginCredential || !password)
+        return next(new AppError("Email/username or password not provided", 400));
+
+    //check if user exists and password is correct
+    //we have restricted the default selection of password, so we explicitly select password
+    const user = await User.findOne({[loginCredential.includes("@") ? "email" : "username"]: loginCredential}).select("+password");
+    if (!user || !(await user.correctPassword(password, user.password)))
+        return next(new AppError("Incorrect email/username or password!", 401));
+
+    createSendToken(user, 200, res);
+});
+
+
+const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const options: CookieOptions = {
+        expires: new Date(0), // Set expiration time to the past
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure in production
+        sameSite: "lax", // "None" if using cross-origin with HTTPS
+        path: "/", // Ensure deletion across all paths
+        domain: process.env.NODE_ENV === "production" ? ".applicationclubmnnit.com" : "localhost",
+    };
+
+    res.cookie("jwt", "", options);
+
+    res.json({
+        status: "success",
+        message: "Logged out successfully",
+    });
+});
 
 
 //functionality to update/reset password is not implemented
@@ -197,4 +197,7 @@ export default {
     verifyEmail,
     protect,
     shallowProtect,
-};
+    login,
+    logout
+}
+

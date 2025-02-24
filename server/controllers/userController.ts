@@ -1,9 +1,10 @@
-import User from "../model/UserModel";
 import catchAsync from "../util/catchAsync";
 import axios from "axios";
 import AppError from "../util/appError";
 import {RequestWithUser} from "../types";
-import {NextFunction, Response} from "express";
+import {NextFunction, Response, Request} from "express";
+import User from "../model/UserModel";
+
 
 const getLeetcodeName = async (username: string): Promise<string> => {
     try {
@@ -62,6 +63,16 @@ const getGithubName = async (username: string): Promise<string> => {
     }
 }
 
+const isUsernameAvailable = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const username: string = req.body.username;
+    if (!username) return next(new AppError("Username not provided!", 400));
+    //case in-sensitive username search
+    const user = await User.findOne({username: {$regex: new RegExp(`^${username}$`, "i")}});
+    res.status(200).json({
+        status: "success",
+        available: !user,
+    });
+});
 
 const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
@@ -140,4 +151,4 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 });
 
 
-export default {makeUserCodingProfileVerificationReady, verifyCodingProfile};
+export default {makeUserCodingProfileVerificationReady, verifyCodingProfile, isUsernameAvailable};

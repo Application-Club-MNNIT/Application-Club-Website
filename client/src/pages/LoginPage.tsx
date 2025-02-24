@@ -1,16 +1,33 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from "react";
 import userIcon from "../assets/images/icons/user.png";
 import lockIcon from "../assets/images/icons/lock.png";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import { MouseEffectBackground } from "../components/MouseEffectBackground.js";
+import {HiEye, HiEyeOff} from "react-icons/hi";
+import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "../redux/store.js";
+import {useNavigate} from "react-router-dom";
+import {login} from "../redux/apiCalls/userCalls.js";
 
 const LoginPage: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const [loginCredential, setLoginCredential] = useState<string>();
+    const [password, setPassword] = useState<string>();
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const result = await login(dispatch, {loginCredential, password});
+        if (result.status) {
+            navigate("/"); // Redirect on successful login
+        }
+    }
 
     return (
         <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-10 lg:px-16">
@@ -33,6 +50,8 @@ const LoginPage: React.FC = () => {
                         </label>
                         <input
                             type="text"
+                            value={loginCredential}
+                            onChange={(e) => setLoginCredential(e.target.value)}
                             placeholder="Enter your username/ Email"
                             className="w-full p-3 px-4 rounded-lg bg-neutral-800 border-0 outline-none focus:ring-0 text-white placeholder-gray-400 text-sm"
                         />
@@ -51,6 +70,8 @@ const LoginPage: React.FC = () => {
 
                         <div className="relative">
                             <input
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 className="w-full p-3 px-4 rounded-lg bg-neutral-800 border-0 outline-none focus:ring-0 text-white placeholder-gray-400 text-sm"
@@ -63,12 +84,14 @@ const LoginPage: React.FC = () => {
                     </div>
 
                     <button type="submit"
+                            onClick={handleSubmit}
                             className="w-[160px] h-[45px] bg-[#2DBAAAF0] hover:bg-teal-600 text-white font-semibold py-3 rounded-2xl text-lg">
                         Submit
                     </button>
                 </div>
             </AnimatedWrapper>
         </div>
+
     );
 };
 
