@@ -7,7 +7,7 @@ import ErrorPage from "./pages/ErrorPage.js";
 import SignupPage from "./pages/SignupPage.js";
 import LoginPage from "./pages/LoginPage.js";
 import React from "react";
-import OTPVerification from "./components/OTPVerification.js";
+import OTPVerification from "./pages/OTPVerification.js";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 
 const App: React.FC = () => {
