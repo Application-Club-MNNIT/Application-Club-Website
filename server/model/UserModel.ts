@@ -14,6 +14,12 @@ export interface IPlatformSubmissions {
     randomName?: string;
 }
 
+export interface IGithub {
+    username: string;
+    verified: boolean;
+    randomName?: string;
+}
+
 export interface IUser extends Document {
     username: string;
     name: string;
@@ -22,6 +28,8 @@ export interface IUser extends Document {
     password: string;
     leetcode: IPlatformSubmissions;
     gfg: IPlatformSubmissions;
+    codeforces: IPlatformSubmissions;
+    github: IGithub;
     otp?: number;
     passwordChangedAt?: number;
     verified: boolean;
@@ -96,6 +104,30 @@ const userSchema = new mongoose.Schema<IUser>({
             ],
             default: [],
         }, verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }
+    }, codeforces: {
+        username: {type: String, unique: true},
+        submissions: {
+            type: [
+                {
+                    questionId: {type: String, required: true},
+                    timestamp: {type: Date, required: true},
+                },
+            ],
+            default: [],
+        }, verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }
+    }, github: {
+        username: {type: String, unique: true},
+        verified: {
             type: Boolean,
             default: false,
         }, randomName: {

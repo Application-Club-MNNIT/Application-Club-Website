@@ -44,6 +44,25 @@ const getGfgName = async (username: string): Promise<string> => {
     }
 }
 
+const getCodeforcesName = async (username: string): Promise<string> => {
+    try {
+        const response = await axios.get(`https://codeforces.com/api/user.info?handles=${username}&checkHistoricHandles=false`);
+        return response.data.result[0]?.firstName;
+    } catch (e) {
+        return null;
+    }
+}
+
+const getGithubName = async (username: string): Promise<string> => {
+    try {
+        const response = await axios.get(`https://api.github.com/users/${username}`);
+        return response.data.name;
+    } catch (e) {
+        return null;
+    }
+}
+
+
 const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
     const platform: string = req.body.platform;
@@ -52,7 +71,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     //todo: add more platform names as needed
     if (!platform || !username) return next(new AppError("username or platform not provided!", 400));
 
-    if (!["leetcode", "gfg"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
+    if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
     if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
     if (!user[platform]?.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
@@ -62,7 +81,10 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
         name = await getLeetcodeName(username);
     else if (platform === "gfg")
         name = await getGfgName(username);
-
+    else if (platform === "codeforces")
+        name = await getCodeforcesName(username);
+    else if (platform === "github")
+        name = await getGithubName(username);
 
     if (!name) return next(new AppError("Check your username and try again", 400));
     if (name !== user[platform].randomName) return next(new AppError(`Name mismatch (actual: ${name})`, 401));
@@ -94,6 +116,17 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
         user.gfg.randomName = randomString;
         unverifiedPlatforms.push("gfg");
     }
+
+    if (!user.codeforces.verified) {
+        user.codeforces.randomName = randomString;
+        unverifiedPlatforms.push("codeforces");
+    }
+
+    if (!user.github.verified) {
+        user.github.randomName = randomString;
+        unverifiedPlatforms.push("github");
+    }
+
 
     //todo: add more platforms as needed
 
