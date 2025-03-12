@@ -4,11 +4,22 @@ const app = express();
 import cookieParser from "cookie-parser";
 import cors from "cors"; //prevents cors blockage
 
+const allowedOrigins = [
+    "http://localhost:5173", // Development Frontend
+    "https://www.applicationclubmnnit.com", // Production Frontend
+];
+
 app.use(
-  cors({
-    credentials: true,
-    origin: process.env.FRONTEND_DOMAIN,
-  })
+    cors({
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, origin);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true, // Required for cookies
+    })
 );
 
 // read data from the body into req.body
@@ -21,36 +32,40 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 app.get("/", (req, res, next) => {
-  res.status(200).json({
-    status: "success",
-    message: "Welcome to ApplicationClubMnnit.com Main server",
-  });
+    res.status(200).json({
+        status: "success",
+        message: "Welcome to ApplicationClubMnnit.com Main server",
+    });
 });
 
 app.get("/test", async (req, res, next) => {
-  res.status(200).json({
-    status: "success",
-    message: "This is a test route.",
-  });
+    res.status(200).json({
+        status: "success",
+        message: "This is a test route.",
+    });
 });
 
 //defining routers
 // todo: routes here
-const userRoutes = require("./routes/userRouters");
+import userRoutes from "./routes/userRouters";
+
 app.use("/user", userRoutes);
 
+
 //for undefined routs
-const AppError = require("./util/appError");
+import AppError from "./util/appError";
+
 app.all("*", (req, res, next) => {
-  next(
-    new AppError(
-      `Can't find ${req.originalUrl} on AC Website main server!`,
-      404
-    )
-  );
+    next(
+        new AppError(
+            `Can't find ${req.originalUrl} on AC Website main server!`,
+            404
+        )
+    );
 });
 
 //in case of operational error this middleware function will be called to return relevant error message
-const globalErrorController = require("./controllers/errorController");
+import globalErrorController from "./controllers/errorController";
+
 app.use(globalErrorController);
 export default app;

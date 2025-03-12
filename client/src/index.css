@@ -1,3 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "flowbite/plugin";
+
+
+@theme {
+    --color-AC_Orange: rgb(255, 154, 0);
+    --color-AC_Green: rgb(45, 186, 170);
+
+    --font-poltawski: "Poltawski Nowy, serif";
+    --font-poppins: "Poppins, sans-serif";
+
+}

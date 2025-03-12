@@ -1,13 +1,45 @@
-import mongoose, {Document, Model} from "mongoose";
+import mongoose, {Document} from "mongoose";
 import validator from "validator";
 import bcryptjs from "bcryptjs";
 
-interface IUser extends Document {
-    email: string;
+export interface ISubmission {
+    questionId: string;
+    timestamp: Date;
+}
+
+export interface IPlatformSubmissions {
+    username: string;
+    submissions: ISubmission[];
+    verified: boolean;
+    randomName?: string;
+    lastSubmissionTimestamp?: string;
+    lastRequestTimestamp?: string;
+}
+
+export interface IGithub {
+    username: string;
+    verified: boolean;
+    randomName?: string;
+}
+
+export interface IUser extends Document {
+    username: string;
     name: string;
+    email: string;
+    regNumber: string;
+    branch: string;
+    batch: number;
+    phone: number;
     password: string;
-    passwordConfirm?: string;
+    leetcode: IPlatformSubmissions;
+    gfg: IPlatformSubmissions;
+    codeforces: IPlatformSubmissions;
+    github: IGithub;
+    otp?: number;
     passwordChangedAt?: number;
+    verified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
 
@@ -15,12 +47,18 @@ interface IUser extends Document {
 }
 
 const userSchema = new mongoose.Schema<IUser>({
-    email: {
+    username: {
         type: String,
         unique: true,
-        lowercase: true,
-        required: [true, "Email is must!"],
-        validate: [validator.isEmail, "Please provide a valid email!"],
+        required: [true, "username not provided"],
+        minlength: [3, "username must be at least 3 characters long"],
+        maxlength: [15, "username must be at max 15 characters long"],
+        validate: {
+            validator: function (value: string) {
+                return /^[a-zA-Z0-9_]+$/.test(value);
+            },
+            message: "username can only contain alphabets, numbers, and underscores!",
+        },
     },
     name: {
         type: String,
@@ -28,32 +66,135 @@ const userSchema = new mongoose.Schema<IUser>({
         minLength: [5, "name too short(min=5)!"],
         maxLength: [15, "name too long(max=25)!"],
     },
+    email: {
+        type: String,
+        unique: true,
+        lowercase: true,
+        required: [true, "Email is required!"],
+        validate: [
+            validator.isEmail,
+            {
+                validator: function (value: string) {
+                    return value.endsWith("@mnnit.ac.in");
+                },
+                message: "Please enter MNNIT GSuit id.",
+            }]
+    }, regNumber: {
+        type: "string",
+        required: true,
+        unique: true
+    }, branch: {
+        type: String,
+        required: true,
+        default: "NA"
+    }, batch: {
+        type: Number,
+        required: true,
+    }, phone: {
+        type: Number,
+        required: true,
+    }, leetcode: {
+        username: {type: String, unique: true, sparse: true},
+        submissions: {
+            type: [
+                {
+                    questionId: {type: String, required: true},
+                    timestamp: {type: Number, required: true},
+                },
+            ],
+            default: [],
+        }, verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
+        }
+    }, gfg: {
+        username: {type: String, unique: true, sparse: true},
+        submissions: {
+            type: [
+                {
+                    questionId: {type: String, required: true},
+                    timestamp: {type: Number, required: true},
+                },
+            ],
+            default: [],
+        }, verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
+        }
+    }, codeforces: {
+        username: {type: String, unique: true, sparse: true},
+        submissions: {
+            type: [
+                {
+                    questionId: {type: String, required: true},
+                    timestamp: {type: Number, required: true},
+                },
+            ],
+            default: [],
+        }, verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
+        }
+    }, github: {
+        username: {type: String, unique: true, sparse: true},
+        verified: {
+            type: Boolean,
+            default: false,
+        }, randomName: {
+            type: String,
+        }
+    },
     password: {
         type: String,
         required: [true, "Please create a password!"],
-        minlength: 8,
+        minlength: [8, "password must be at least 8 characters long"],
         select: false,
-    },
-    passwordConfirm: {
-        type: String,
-        required: [true, "Please confirm the password!"],
-        validate: {
-            validator: function (this: IUser, el: string) {
-                return el === this.password;
-            },
-            message: "Passwords are not the same!",
-        },
-    },
-    passwordChangedAt: {
+    }, passwordChangedAt: {
         type: Number,
         required: false,
-    },
+    }, otp: {
+        type: Number,
+        select: false,
+        required: false,
+    }, verified: {
+        type: Boolean,
+        required: true,
+        default: false,
+    }
+}, {
+    timestamps: true,
 });
 
 userSchema.pre<IUser>("save", async function (next) {
     if (!this.isModified("password")) return next();
     this.password = await bcryptjs.hash(this.password, 12);
-    this.passwordConfirm = undefined;
     next();
 });
 
@@ -78,5 +219,5 @@ userSchema.pre<IUser>("save", function (next) {
     next();
 });
 
-const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 export default User;
