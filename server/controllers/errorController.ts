@@ -14,7 +14,7 @@ const handleValidationErrorDB = (err: MongooseError.ValidationError) => {
 }
 
 const handleDuplicateFieldsDB = (err) => {
-    const message = `Duplicate field value: ${err.errmsg.match(/(["'])(\\?.)*?\1/)[0]}. Please use another value.`;
+    const message = `Duplicate field value: (${(err.errmsg.match(/(["'])(\\?.)*?\1/) || [err])[0]}. Please use another value.`;
     return new AppError(message, 400);
 }
 

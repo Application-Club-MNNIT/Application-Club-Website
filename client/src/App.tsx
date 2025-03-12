@@ -49,6 +49,10 @@ const App: React.FC = () => {
                 },
                 {
                     path: "profileVerification",
+                    loader: async () => {
+                        //backend ko call krenge, random name retrieve
+                        return {randomName: "thisIsAnotherRandomName"};
+                    },
                     element: <PublicOnlyRoute><ProfileVerificationPage/></PublicOnlyRoute>,
                 },
             ],

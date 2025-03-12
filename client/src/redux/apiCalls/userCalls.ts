@@ -13,10 +13,11 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
     status: boolean,
     message: string
 }> = async (dispatch: Dispatch, body: any) => {
+
     //please notice: how a toast is being created. toast is that "popup". we are storing id as we will update it later
     const id = toast.loading("Logging you in");
+    
     // api call
-    // todo: Doing it any for now, might have to change it later to make it more strict
     //please notice: to(...) returns [err, res] containing error or response. if api call gives error, err has something otherwise res has something. simple. ?
     const [err, res]: any[] = await to(backend.post("/user/login", body));
     if (err) {

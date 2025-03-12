@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import LeetCodeIcon from "../assets/images/icon/leetcode.png";
 import GFGIcon from "../assets/images/icon/gfg.png";
 import GitHubIcon from "../assets/images/icon/github.png";
@@ -7,15 +7,21 @@ import CodeforcesIcon from "../assets/images/icon/codeforces.png";
 import VerifyIcon from "../assets/images/icon/verify.png";
 import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
-import { MouseEffectBackground } from "../components/MouseEffectBackground.js";
+import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
+import {useLoaderData} from "react-router-dom";
 
 const ProfileVerificationPage: React.FC = () => {
 
-    const randomName: string = "random_name";
+    //todo: remove linkedin
+
+    //yes it looks weird in typescript
+    //const data = useLoaderData() in js
+    const data: { randomName: string } = useLoaderData() as { randomName: string };
+    const randomName: string = data.randomName;
 
     // State to hold usernames for different platforms
     const [usernames, setUsernames] = useState({
-        leetcode: "",
+        leetcode: "JaTin",
         gfg: "",
         github: "",
         linkedin: "",
@@ -34,14 +40,14 @@ const ProfileVerificationPage: React.FC = () => {
     // Handler to update the username for a specific platform
     const handleChange = (platform: string, value: string) => {
         if (!verified[platform]) {
-            setUsernames({ ...usernames, [platform]: value });
+            setUsernames({...usernames, [platform]: value});
         }
     };
 
     // Handler to verify the username for a specific platform
     const handleVerify = (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
-        setVerified({ ...verified, [platform]: true });
+        setVerified({...verified, [platform]: true});
     };
 
     return (
@@ -101,27 +107,27 @@ const ProfileVerificationPage: React.FC = () => {
                                 />
 
                                 {verified[key] && (
-                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6" />
+                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6"/>
                                 )}
 
                                 {/* Verify section with icon and button */}
                                 <div className="flex items-center space-x-3 h-12">
-                                {!verified[key] && (
-                                    <>
-                                    {/* Verify icon inside a box */}
-                                    <div
-                                        className="bg-[rgba(74,74,74,0.42)] p-2 rounded-md w-12 flex items-center justify-center">
-                                        <img src={VerifyIcon} alt="Verify Icon" className="w-7 h-7"/>
-                                    </div>
-                                    {/* Verify button */}
-                                    <button
-                                        onClick={() => handleVerify(key)}
-                                        className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-4 py-2 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
-                                    >
-                                        Verify
-                                    </button>
-                                    </>
-                                )}
+                                    {!verified[key] && (
+                                        <>
+                                            {/* Verify icon inside a box */}
+                                            <div
+                                                className="bg-[rgba(74,74,74,0.42)] p-2 rounded-md w-12 flex items-center justify-center">
+                                                <img src={VerifyIcon} alt="Verify Icon" className="w-7 h-7"/>
+                                            </div>
+                                            {/* Verify button */}
+                                            <button
+                                                onClick={() => handleVerify(key)}
+                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-4 py-2 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
+                                            >
+                                                Verify
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>

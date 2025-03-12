@@ -6,7 +6,6 @@ import {Request, Response, NextFunction, CookieOptions} from "express";
 import {IUser} from "../model/UserModel";
 import {sendEmail} from "../util/email";
 import {RequestWithUser} from "../types";
-import {log} from "node:util";
 
 //returns a jwt token created using given id
 const signToken = (id: any) => {
@@ -63,12 +62,30 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
         if (existingUser.verified) return next(new AppError("User already exists", 401));
         else await User.deleteOne({_id: existingUser._id});
 
+
+    let batch: number, branch: string;
+    const p1: string[] = email.toLowerCase().split("@")[0].split(".");
+    const regNumber: string = p1[p1.length - 1];
+    if (regNumber.startsWith("ca", 4)) {
+        batch = parseInt(regNumber.substring(0, 4), 10) + 3;
+        branch = "MCA";
+    } else if (regNumber.startsWith("msc", 4)) {
+        batch = parseInt(regNumber.substring(0, 4), 10) + 2;
+        branch = "MSC";
+    } else {
+        batch = parseInt(regNumber.substring(0, 4), 10);
+        branch = "NA";
+    }
+
     const otp = Math.floor(10000 + Math.random() * 90000);
 
     await User.create({
         username,
         name,
         email,
+        regNumber,
+        batch,
+        branch,
         phone,
         password,
         otp
@@ -191,7 +208,6 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 
 //functionality to update/reset password is not implemented
-
 export default {
     signup,
     verifyEmail,
@@ -200,4 +216,6 @@ export default {
     login,
     logout
 }
+
+
 

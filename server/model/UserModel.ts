@@ -12,6 +12,8 @@ export interface IPlatformSubmissions {
     submissions: ISubmission[];
     verified: boolean;
     randomName?: string;
+    lastSubmissionTimestamp?: string;
+    lastRequestTimestamp?: string;
 }
 
 export interface IGithub {
@@ -24,6 +26,9 @@ export interface IUser extends Document {
     username: string;
     name: string;
     email: string;
+    regNumber: string;
+    branch: string;
+    batch: number;
     phone: number;
     password: string;
     leetcode: IPlatformSubmissions;
@@ -72,18 +77,29 @@ const userSchema = new mongoose.Schema<IUser>({
                 validator: function (value: string) {
                     return value.endsWith("@mnnit.ac.in");
                 },
-                message: "Please enter MNNIT GSit id.",
+                message: "Please enter MNNIT GSuit id.",
             }]
+    }, regNumber: {
+        type: "string",
+        required: true,
+        unique: true
+    }, branch: {
+        type: String,
+        required: true,
+        default: "NA"
+    }, batch: {
+        type: Number,
+        required: true,
     }, phone: {
         type: Number,
         required: true,
     }, leetcode: {
-        username: {type: String, unique: true},
+        username: {type: String, unique: true, sparse: true},
         submissions: {
             type: [
                 {
                     questionId: {type: String, required: true},
-                    timestamp: {type: Date, required: true},
+                    timestamp: {type: Number, required: true},
                 },
             ],
             default: [],
@@ -92,14 +108,21 @@ const userSchema = new mongoose.Schema<IUser>({
             default: false,
         }, randomName: {
             type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
         }
     }, gfg: {
-        username: {type: String, unique: true},
+        username: {type: String, unique: true, sparse: true},
         submissions: {
             type: [
                 {
                     questionId: {type: String, required: true},
-                    timestamp: {type: Date, required: true},
+                    timestamp: {type: Number, required: true},
                 },
             ],
             default: [],
@@ -108,14 +131,21 @@ const userSchema = new mongoose.Schema<IUser>({
             default: false,
         }, randomName: {
             type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
         }
     }, codeforces: {
-        username: {type: String, unique: true},
+        username: {type: String, unique: true, sparse: true},
         submissions: {
             type: [
                 {
                     questionId: {type: String, required: true},
-                    timestamp: {type: Date, required: true},
+                    timestamp: {type: Number, required: true},
                 },
             ],
             default: [],
@@ -124,9 +154,16 @@ const userSchema = new mongoose.Schema<IUser>({
             default: false,
         }, randomName: {
             type: String,
+        }, lastSubmissionTimestamp: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }, lastRequestTimestamp: {
+            type: Number, required: true, min: 0, default: 0
         }
     }, github: {
-        username: {type: String, unique: true},
+        username: {type: String, unique: true, sparse: true},
         verified: {
             type: Boolean,
             default: false,
