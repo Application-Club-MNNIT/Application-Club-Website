@@ -11,7 +11,7 @@ import OTPVerification from "./pages/OTPVerification.js";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
-
+import { getRandomString } from "./redux/apiCalls/userCalls.js";
 const App: React.FC = () => {
 
     const PrivateRoute = ({children}: { children: JSX.Element }) => {
@@ -50,10 +50,10 @@ const App: React.FC = () => {
                 {
                     path: "profileVerification",
                     loader: async () => {
-                        //backend ko call krenge, random name retrieve
-                        return {randomName: "thisIsAnotherRandomName"};
+                        const { randomString } = await getRandomString();
+                        return { randomName: randomString || "Manish" };
                     },
-                    element: <PublicOnlyRoute><ProfileVerificationPage/></PublicOnlyRoute>,
+                    element: <ProfileVerificationPage/>,
                 },
             ],
         },

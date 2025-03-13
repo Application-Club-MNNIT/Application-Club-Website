@@ -9,32 +9,38 @@ import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import {useLoaderData} from "react-router-dom";
-
+import { verifyHandle } from "../redux/apiCalls/userCalls";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store"; 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin
 
     //yes it looks weird in typescript
     //const data = useLoaderData() in js
+    const dispatch = useDispatch<AppDispatch>();
     const data: { randomName: string } = useLoaderData() as { randomName: string };
     const randomName: string = data.randomName;
-
-    // State to hold usernames for different platforms
+    const user = useSelector((state: RootState) => state.auth.user);
+    console.log(user);
+    
+    // Initialize usernames from the user state
     const [usernames, setUsernames] = useState({
-        leetcode: "JaTin",
-        gfg: "",
-        github: "",
-        linkedin: "",
-        codeforces: "",
+        leetcode: user?.leetcode?.username || "",
+        gfg: user?.gfg?.username || "",
+        github: user?.github?.username || "",
+        codeforces: user?.codeforces?.username || "",
+        linkedin: "" // Not present in schema
     });
-
-    // State to hold verification status for different platforms
+    
     const [verified, setVerified] = useState({
-        leetcode: true,
-        gfg: false,
-        github: false,
-        linkedin: false,
-        codeforces: false,
+        leetcode: user?.leetcode?.verified || false,
+        gfg: user?.gfg?.verified || false,
+        github: user?.github?.verified || false,
+        codeforces: user?.codeforces?.verified || false,
+        linkedin: false // Not present in schema
     });
 
     // Handler to update the username for a specific platform
@@ -45,9 +51,15 @@ const ProfileVerificationPage: React.FC = () => {
     };
 
     // Handler to verify the username for a specific platform
-    const handleVerify = (platform: string) => {
+    const handleVerify = async (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
-        setVerified({...verified, [platform]: true});
+        let username :string= usernames[platform];
+        const response = await verifyHandle({platform,username });
+        if (response.status) {
+            setUsernames({...usernames, [platform]: username});
+            setVerified({ ...verified, [platform]: true }); // Update the state only if successful
+            // dispatch(updateUserVerification({ platform, username }));
+        }
     };
 
     return (

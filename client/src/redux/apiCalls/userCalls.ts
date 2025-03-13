@@ -46,6 +46,66 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
     return { status: true, message: "Login success!" };
 };
 
+
+export const getRandomString = async () => {
+    const id = toast.loading("Generating verification strings...");
+
+    const [err, res]: any[] = await to(backend.post("/user/getCodingPlatformVerificationString"));
+
+    if (err) {
+        const message = err.response?.data?.message || err.response?.data || err.message || "Some error occurred, please try again later";
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+        return { status: false, message, unverifiedPlatforms: [] };
+    } else {
+        const { randomString } = res.data;
+
+        toast.update(id, {
+            render: "Verification strings generated successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return { status: true, message: "Verification strings generated successfully!", randomString };
+    }
+};
+
+
+export const verifyHandle = async (body: any) => {
+    const id = toast.loading("Verifying handle...");
+
+    const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
+
+    if (err) {
+        const message =
+            err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
+        
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+
+        return { status: false, message, verified: false };
+    } else {
+        toast.update(id, {
+            render: "Handle verified successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return { status: true, message: "Handle verified successfully!", verified: true };
+    }
+};
+
+
 export const isUsernameAvailable = async (username: string) => {
     let [err, res]: any[] = await to(backend.post("/user/isUsernameAvailable", { username }));
     if (err) {
@@ -56,6 +116,10 @@ export const isUsernameAvailable = async (username: string) => {
     }
 }
 
+//please notice: below is code i copied from previous projects, make appropriate changes. good luck
+export const signup = async (dispatch, formData) => {
+    dispatch(resetAll());
+    // dispatch(startFetch());
 export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
     // Performing data validation
     const id = toast.loading("Signing you in");
