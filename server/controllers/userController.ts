@@ -84,7 +84,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
 
     if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
     if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
-    if (!user[platform]?.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
+    if (!user.profileVerificationData.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
     //todo: actually verify the platform, add more platforms as needed
     let name: string;
@@ -98,9 +98,8 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
         name = await getGithubName(username);
 
     if (!name) return next(new AppError("Check your username and try again", 400));
-    if (name !== user[platform].randomName) return next(new AppError(`Name mismatch (actual: ${name})`, 401));
+    if (name !== user.profileVerificationData.randomName) return next(new AppError(`Name mismatch (actual: ${name})`, 400));
     user[platform].username = username;
-    user[platform].randomName = undefined;
     user[platform].verified = true;
     await user.save();
 
@@ -112,39 +111,39 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
 
 const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
-    const randomString: string = ((length = 8) =>
-        Array.from({length}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-            .charAt(Math.random() * 62)).join(''))();
+
+    const lastRequestTimestamp: number = user.profileVerificationData?.lastRequestTimestamp || 0;
+    const fifteenMinutesInMs = 15 * 60 * 1000;
+    const hasFifteenMinutesPassed = Date.now() - lastRequestTimestamp >= fifteenMinutesInMs;
+
+    let randomString: string = null;
 
     const unverifiedPlatforms: string[] = [];
+    const verifiedPlatforms = [];
+    for (const platform of ['leetcode', 'gfg', 'codeforces', 'github'])
+        if (!user[platform].verified) {
+            unverifiedPlatforms.push(platform);
+        } else {
+            verifiedPlatforms.push({platform, username: user[platform].username});
+        }
 
-    if (!user.leetcode.verified) {
-        user.leetcode.randomName = randomString;
-        unverifiedPlatforms.push("leetcode");
-    }
-
-    if (!user.gfg.verified) {
-        user.gfg.randomName = randomString;
-        unverifiedPlatforms.push("gfg");
-    }
-
-    if (!user.codeforces.verified) {
-        user.codeforces.randomName = randomString;
-        unverifiedPlatforms.push("codeforces");
-    }
-
-    if (!user.github.verified) {
-        user.github.randomName = randomString;
-        unverifiedPlatforms.push("github");
-    }
-
+    if (unverifiedPlatforms.length > 0)
+        if (hasFifteenMinutesPassed) {
+            randomString = ((length = 8) =>
+                Array.from({length}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+                    .charAt(Math.random() * 62)).join(''))();
+            user.profileVerificationData.randomName = randomString;
+            user.profileVerificationData.lastRequestTimestamp = Date.now();
+        } else {
+            randomString = user.profileVerificationData.randomName;
+        }
 
     //todo: add more platforms as needed
-
     await user.save();
     res.status(200).json({
         status: "success",
         unverifiedPlatforms,
+        verifiedPlatforms,
         randomString
     });
 
