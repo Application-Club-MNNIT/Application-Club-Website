@@ -1,0 +1,14 @@
+{
+  "name": "application-club-website",
+  "version": "1.0.0",
+  "description": "This repo contains code related to applicationclubmnnit.com",
+  "homepage": "https://github.com/Application-Club-MNNIT/Application-Club-Website#readme",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  }
+}
