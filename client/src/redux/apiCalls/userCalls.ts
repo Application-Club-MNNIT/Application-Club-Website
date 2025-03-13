@@ -116,10 +116,6 @@ export const isUsernameAvailable = async (username: string) => {
     }
 }
 
-//please notice: below is code i copied from previous projects, make appropriate changes. good luck
-export const signup = async (dispatch, formData) => {
-    dispatch(resetAll());
-    // dispatch(startFetch());
 export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
     // Performing data validation
     const id = toast.loading("Signing you in");
