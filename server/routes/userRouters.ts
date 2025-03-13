@@ -35,6 +35,21 @@ router.post(
     userController.verifyCodingProfile,
 )
 
+router.post(
+    "/isUsernameAvailable",
+    userController.isUsernameAvailable
+)
+
+router.post(
+    "/login",
+    authController.login,
+)
+
+router.post(
+    "/logout",
+    authController.logout
+)
+
 //
 // //for logging in
 // router.post(

@@ -5,30 +5,49 @@ import GitHubIcon from "../assets/images/icon/github.png";
 import LinkedInIcon from "../assets/images/icon/linkedin.png";
 import CodeforcesIcon from "../assets/images/icon/codeforces.png";
 import VerifyIcon from "../assets/images/icon/verify.png";
+import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
+import {useLoaderData} from "react-router-dom";
 
 const ProfileVerificationPage: React.FC = () => {
 
-    const randomName: string = "random_name";
+    //todo: remove linkedin
+
+    //yes it looks weird in typescript
+    //const data = useLoaderData() in js
+    const data: { randomName: string } = useLoaderData() as { randomName: string };
+    const randomName: string = data.randomName;
 
     // State to hold usernames for different platforms
     const [usernames, setUsernames] = useState({
-        leetcode: "",
+        leetcode: "JaTin",
         gfg: "",
         github: "",
         linkedin: "",
         codeforces: "",
     });
 
+    // State to hold verification status for different platforms
+    const [verified, setVerified] = useState({
+        leetcode: true,
+        gfg: false,
+        github: false,
+        linkedin: false,
+        codeforces: false,
+    });
+
     // Handler to update the username for a specific platform
     const handleChange = (platform: string, value: string) => {
-        setUsernames({...usernames, [platform]: value});
+        if (!verified[platform]) {
+            setUsernames({...usernames, [platform]: value});
+        }
     };
 
     // Handler to verify the username for a specific platform
     const handleVerify = (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
+        setVerified({...verified, [platform]: true});
     };
 
     return (
@@ -76,29 +95,39 @@ const ProfileVerificationPage: React.FC = () => {
                                 {name} :
                             </label>
                             {/* Input field and verify button */}
-                            <div className="flex-1 flex items-center space-x-4">
+                            <div className="flex-1 flex items-center space-x-4 relative">
                                 <input
                                     type="text"
                                     value={usernames[key]}
                                     onChange={(e) => handleChange(key, e.target.value)}
-                                    className="flex-1 p-2 px-3 border-none rounded-xl bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-green-400 sm:w-auto md:w-[200px]"
+                                    className={`flex-1 p-3 rounded-xl bg-[rgba(74,74,74,0.42)] text-white focus:outline-none sm:w-auto md:w-[200px]
+                                         ${verified[key] ? 'border-2 border-green-400' : 'border-none'}`}
                                     placeholder={`Enter your ${name} username`}
+                                    readOnly={verified[key]}
                                 />
+
+                                {verified[key] && (
+                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6"/>
+                                )}
 
                                 {/* Verify section with icon and button */}
                                 <div className="flex items-center space-x-3 h-12">
-                                    {/* Verify icon inside a box */}
-                                    <div
-                                        className=" cursor-pointer bg-neutral-800 p-2 rounded-md w-12 flex items-center justify-center">
-                                        <img src={VerifyIcon} alt="Verify Icon" className="w-6 h-6"/>
-                                    </div>
-                                    {/* Verify button */}
-                                    <button
-                                        onClick={() => handleVerify(key)}
-                                        className="cursor-pointer bg-neutral-800 text-AC_Green px-4 py-2 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
-                                    >
-                                        Verify
-                                    </button>
+                                    {!verified[key] && (
+                                        <>
+                                            {/* Verify icon inside a box */}
+                                            <div
+                                                className="bg-[rgba(74,74,74,0.42)] p-2 rounded-md w-12 flex items-center justify-center">
+                                                <img src={VerifyIcon} alt="Verify Icon" className="w-7 h-7"/>
+                                            </div>
+                                            {/* Verify button */}
+                                            <button
+                                                onClick={() => handleVerify(key)}
+                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-4 py-2 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
+                                            >
+                                                Verify
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>

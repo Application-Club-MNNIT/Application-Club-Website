@@ -1,9 +1,10 @@
-import User from "../model/UserModel";
 import catchAsync from "../util/catchAsync";
 import axios from "axios";
 import AppError from "../util/appError";
 import {RequestWithUser} from "../types";
-import {NextFunction, Response} from "express";
+import {NextFunction, Response, Request} from "express";
+import User from "../model/UserModel";
+
 
 const getLeetcodeName = async (username: string): Promise<string> => {
     try {
@@ -44,6 +45,35 @@ const getGfgName = async (username: string): Promise<string> => {
     }
 }
 
+const getCodeforcesName = async (username: string): Promise<string> => {
+    try {
+        const response = await axios.get(`https://codeforces.com/api/user.info?handles=${username}&checkHistoricHandles=false`);
+        return response.data.result[0]?.firstName;
+    } catch (e) {
+        return null;
+    }
+}
+
+const getGithubName = async (username: string): Promise<string> => {
+    try {
+        const response = await axios.get(`https://api.github.com/users/${username}`);
+        return response.data.name;
+    } catch (e) {
+        return null;
+    }
+}
+
+const isUsernameAvailable = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const username: string = req.body.username;
+    if (!username) return next(new AppError("Username not provided!", 400));
+    //case in-sensitive username search
+    const user = await User.findOne({username: {$regex: new RegExp(`^${username}$`, "i")}});
+    res.status(200).json({
+        status: "success",
+        available: !user,
+    });
+});
+
 const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
     const platform: string = req.body.platform;
@@ -52,7 +82,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     //todo: add more platform names as needed
     if (!platform || !username) return next(new AppError("username or platform not provided!", 400));
 
-    if (!["leetcode", "gfg"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
+    if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
     if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
     if (!user[platform]?.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
@@ -62,7 +92,10 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
         name = await getLeetcodeName(username);
     else if (platform === "gfg")
         name = await getGfgName(username);
-
+    else if (platform === "codeforces")
+        name = await getCodeforcesName(username);
+    else if (platform === "github")
+        name = await getGithubName(username);
 
     if (!name) return next(new AppError("Check your username and try again", 400));
     if (name !== user[platform].randomName) return next(new AppError(`Name mismatch (actual: ${name})`, 401));
@@ -95,6 +128,17 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
         unverifiedPlatforms.push("gfg");
     }
 
+    if (!user.codeforces.verified) {
+        user.codeforces.randomName = randomString;
+        unverifiedPlatforms.push("codeforces");
+    }
+
+    if (!user.github.verified) {
+        user.github.randomName = randomString;
+        unverifiedPlatforms.push("github");
+    }
+
+
     //todo: add more platforms as needed
 
     await user.save();
@@ -107,4 +151,4 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 });
 
 
-export default {makeUserCodingProfileVerificationReady, verifyCodingProfile};
+export default {makeUserCodingProfileVerificationReady, verifyCodingProfile, isUsernameAvailable};
