@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import debounce from "lodash/debounce";
 import usernameLogo from "../assets/SignUpformLogo/usernameLogo (1).png";
 import passwordLogo from "../assets/SignUpformLogo/passwordLogo.png";
 import mobileLogo from "../assets/SignUpformLogo/tempImage5qyAJv 1 (2).png";
@@ -7,6 +8,11 @@ import nameLogo from "../assets/SignUpformLogo/tempImageChspc3 1 (1).png";
 import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import check, cross, and eye icons
 import { MouseEffectBackground } from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
+import { isUsernameAvailable as isUsernameAvailableApi } from "../redux/apiCalls/userCalls.js";
+
+
+// in milliseconds
+const DEFAULT_DEBOUNCE_DELAY = 500;
 
 interface FormData {
     username: string;
@@ -36,11 +42,26 @@ const SignupPage: React.FC = () => {
         }));
 
         if (name === 'username') {
-          // simulating availability of username
-          // TODO : replace with actual implementation of username availibility 
-            setIsUsernameAvailable(value.length >= 4); 
+            handleUsernameChange(value);
         }
     };
+
+    const handleUsernameChange = (value: string) => {
+        debouncedCheckUsernameAvailability(value);
+    }
+
+    // using debounce to avoid making API calls on every keystroke
+    // debouncedCheckUsernameAvailability will be called only after the user stops typing for DEFAULT_DEBOUNCE_DELAY
+    const debouncedCheckUsernameAvailability = useMemo(() =>
+        debounce(async (username: string) => {
+            let isAvailable: boolean = false;
+            if (username.length >= 4) {
+                isAvailable = await isUsernameAvailableApi(username);
+            }
+            setIsUsernameAvailable(isAvailable);
+        }, DEFAULT_DEBOUNCE_DELAY),
+        []
+    );
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
