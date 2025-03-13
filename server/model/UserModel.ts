@@ -11,7 +11,6 @@ export interface IPlatformSubmissions {
     username: string;
     submissions: ISubmission[];
     verified: boolean;
-    randomName?: string;
     lastSubmissionTimestamp?: string;
     lastRequestTimestamp?: string;
 }
@@ -20,6 +19,11 @@ export interface IGithub {
     username: string;
     verified: boolean;
     randomName?: string;
+}
+
+export interface IProfileVerificationData {
+    randomName?: string;
+    lastRequestTimestamp?: number;
 }
 
 export interface IUser extends Document {
@@ -38,6 +42,7 @@ export interface IUser extends Document {
     otp?: number;
     passwordChangedAt?: number;
     verified: boolean;
+    profileVerificationData: IProfileVerificationData;
     createdAt: Date;
     updatedAt: Date;
 
@@ -106,8 +111,6 @@ const userSchema = new mongoose.Schema<IUser>({
         }, verified: {
             type: Boolean,
             default: false,
-        }, randomName: {
-            type: String,
         }, lastSubmissionTimestamp: {
             type: Number,
             required: true,
@@ -129,8 +132,6 @@ const userSchema = new mongoose.Schema<IUser>({
         }, verified: {
             type: Boolean,
             default: false,
-        }, randomName: {
-            type: String,
         }, lastSubmissionTimestamp: {
             type: Number,
             required: true,
@@ -152,8 +153,6 @@ const userSchema = new mongoose.Schema<IUser>({
         }, verified: {
             type: Boolean,
             default: false,
-        }, randomName: {
-            type: String,
         }, lastSubmissionTimestamp: {
             type: Number,
             required: true,
@@ -187,6 +186,9 @@ const userSchema = new mongoose.Schema<IUser>({
         type: Boolean,
         required: true,
         default: false,
+    }, profileVerificationData: {
+        randomName: String,
+        lastRequestTimestamp: Number,
     }
 }, {
     timestamps: true,
