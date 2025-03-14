@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import LeetCodeIcon from "../assets/images/icon/leetcode.png";
 import GFGIcon from "../assets/images/icon/gfg.png";
 import GitHubIcon from "../assets/images/icon/github.png";
@@ -9,45 +9,57 @@ import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import {useLoaderData} from "react-router-dom";
-
+import { verifyHandle } from "../redux/apiCalls/userCalls";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store"; 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin
 
     //yes it looks weird in typescript
     //const data = useLoaderData() in js
+    const dispatch = useDispatch<AppDispatch>();
     const data: { randomName: string } = useLoaderData() as { randomName: string };
     const randomName: string = data.randomName;
-
-    // State to hold usernames for different platforms
+    const user = useSelector((state: RootState) => state.auth.user);
+    console.log(user);
+    
+    // Initialize usernames from the user state
     const [usernames, setUsernames] = useState({
-        leetcode: "JaTin",
-        gfg: "",
-        github: "",
-        linkedin: "",
-        codeforces: "",
+        leetcode: user?.leetcode?.username || "",
+        gfg: user?.gfg?.username || "",
+        github: user?.github?.username || "",
+        codeforces: user?.codeforces?.username || "",
+        linkedin: "" // Not present in schema
     });
-
-    // State to hold verification status for different platforms
+    
     const [verified, setVerified] = useState({
-        leetcode: true,
-        gfg: false,
-        github: false,
-        linkedin: false,
-        codeforces: false,
+        leetcode: user?.leetcode?.verified || false,
+        gfg: user?.gfg?.verified || false,
+        github: user?.github?.verified || false,
+        codeforces: user?.codeforces?.verified || false,
+        linkedin: false // Not present in schema
     });
 
     // Handler to update the username for a specific platform
     const handleChange = (platform: string, value: string) => {
         if (!verified[platform]) {
-            setUsernames({...usernames, [platform]: value});
+            setUsernames({ ...usernames, [platform]: value });
         }
     };
 
     // Handler to verify the username for a specific platform
-    const handleVerify = (platform: string) => {
+    const handleVerify = async (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
-        setVerified({...verified, [platform]: true});
+        let username :string= usernames[platform];
+        const response = await verifyHandle({platform,username });
+        if (response.status) {
+            setUsernames({...usernames, [platform]: username});
+            setVerified({ ...verified, [platform]: true }); // Update the state only if successful
+            // dispatch(updateUserVerification({ platform, username }));
+        }
     };
 
     return (
@@ -61,20 +73,21 @@ const ProfileVerificationPage: React.FC = () => {
             </button>
 
 
+            <div className="mt-6.5"></div>
             <AnimatedWrapper>
                 {/* Inner container with background and shadow */}
                 <div
-                    className="bg-neutral-900 w-full p-8 px-10 flex flex-col items-center justify-center">
-                    <h2 className="text-center text-white text-2xl sm:text-3xl font-poltawski mb-10">
+                    className="bg-neutral-900 w-full flex flex-col items-center justify-center max-w-[95vw] overflow-hidden">
+                    <h2 className="text-center text-white p-4 mt-4 text-2xl sm:text-3xl font-poltawski mb-4 sm:mb-2">
                         Profile Verification
                     </h2>
 
-                    <p className="font-thin w-[90%] mb-8">
+                    <p className="font-thin w-[100%] p-4 px-4 md:w-[90%] px-0 mb-4 sm:mb-6">
                         To verify your profile, change your name to <span
                         className="font-medium text-AC_Orange">{randomName}</span> on
                         each platform, then click verify</p>
 
-                    <p className="text-red-500 font-medium text-lg mb-8">Caution: You won't be allowed to change your
+                    <p className="text-red-500 font-medium w-[100%] md:w-[90%] px-4 text-lg mb-8">Caution: You won't be allowed to change your
                         username once
                         verified!</p>
 
@@ -87,53 +100,53 @@ const ProfileVerificationPage: React.FC = () => {
                         {name: "LinkedIn", key: "linkedin", icon: LinkedInIcon},
                     ].map(({name, key, icon}) => (
                         <div key={key}
-                             className="flex flex-col sm:flex-row items-center mb-3 space-y-6 sm:space-y-0 w-full">
+                        className="flex flex-wrap md:flex-row px-1 md:px-10 items-center mb-2 sm:mb-3 space-y-3 sm:space-y-0 w-full">
                             {/* Platform icon and label */}
                             <label
-                                className="text-white font-poppins text-lg flex items-center w-full sm:w-1/4 justify-center sm:justify-end sm:mr-4">
+                                className="text-white font-poppins text-lg flex items-center w-full sm:w-1/4 p-2 sm:justify-end sm:mr-4">
                                 <img src={icon} alt={name} className="w-6 h-6 mr-2"/>
                                 {name} :
                             </label>
                             {/* Input field and verify button */}
-                            <div className="flex-1 flex items-center space-x-4 relative">
+                            <div className="flex-1 flex items-center  space-x-2 sm:space-x-4 relative">
                                 <input
                                     type="text"
                                     value={usernames[key]}
                                     onChange={(e) => handleChange(key, e.target.value)}
-                                    className={`flex-1 p-3 rounded-xl bg-[rgba(74,74,74,0.42)] text-white focus:outline-none sm:w-auto md:w-[200px]
+                                    className={`flex-1 p-3 rounded-xl bg-[rgba(74,74,74,0.42)] text-white focus:outline-none w-[200px] sm:w-[75px] md:w-[140px]
                                          ${verified[key] ? 'border-2 border-green-400' : 'border-none'}`}
                                     placeholder={`Enter your ${name} username`}
                                     readOnly={verified[key]}
                                 />
-
+                                
                                 {verified[key] && (
-                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6"/>
+                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6" />
                                 )}
 
                                 {/* Verify section with icon and button */}
                                 <div className="flex items-center space-x-3 h-12">
-                                    {!verified[key] && (
-                                        <>
-                                            {/* Verify icon inside a box */}
-                                            <div
-                                                className="bg-[rgba(74,74,74,0.42)] p-2 rounded-md w-12 flex items-center justify-center">
-                                                <img src={VerifyIcon} alt="Verify Icon" className="w-7 h-7"/>
-                                            </div>
-                                            {/* Verify button */}
-                                            <button
-                                                onClick={() => handleVerify(key)}
-                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-4 py-2 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
-                                            >
-                                                Verify
-                                            </button>
-                                        </>
-                                    )}
+                                {!verified[key] && (
+                                    <>
+                                    {/* Verify icon inside a box */}
+                                    <div
+                                        className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
+                                        <img src={VerifyIcon} alt="Verify Icon" className="w-6 h-6 p-0.5  sm:w-6 sm:h-6"/>
+                                    </div>
+                                    {/* Verify button */}
+                                    <button
+                                        onClick={() => handleVerify(key)}
+                                        className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-1 py-2 md:px-2 sm:h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski "
+                                    >
+                                        Verify
+                                    </button>
+                                    </>
+                                )}
                                 </div>
                             </div>
                         </div>
                     ))}
                     {/* Submit button */}
-                    <div className="p-2 rounded-lg flex justify-center w-[300px]">
+                    <div className="p-2 px-10 rounded-lg flex justify-center w-[300px]">
                         <button
                             className="bg-AC_Green text-black px-8 py-2 w-full rounded-lg text-lg font-medium hover:opacity-90 transition"
                         >

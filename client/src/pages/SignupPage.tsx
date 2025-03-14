@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import debounce from "lodash/debounce";
 import usernameLogo from "../assets/SignUpformLogo/usernameLogo (1).png";
 import passwordLogo from "../assets/SignUpformLogo/passwordLogo.png";
 import mobileLogo from "../assets/SignUpformLogo/tempImage5qyAJv 1 (2).png";
@@ -7,26 +8,27 @@ import nameLogo from "../assets/SignUpformLogo/tempImageChspc3 1 (1).png";
 import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import check, cross, and eye icons
 import { MouseEffectBackground } from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
+import { isUsernameAvailable as isUsernameAvailableApi, signup } from "../redux/apiCalls/userCalls.js";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
 
-interface FormData {
-    username: string;
-    fullName: string;
-    gsuiteId: string;
-    mobileNo: string;
-    password: string;
-}
+
+// in milliseconds
+const DEFAULT_DEBOUNCE_DELAY = 500;
 
 const SignupPage: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<ISignUpFormData>({
         username: '',
-        fullName: '',
-        gsuiteId: '',
-        mobileNo: '',
+        name: '',
+        email: '',
+        phone: '',
         password: '',
     });
 
     const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null);
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false); // To toggle password visibility
+
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -36,17 +38,32 @@ const SignupPage: React.FC = () => {
         }));
 
         if (name === 'username') {
-          // simulating availability of username
-          // TODO : replace with actual implementation of username availibility 
-            setIsUsernameAvailable(value.length >= 4); 
+            handleUsernameChange(value);
         }
     };
+
+    const handleUsernameChange = (value: string) => {
+        debouncedCheckUsernameAvailability(value);
+    }
+
+    // using debounce to avoid making API calls on every keystroke
+    // debouncedCheckUsernameAvailability will be called only after the user stops typing for DEFAULT_DEBOUNCE_DELAY
+    const debouncedCheckUsernameAvailability = useMemo(() =>
+        debounce(async (username: string) => {
+            let isAvailable: boolean = false;
+            if (username.length >= 4) {
+                isAvailable = await isUsernameAvailableApi(username);
+            }
+            setIsUsernameAvailable(isAvailable);
+        }, DEFAULT_DEBOUNCE_DELAY),
+        []
+    );
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
+        signup(dispatch, formData);
     };
-
     const togglePasswordVisibility = () => {
         setIsPasswordVisible((prevState) => !prevState); // Toggle password visibility state
     };
@@ -97,8 +114,8 @@ const SignupPage: React.FC = () => {
                             </label>
                             <input
                                 type="text"
-                                name="fullName"
-                                value={formData.fullName}
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 className="p-1 rounded-lg bg-neutral-800 border-none px-2 outline-none focus:ring-2 focus:ring-AC_Orange"
                             />
@@ -111,8 +128,8 @@ const SignupPage: React.FC = () => {
                             </label>
                             <input
                                 type="email"
-                                name="gsuiteId"
-                                value={formData.gsuiteId}
+                                name="email"
+                                value={formData.email}
                                 onChange={handleChange}
                                 className="p-1 rounded-lg bg-neutral-800 border-none px-2 outline-none focus:ring-2 focus:ring-AC_Orange"
                             />
@@ -125,8 +142,8 @@ const SignupPage: React.FC = () => {
                             </label>
                             <input
                                 type="text"
-                                name="mobileNo"
-                                value={formData.mobileNo}
+                                name="phone"
+                                value={formData.phone}
                                 onChange={handleChange}
                                 className="p-1 rounded-lg bg-neutral-800 border-none px-2 outline-none focus:ring-2 focus:ring-AC_Orange"
                             />

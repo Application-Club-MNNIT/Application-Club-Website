@@ -1,13 +1,14 @@
-import {backend} from "../../AxiosRequests/backendRequestAxios.js";
+import { backend } from "../../AxiosRequests/backendRequestAxios.js";
 import {
     loginFailed,
     loginSuccess,
     logoutSuccess,
     resetAll,
 } from "../authSlice.js";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import to from "await-to-js";
-import {Dispatch} from "@reduxjs/toolkit";
+import { Dispatch } from "@reduxjs/toolkit";
+import ISignupResponse from "../../interfaces/ISignupResponse";
 
 export const login: (dispatch: Dispatch, body: any) => Promise<{
     status: boolean,
@@ -16,10 +17,10 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
 
     //please notice: how a toast is being created. toast is that "popup". we are storing id as we will update it later
     const id = toast.loading("Logging you in");
-    
+
     // api call
     //please notice: to(...) returns [err, res] containing error or response. if api call gives error, err has something otherwise res has something. simple. ?
-    const [err, res]: any[] = await to(backend.post("/user/login", body));
+    const [err, res]: [any, ISignupResponse] = await to(backend.post("/user/login", body));
     if (err) {
         dispatch(loginFailed());
         const message = err.response?.data?.message || err.response?.data || err.message || "Some error occurred please try again later";
@@ -29,11 +30,12 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
             isLoading: false,
             autoClose: 3000,
         });
-        return {status: false, message};
+        return { status: false, message };
     } else {
-        // please notice: how dispatch is being used
-        // update state if login successfully
-        dispatch(loginSuccess({user: res.data.user}));
+
+        // TODO: user should probably be username, I'm not sure.
+        // Must check again after authSlice is implemented
+        dispatch(loginSuccess({ user: res.data.email }));
         toast.update(id, {
             render: "Login success!",
             type: "success",
@@ -41,23 +43,97 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
             autoClose: 2000,
         });
     }
-    return {status: true, message: "Login success!"};
+    return { status: true, message: "Login success!" };
 };
 
 
-//please notice: below is code i copied from previous projects, make appropriate changes. good luck
-export const signup = async (dispatch, formData) => {
-    dispatch(resetAll());
-    dispatch(startFetch());
+export const getRandomString = async () => {
+    const id = toast.loading("Generating verification strings...");
+
+    const [err, res]: any[] = await to(backend.post("/user/getCodingPlatformVerificationString"));
+
+    if (err) {
+        const message = err.response?.data?.message || err.response?.data || err.message || "Some error occurred, please try again later";
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+        return { status: false, message, unverifiedPlatforms: [] };
+    } else {
+        const { randomString } = res.data;
+
+        toast.update(id, {
+            render: "Verification strings generated successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return { status: true, message: "Verification strings generated successfully!", randomString };
+    }
+};
+
+
+export const verifyHandle = async (body: any) => {
+    const id = toast.loading("Verifying handle...");
+
+    const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
+
+    if (err) {
+        const message =
+            err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
+        
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+
+        return { status: false, message, verified: false };
+    } else {
+        toast.update(id, {
+            render: "Handle verified successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return { status: true, message: "Handle verified successfully!", verified: true };
+    }
+};
+
+
+export const isUsernameAvailable = async (username: string) => {
+    let [err, res]: any[] = await to(backend.post("/user/isUsernameAvailable", { username }));
+    if (err) {
+        console.error("Error while checking username availability: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res.data.available;
+    }
+}
+
+export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
+    // Performing data validation
     const id = toast.loading("Signing you in");
-    // Making it any[] for now , might have to change it later
-    const [err, response]: any[] = await to(
+    if (!formData.username || !formData.name || !formData.email || !formData.phone || !formData.password) {
+        toast.update(id, {
+            render: "All fields are required!",
+        });
+        return false;
+    }
+
+    dispatch(resetAll());
+    const [err, response]: [any, ISignupResponse] = await to(
         backend.post("/user/signup", formData)
     );
     if (err || ((response.status / 100) | 0) !== 2) {
         const errorMessage =
             err.response?.data?.message ||
-            err.response.data ||
+            err.response?.data ||
             "Some error occurred! please try again later.";
         toast.update(id, {
             render: errorMessage,
@@ -67,7 +143,7 @@ export const signup = async (dispatch, formData) => {
         });
         return false;
     } else {
-        dispatch(loginSuccess({user: response.data.user}));
+        dispatch(loginSuccess({ user: response.data.email }));
         toast.update(id, {
             render: "Signup successful!",
             type: "success",
@@ -90,7 +166,7 @@ export const logoutUser = async (dispatch: Dispatch) => {
             isLoading: false,
             autoClose: 2000,
         });
-        return {status: true, message: "Logged out successfully!"};
+        return { status: true, message: "Logged out successfully!" };
     } catch (err) {
         const errorMessage = err.response?.data?.message || err.response?.data || err.message || "Some error occurred please try again later";
         dispatch(loginFailed(errorMessage));
@@ -100,6 +176,6 @@ export const logoutUser = async (dispatch: Dispatch) => {
             isLoading: false,
             autoClose: 0,
         });
-        return {status: true, message: errorMessage};
+        return { status: true, message: errorMessage };
     }
 };
