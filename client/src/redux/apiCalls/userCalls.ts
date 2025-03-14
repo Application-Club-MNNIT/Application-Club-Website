@@ -4,6 +4,8 @@ import {
     loginSuccess,
     logoutSuccess,
     resetAll,
+    verifyFail,
+    verifySuccess
 } from "../authSlice.js";
 import { toast } from "react-toastify";
 import to from "await-to-js";
@@ -76,15 +78,51 @@ export const getRandomString = async () => {
 };
 
 
-export const verifyHandle = async (body: any) => {
+// export const verifyHandle = async (body: any) => {
+//     const id = toast.loading("Verifying handle...");
+
+//     const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
+
+//     if (err) {
+//         const message =
+//             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
+        
+//         toast.update(id, {
+//             render: message,
+//             type: "error",
+//             isLoading: false,
+//             autoClose: 3000,
+//         });
+
+//         return { status: false, message, verified: false };
+//     } else {
+//         toast.update(id, {
+//             render: "Handle verified successfully!",
+//             type: "success",
+//             isLoading: false,
+//             autoClose: 2000,
+//         });
+
+//         return { status: true, message: "Handle verified successfully!", verified: true };
+//     }
+// };
+
+export const verifyHandle: (
+    dispatch: Dispatch,
+    body: any
+) => Promise<{ status: boolean; message: string; verified: boolean }> = async (
+    dispatch: Dispatch,
+    body: any
+) => {
     const id = toast.loading("Verifying handle...");
 
-    const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
+    const [err, res]: [any, any] = await to(backend.post("/user/verifyCodingPlatform", body));
 
     if (err) {
+        dispatch(verifyFail({ platform: body.platform,username:body.username }));
         const message =
             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
-        
+
         toast.update(id, {
             render: message,
             type: "error",
@@ -94,6 +132,8 @@ export const verifyHandle = async (body: any) => {
 
         return { status: false, message, verified: false };
     } else {
+        dispatch(verifySuccess({ platform: body.platform,username:body.username }));
+
         toast.update(id, {
             render: "Handle verified successfully!",
             type: "success",
@@ -104,7 +144,6 @@ export const verifyHandle = async (body: any) => {
         return { status: true, message: "Handle verified successfully!", verified: true };
     }
 };
-
 
 export const isUsernameAvailable = async (username: string) => {
     let [err, res]: any[] = await to(backend.post("/user/isUsernameAvailable", { username }));

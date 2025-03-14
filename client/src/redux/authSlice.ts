@@ -18,6 +18,19 @@ export const authSlice = createSlice({
         },
         logoutSuccess: (state) => {
             state.user = null;
+        },
+        verifySuccess: (state, action) => {
+            const { platform,username } = action.payload; 
+            if (state.user && state.user[platform]) {
+                state.user[platform].verified = true;
+                state.user[platform].username=username;
+            }
+        },
+        verifyFail: (state, action) => {
+            const { platform } = action.payload; 
+            if (state.user && state.user[platform]) {
+                state.user[platform].verified = false;
+            }
         }
     },
 });
@@ -27,6 +40,8 @@ export const {
     loginFailed,
     loginSuccess,
     resetAll,
+    verifyFail,
+    verifySuccess
 } = authSlice.actions;
 const userReducer = authSlice.reducer;
 export default userReducer;

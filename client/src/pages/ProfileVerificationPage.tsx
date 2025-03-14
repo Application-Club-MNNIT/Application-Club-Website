@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store"; 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/store";
+import { verifySuccess } from "../redux/authSlice";
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin
