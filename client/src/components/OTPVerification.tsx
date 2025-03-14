@@ -1,6 +1,9 @@
 import React, { useRef } from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
 import { MouseEffectBackground } from "./MouseEffectBackground.js";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import { loginSuccess, resetAll } from "../redux/authSlice";
 
 const OTPVerification = () => {
     const inputRefs = useRef([]);
@@ -28,6 +31,14 @@ const OTPVerification = () => {
         }
     };
 
+    const dispatch = useDispatch<AppDispatch>();
+
+    // reseting username so that signup page renders again
+    const handleEmailChange = () => {
+        dispatch(resetAll());
+    }
+
+    // TODO: Show email address at opt verification page
     return (
         <div className="relative flex justify-center items-center h-screen bg-stone-950">
             <AnimatedWrapper>
@@ -62,7 +73,7 @@ const OTPVerification = () => {
 
                     <div className="flex justify-center gap-2 ">
                         <button
-                            className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
+                            className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition" onClick={handleEmailChange}>
                             change email
                         </button>
                         <button
