@@ -14,13 +14,13 @@ import { getRandomString } from "./redux/apiCalls/userCalls.js";
 const App: React.FC = () => {
 
     const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-        const user = useSelector((state: RootState) => state.auth.username);
+        const user = useSelector((state: RootState) => state.auth.isLoggedIn);
 
         return user ? children : <Navigate to="/login" replace />;
     };
 
     const PublicOnlyRoute = ({ children }: { children: JSX.Element }) => {
-        const user = useSelector((state: RootState) => state.auth.username);
+        const user = useSelector((state: RootState) => state.auth.isLoggedIn);
         return user ? <Navigate to="../" replace /> : children;
     };
 
