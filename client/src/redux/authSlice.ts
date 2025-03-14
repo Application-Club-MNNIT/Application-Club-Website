@@ -159,6 +159,19 @@ export const authSlice = createSlice({
         },
         otpVerified: (state) => {
             state.verified = true;
+        },
+        verifySuccess: (state, action) => {
+            const { platform, username } = action.payload;
+            if (state.username && state.verified && state[platform]) {
+                state[platform].verified = true;
+                state[platform].username = username;
+            }
+        },
+        verifyFail: (state, action) => {
+            const { platform } = action.payload;
+            if (state.username && state.verified && state[platform]) {
+                state[platform].verified = false;
+            }
         }
     },
 });
@@ -169,6 +182,8 @@ export const {
     loginSuccess,
     resetAll,
     otpVerified,
+    verifyFail,
+    verifySuccess,
 } = authSlice.actions;
 const userReducer = authSlice.reducer;
 export default userReducer;
