@@ -17,7 +17,6 @@ const createSendToken = (user: IUser, status: number, res: Response) => {
     const token = signToken(user._id);
 
     user.password = undefined;
-    // user.leetcode = undefined;
 
     //set cookies
     const options =
@@ -79,7 +78,7 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
 
     const otp = Math.floor(10000 + Math.random() * 90000);
 
-    await User.create({
+    const user = await User.create({
         username,
         name,
         email,
@@ -91,6 +90,10 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
         otp
     });
 
+    user.password = undefined;
+    user.otp = undefined;
+    user._id = undefined;
+
     await sendEmail({
         email: email,
         subject: "Here is your OTP for email verification",
@@ -100,7 +103,7 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
     res.status(201).json({
         status: "success",
         message: "Unverified user created!",
-        email: email,
+        user
     });
 });
 
