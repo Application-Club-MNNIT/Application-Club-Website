@@ -1,14 +1,14 @@
-import React, {Fragment} from "react";
-import {Link, NavLink, useNavigate, useNavigation} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {logoutUser} from "../redux/apiCalls/userCalls.js";
+import React, { Fragment } from "react";
+import { Link, NavLink, useNavigate, useNavigation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../redux/apiCalls/userCalls.js";
 import ACLogo from "../assets/images/logos/discord_emoji.png";
-import {RootState} from "../redux/store.js";
-import {PiCatLight} from "react-icons/pi";
+import { RootState } from "../redux/store.js";
+import { PiCatLight } from "react-icons/pi";
 
 const Navbar = () => {
     // TODO: Define a user type in global types.ts file
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useSelector((state: RootState) => state.auth.username);
     // const user = false; // just temporarily for seeing how the user screen looks;
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const Navbar = () => {
         await logoutUser(dispatch);
     }
 
-    const underlineIfActive = ({isActive}) =>
+    const underlineIfActive = ({ isActive }) =>
         `${isActive ? "box-border transition-all border-black border-b-2" : ""}`;
 
     const links = (
@@ -49,7 +49,7 @@ const Navbar = () => {
         <div className="sticky top-0 font-montserrat w-full bg-AC_Orange p-1 z-50">
             <div className="flex justify-between items-center">
                 <div className="p-1 bg-black rounded-md h-12 w-12 flex justify-center items-center">
-                    <img src={ACLogo} alt="AC Logo" className=""/>
+                    <img src={ACLogo} alt="AC Logo" className="" />
                 </div>
                 <span className="flex gap-4">{links}</span>
             </div>

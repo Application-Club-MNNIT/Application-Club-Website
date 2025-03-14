@@ -1,12 +1,12 @@
-import React, {useRef} from "react";
-import AnimatedWrapper from "../components/AnimatedWrapper";
-import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
+import React, { useRef } from "react";
+import AnimatedWrapper from "./AnimatedWrapper";
+import { MouseEffectBackground } from "./MouseEffectBackground.js";
 
 const OTPVerification = () => {
     const inputRefs = useRef([]);
 
     const handleChange = (e, index) => {
-        const {value} = e.target;
+        const { value } = e.target;
         if (!/^[0-9]*$/.test(value)) {
             e.target.value = "";
             return;
@@ -30,7 +30,6 @@ const OTPVerification = () => {
 
     return (
         <div className="relative flex justify-center items-center h-screen bg-stone-950">
-            <MouseEffectBackground/>
             <AnimatedWrapper>
                 <div
                     className="flex justify-center items-center align-middle flex-col gap-5 bg-neutral-900 text-white p-8 sm:px-12 ">

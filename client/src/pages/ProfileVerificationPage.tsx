@@ -9,12 +9,12 @@ import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import {useLoaderData} from "react-router-dom";
-import {verifyHandle} from "../redux/apiCalls/userCalls";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-
+import { verifyHandle } from "../redux/apiCalls/userCalls";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store"; 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
+import { verifySuccess } from "../redux/authSlice";
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin

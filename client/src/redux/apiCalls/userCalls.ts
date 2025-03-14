@@ -4,6 +4,8 @@ import {
     loginSuccess,
     logoutSuccess,
     resetAll,
+    verifyFail,
+    verifySuccess
 } from "../authSlice.js";
 import { toast } from "react-toastify";
 import to from "await-to-js";
@@ -35,7 +37,7 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
 
         // TODO: user should probably be username, I'm not sure.
         // Must check again after authSlice is implemented
-        dispatch(loginSuccess({ user: res.data.email }));
+        dispatch(loginSuccess(res.data.user));
         toast.update(id, {
             render: "Login success!",
             type: "success",
@@ -76,35 +78,72 @@ export const getRandomString = async () => {
 };
 
 
-export const verifyHandle = async (body: any) => {
-    const id = toast.loading("Verifying handle...");
+// export const verifyHandle = async (body: any) => {
+//     const id = toast.loading("Verifying handle...");
 
-    const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
+//     const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
 
-    if (err) {
-        const message =
-            err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
-        
-        toast.update(id, {
-            render: message,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-        });
+//     if (err) {
+//         const message =
+//             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
 
-        return { status: false, message, verified: false };
-    } else {
-        toast.update(id, {
-            render: "Handle verified successfully!",
-            type: "success",
-            isLoading: false,
-            autoClose: 2000,
-        });
+//         toast.update(id, {
+//             render: message,
+//             type: "error",
+//             isLoading: false,
+//             autoClose: 3000,
+//         });
 
-        return { status: true, message: "Handle verified successfully!", verified: true };
-    }
-};
+//         return { status: false, message, verified: false };
+//     } else {
+//         toast.update(id, {
+//             render: "Handle verified successfully!",
+//             type: "success",
+//             isLoading: false,
+//             autoClose: 2000,
+//         });
 
+//         return { status: true, message: "Handle verified successfully!", verified: true };
+//     }
+// };
+
+export const verifyHandle: (
+    dispatch: Dispatch,
+    body: any
+) => Promise<{ status: boolean; message: string; verified: boolean }> = async (
+    dispatch: Dispatch,
+    body: any
+) => {
+        const id = toast.loading("Verifying handle...");
+
+        const [err, res]: [any, any] = await to(backend.post("/user/verifyCodingPlatform", body));
+
+        if (err) {
+            dispatch(verifyFail({ platform: body.platform, username: body.username }));
+            const message =
+                err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
+
+            toast.update(id, {
+                render: message,
+                type: "error",
+                isLoading: false,
+                autoClose: 3000,
+            });
+
+            return { status: false, message, verified: false };
+        } else {
+            dispatch(verifySuccess({ platform: body.platform, username: body.username }));
+
+            toast.update(id, {
+                render: "Handle verified successfully!",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000,
+            });
+
+            return { status: true, message: "Handle verified successfully!", verified: true };
+        }
+    };
 
 export const isUsernameAvailable = async (username: string) => {
     let [err, res]: any[] = await to(backend.post("/user/isUsernameAvailable", { username }));
@@ -143,7 +182,7 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
         });
         return false;
     } else {
-        dispatch(loginSuccess({ user: response.data.email }));
+        dispatch(loginSuccess(response.data.user));
         toast.update(id, {
             render: "Signup successful!",
             type: "success",
