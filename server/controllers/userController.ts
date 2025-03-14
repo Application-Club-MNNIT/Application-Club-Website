@@ -86,7 +86,6 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
     if (!user.profileVerificationData.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
-    //todo: actually verify the platform, add more platforms as needed
     let name: string;
     if (platform === "leetcode")
         name = await getLeetcodeName(username);
@@ -129,16 +128,19 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 
     if (unverifiedPlatforms.length > 0)
         if (hasFifteenMinutesPassed) {
-            randomString = ((length = 8) =>
-                Array.from({length}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-                    .charAt(Math.random() * 62)).join(''))();
+            const randomString = ((length = 8) => {
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+                return letters.charAt(Math.floor(Math.random() * letters.length)) +
+                    Array.from({length: length - 1}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+            })();
+
             user.profileVerificationData.randomName = randomString;
             user.profileVerificationData.lastRequestTimestamp = Date.now();
         } else {
             randomString = user.profileVerificationData.randomName;
         }
 
-    //todo: add more platforms as needed
     await user.save();
     res.status(200).json({
         status: "success",
