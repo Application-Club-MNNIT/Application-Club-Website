@@ -64,9 +64,10 @@ const SignupPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
-        const topSendStatus = await signup(dispatch, formData)
-        setIsOtpSent(topSendStatus);
+        const otpSendStatus = await signup(dispatch, formData)
+        setIsOtpSent(otpSenkStatus);
     };
+
     const togglePasswordVisibility = () => {
         setIsPasswordVisible((prevState) => !prevState); // Toggle password visibility state
     };
