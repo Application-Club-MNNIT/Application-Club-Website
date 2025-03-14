@@ -1,4 +1,5 @@
 interface IAuthState {
+    isLoggedIn?: boolean,
     username: string | null,
     name: string | null,
     phone: number | null,

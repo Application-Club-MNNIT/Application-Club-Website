@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const authSlice = createSlice({
     name: "auth",
     initialState: {
+        isLoggedIn: false,
         username: null,
         name: null,
         phone: null,
@@ -39,6 +40,7 @@ export const authSlice = createSlice({
     reducers: {
         // yes there was no need for all variations of reducers that are basically making user null, but nvm
         resetAll: (state) => {
+            state.isLoggedIn = false;
             state.username = null;
             state.name = null;
             state.phone = null;
@@ -159,17 +161,18 @@ export const authSlice = createSlice({
         },
         otpVerified: (state) => {
             state.verified = true;
+            state.isLoggedIn = true;
         },
         verifySuccess: (state, action) => {
             const { platform, username } = action.payload;
-            if (state.username && state.verified && state[platform]) {
+            if (state.isLoggedIn && state[platform]) {
                 state[platform].verified = true;
                 state[platform].username = username;
             }
         },
         verifyFail: (state, action) => {
             const { platform } = action.payload;
-            if (state.username && state.verified && state[platform]) {
+            if (state.isLoggedIn && state[platform]) {
                 state[platform].verified = false;
             }
         }
