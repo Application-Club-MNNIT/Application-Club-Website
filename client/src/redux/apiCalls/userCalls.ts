@@ -35,7 +35,7 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
 
         // TODO: user should probably be username, I'm not sure.
         // Must check again after authSlice is implemented
-        dispatch(loginSuccess({ user: res.data.email }));
+        dispatch(loginSuccess(res.data.user));
         toast.update(id, {
             render: "Login success!",
             type: "success",
@@ -84,7 +84,7 @@ export const verifyHandle = async (body: any) => {
     if (err) {
         const message =
             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
-        
+
         toast.update(id, {
             render: message,
             type: "error",
@@ -143,7 +143,7 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
         });
         return false;
     } else {
-        dispatch(loginSuccess({ user: response.data.email }));
+        dispatch(loginSuccess(response.data.user));
         toast.update(id, {
             render: "Signup successful!",
             type: "success",
