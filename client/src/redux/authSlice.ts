@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 export const authSlice = createSlice({
     name: "auth",
     initialState: {
@@ -12,24 +11,28 @@ export const authSlice = createSlice({
         branch: null,
         batch: null,
         leetcode: {
+            username :null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
-            submissions: []
+            submissions: [],
         },
         gfg: {
+            username:null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
             submissions: []
         },
         codeforces: {
+            username:null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
             submissions: []
         },
         github: {
+            username:null,
             verified: false
         },
         verified: false,
@@ -49,24 +52,28 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.leetcode = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
+                username:null,
                 verified: false
             };
             state.verified = false;
@@ -100,24 +107,28 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.leetcode = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
+                username:null,
                 verified: false
             };
             state.verified = false;
@@ -134,24 +145,28 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.leetcode = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
+                username:null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
+                username:null,
                 verified: false
             };
             state.verified = false;
@@ -163,18 +178,12 @@ export const authSlice = createSlice({
             state.verified = true;
             state.isLoggedIn = true;
         },
-        verifySuccess: (state, action) => {
-            const { platform, username } = action.payload;
-            if (state.isLoggedIn && state[platform]) {
-                state[platform].verified = true;
-                state[platform].username = username;
-            }
+        verifyPlatformSuccess: (state, action: { payload: IPlatformVerifyData }) => {
+            state[action.payload.platform].verified=true;
+            state[action.payload.platform].username=action.payload.username;
         },
-        verifyFail: (state, action) => {
-            const { platform } = action.payload;
-            if (state.isLoggedIn && state[platform]) {
-                state[platform].verified = false;
-            }
+        verifyPlatformFail: (state) => {
+
         }
     },
 });
@@ -185,8 +194,8 @@ export const {
     loginSuccess,
     resetAll,
     otpVerified,
-    verifyFail,
-    verifySuccess,
+    verifyPlatformFail,
+    verifyPlatformSuccess,
 } = authSlice.actions;
 const userReducer = authSlice.reducer;
 export default userReducer;

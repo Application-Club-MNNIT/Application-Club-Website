@@ -4,8 +4,8 @@ import {
     loginSuccess,
     logoutSuccess,
     resetAll,
-    verifyFail,
-    verifySuccess
+    verifyPlatformFail,
+    verifyPlatformSuccess
 } from "../authSlice.js";
 import { toast } from "react-toastify";
 import to from "await-to-js";
@@ -109,17 +109,17 @@ export const getRandomString = async () => {
 
 export const verifyHandle: (
     dispatch: Dispatch,
-    body: any
+    body: IPlatformVerifyData
 ) => Promise<{ status: boolean; message: string; verified: boolean }> = async (
     dispatch: Dispatch,
-    body: any
+    body: IPlatformVerifyData
 ) => {
         const id = toast.loading("Verifying handle...");
 
         const [err, res]: [any, any] = await to(backend.post("/user/verifyCodingPlatform", body));
 
         if (err) {
-            dispatch(verifyFail({ platform: body.platform, username: body.username }));
+            dispatch(verifyPlatformFail());
             const message =
                 err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
 
@@ -132,7 +132,7 @@ export const verifyHandle: (
 
             return { status: false, message, verified: false };
         } else {
-            dispatch(verifySuccess({ platform: body.platform, username: body.username }));
+            dispatch(verifyPlatformSuccess({ platform: body.platform, username: body.username }));
 
             toast.update(id, {
                 render: "Handle verified successfully!",

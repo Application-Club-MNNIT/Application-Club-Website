@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store"; 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/store";
-import { verifySuccess } from "../redux/authSlice";
+
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin
@@ -24,23 +24,25 @@ const ProfileVerificationPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const data: { randomName: string } = useLoaderData() as { randomName: string };
     const randomName: string = data.randomName;
-    const user = useSelector((state: RootState) => state.auth.user);
-    console.log(user);
+    const leetcode = useSelector((state: RootState) => state.auth.leetcode);
+    const gfg = useSelector((state: RootState) => state.auth.leetcode);
+    const github = useSelector((state: RootState) => state.auth.leetcode);
+    const codeforces = useSelector((state: RootState) => state.auth.leetcode);
 
     // Initialize usernames from the user state
     const [usernames, setUsernames] = useState({
-        leetcode: user?.leetcode?.username || "",
-        gfg: user?.gfg?.username || "",
-        github: user?.github?.username || "",
-        codeforces: user?.codeforces?.username || "",
+        leetcode: leetcode?.username || "",
+        gfg: gfg?.username || "",
+        github: github?.username || "",
+        codeforces: codeforces?.username || "",
         linkedin: "" // Not present in schema
     });
 
     const [verified, setVerified] = useState({
-        leetcode: user?.leetcode?.verified || false,
-        gfg: user?.gfg?.verified || false,
-        github: user?.github?.verified || false,
-        codeforces: user?.codeforces?.verified || false,
+        leetcode: leetcode?.verified || false,
+        gfg: gfg?.verified || false,
+        github: github?.verified || false,
+        codeforces: codeforces?.verified || false,
         linkedin: false // Not present in schema
     });
 
@@ -55,7 +57,7 @@ const ProfileVerificationPage: React.FC = () => {
     const handleVerify = async (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
         let username: string = usernames[platform];
-        const response = await verifyHandle({platform, username});
+        const response = await verifyHandle(dispatch,{platform, username});
         if (response.status) {
             setUsernames({...usernames, [platform]: username});
             setVerified({...verified, [platform]: true}); // Update the state only if successful
@@ -130,6 +132,7 @@ const ProfileVerificationPage: React.FC = () => {
                                     {!verified[key] && (
                                         <>
                                             {/* Verify icon inside a box */}
+                                            
                                             <div
                                                 className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
                                                 <img src={VerifyIcon} alt="Verify Icon"
