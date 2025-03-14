@@ -54,7 +54,7 @@ const ProfileVerificationPage: React.FC = () => {
     };
 
     // Handler to verify the username for a specific platform
-    const handleVerify = async (platform: string) => {
+    const handleVerify = async (platform: "leetcode" | "gfg" | "codeforces" | "github") => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
         let username: string = usernames[platform];
         const response = await verifyHandle(dispatch,{platform, username});
@@ -85,7 +85,7 @@ const ProfileVerificationPage: React.FC = () => {
                         Profile Verification
                     </h2>
 
-                    <p className="font-thin w-[100%] p-4 px-4 md:w-[90%] px-0 mb-4 sm:mb-6">
+                    <p className="font-thin w-[100%] p-4 px-4 md:w-[90%] mb-4 sm:mb-6">
                         To verify your profile, change your name to <span
                         className="font-medium text-AC_Orange">{randomName}</span> on
                         each platform, then click verify</p>
@@ -97,12 +97,11 @@ const ProfileVerificationPage: React.FC = () => {
 
                     {/* List of platforms for username verification */}
                     {[
-                        {name: "Leetcode", key: "leetcode", icon: LeetCodeIcon},
-                        {name: "Codeforces", key: "codeforces", icon: CodeforcesIcon},
-                        {name: "GFG", key: "gfg", icon: GFGIcon},
-                        {name: "GitHub", key: "github", icon: GitHubIcon},
-                        {name: "LinkedIn", key: "linkedin", icon: LinkedInIcon},
-                    ].map(({name, key, icon}) => (
+    { name: "Leetcode", key: "leetcode", icon: LeetCodeIcon, link: "https://leetcode.com/profile/" },
+    { name: "Codeforces", key: "codeforces", icon: CodeforcesIcon, link: "https://codeforces.com/settings/social" },
+    { name: "GFG", key: "gfg", icon: GFGIcon, link: "https://www.geeksforgeeks.org/edit-profile/" },
+    { name: "GitHub", key: "github", icon: GitHubIcon, link: "https://github.com/settings/profile" },
+].map(({name, key, icon,link}) => (
                         <div key={key}
                              className="flex flex-wrap md:flex-row px-1 md:px-10 items-center mb-2 sm:mb-3 space-y-3 sm:space-y-0 w-full">
                             {/* Platform icon and label */}
@@ -133,14 +132,13 @@ const ProfileVerificationPage: React.FC = () => {
                                         <>
                                             {/* Verify icon inside a box */}
                                             
-                                            <div
-                                                className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
-                                                <img src={VerifyIcon} alt="Verify Icon"
-                                                     className="w-6 h-6 p-0.5  sm:w-6 sm:h-6"/>
-                                            </div>
+                                            <a href={link} target="_blank" rel="noopener noreferrer"
+                           className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
+                            <img src={VerifyIcon} alt="Verify Icon" className="w-6 h-6 p-0.5 sm:w-6 sm:h-6"/>
+                        </a>
                                             {/* Verify button */}
                                             <button
-                                                onClick={() => handleVerify(key)}
+                                                onClick={() => handleVerify(key as "leetcode" | "codeforces" | "gfg" | "github")}
                                                 className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-1 py-2 md:px-2 sm:h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski "
                                             >
                                                 Verify
