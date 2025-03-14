@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import LeetCodeIcon from "../assets/images/icon/leetcode.png";
 import GFGIcon from "../assets/images/icon/gfg.png";
 import GitHubIcon from "../assets/images/icon/github.png";
@@ -9,11 +9,12 @@ import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import {useLoaderData} from "react-router-dom";
-import { verifyHandle } from "../redux/apiCalls/userCalls";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store"; 
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/store";
+import {verifyHandle} from "../redux/apiCalls/userCalls";
+import {useSelector} from "react-redux";
+import {RootState} from "../redux/store";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
+
 const ProfileVerificationPage: React.FC = () => {
 
     //todo: remove linkedin
@@ -25,7 +26,7 @@ const ProfileVerificationPage: React.FC = () => {
     const randomName: string = data.randomName;
     const user = useSelector((state: RootState) => state.auth.user);
     console.log(user);
-    
+
     // Initialize usernames from the user state
     const [usernames, setUsernames] = useState({
         leetcode: user?.leetcode?.username || "",
@@ -34,7 +35,7 @@ const ProfileVerificationPage: React.FC = () => {
         codeforces: user?.codeforces?.username || "",
         linkedin: "" // Not present in schema
     });
-    
+
     const [verified, setVerified] = useState({
         leetcode: user?.leetcode?.verified || false,
         gfg: user?.gfg?.verified || false,
@@ -46,18 +47,18 @@ const ProfileVerificationPage: React.FC = () => {
     // Handler to update the username for a specific platform
     const handleChange = (platform: string, value: string) => {
         if (!verified[platform]) {
-            setUsernames({ ...usernames, [platform]: value });
+            setUsernames({...usernames, [platform]: value});
         }
     };
 
     // Handler to verify the username for a specific platform
     const handleVerify = async (platform: string) => {
         console.log(`Verifying ${platform} username: ${usernames[platform]}`);
-        let username :string= usernames[platform];
-        const response = await verifyHandle({platform,username });
+        let username: string = usernames[platform];
+        const response = await verifyHandle({platform, username});
         if (response.status) {
             setUsernames({...usernames, [platform]: username});
-            setVerified({ ...verified, [platform]: true }); // Update the state only if successful
+            setVerified({...verified, [platform]: true}); // Update the state only if successful
             // dispatch(updateUserVerification({ platform, username }));
         }
     };
@@ -87,7 +88,8 @@ const ProfileVerificationPage: React.FC = () => {
                         className="font-medium text-AC_Orange">{randomName}</span> on
                         each platform, then click verify</p>
 
-                    <p className="text-red-500 font-medium w-[100%] md:w-[90%] px-4 text-lg mb-8">Caution: You won't be allowed to change your
+                    <p className="text-red-500 font-medium w-[100%] md:w-[90%] px-4 text-lg mb-8">Caution: You won't be
+                        allowed to change your
                         username once
                         verified!</p>
 
@@ -100,7 +102,7 @@ const ProfileVerificationPage: React.FC = () => {
                         {name: "LinkedIn", key: "linkedin", icon: LinkedInIcon},
                     ].map(({name, key, icon}) => (
                         <div key={key}
-                        className="flex flex-wrap md:flex-row px-1 md:px-10 items-center mb-2 sm:mb-3 space-y-3 sm:space-y-0 w-full">
+                             className="flex flex-wrap md:flex-row px-1 md:px-10 items-center mb-2 sm:mb-3 space-y-3 sm:space-y-0 w-full">
                             {/* Platform icon and label */}
                             <label
                                 className="text-white font-poppins text-lg flex items-center w-full sm:w-1/4 p-2 sm:justify-end sm:mr-4">
@@ -118,29 +120,30 @@ const ProfileVerificationPage: React.FC = () => {
                                     placeholder={`Enter your ${name} username`}
                                     readOnly={verified[key]}
                                 />
-                                
+
                                 {verified[key] && (
-                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6" />
+                                    <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6"/>
                                 )}
 
                                 {/* Verify section with icon and button */}
                                 <div className="flex items-center space-x-3 h-12">
-                                {!verified[key] && (
-                                    <>
-                                    {/* Verify icon inside a box */}
-                                    <div
-                                        className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
-                                        <img src={VerifyIcon} alt="Verify Icon" className="w-6 h-6 p-0.5  sm:w-6 sm:h-6"/>
-                                    </div>
-                                    {/* Verify button */}
-                                    <button
-                                        onClick={() => handleVerify(key)}
-                                        className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-1 py-2 md:px-2 sm:h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski "
-                                    >
-                                        Verify
-                                    </button>
-                                    </>
-                                )}
+                                    {!verified[key] && (
+                                        <>
+                                            {/* Verify icon inside a box */}
+                                            <div
+                                                className="bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 flex items-center justify-center">
+                                                <img src={VerifyIcon} alt="Verify Icon"
+                                                     className="w-6 h-6 p-0.5  sm:w-6 sm:h-6"/>
+                                            </div>
+                                            {/* Verify button */}
+                                            <button
+                                                onClick={() => handleVerify(key)}
+                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green px-1 py-2 md:px-2 sm:h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski "
+                                            >
+                                                Verify
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
