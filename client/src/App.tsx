@@ -46,7 +46,7 @@ const App: React.FC = () => {
                     path: "profileVerification",
                     loader: async () => {
                         const { randomString } = await getRandomString();
-                        return { randomName: randomString || "Manish" };
+                        return { randomName: randomString || "randomstring" };
                     },
                     element: <ProfileVerificationPage />,
                 },
