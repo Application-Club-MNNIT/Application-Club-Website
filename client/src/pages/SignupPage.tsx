@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import usernameLogo from "../assets/SignUpformLogo/usernameLogo (1).png";
 import passwordLogo from "../assets/SignUpformLogo/passwordLogo.png";
@@ -9,8 +9,8 @@ import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import 
 import { MouseEffectBackground } from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import { isUsernameAvailable as isUsernameAvailableApi, signup } from "../redux/apiCalls/userCalls.js";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
 import OTPVerification from "../components/OTPVerification";
 
 
@@ -31,6 +31,7 @@ const SignupPage: React.FC = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false); // To toggle password visibility
 
     const dispatch = useDispatch<AppDispatch>();
+    const authSelector = useSelector((state: RootState) => state.auth);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -64,14 +65,16 @@ const SignupPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
-        const otpSendStatus = await signup(dispatch, formData)
-        console.log('OTP send status:', otpSendStatus);
-        setIsOtpSent(otpSendStatus);
+        await signup(dispatch, formData)
     };
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible((prevState) => !prevState); // Toggle password visibility state
     };
+
+    useEffect(() => {
+        setIsOtpSent(authSelector.username && !authSelector.verified);
+    }, [authSelector.username, authSelector.verified]);
 
     return (
         <div className="relative flex items-center justify-center min-h-screen p-5">
