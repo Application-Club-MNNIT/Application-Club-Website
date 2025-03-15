@@ -22,7 +22,7 @@ const SignupPage: React.FC = () => {
         username: '',
         name: '',
         email: '',
-        phone: '',
+        phone: null,
         password: '',
     });
     const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
@@ -72,6 +72,7 @@ const SignupPage: React.FC = () => {
         setIsPasswordVisible((prevState) => !prevState); // Toggle password visibility state
     };
 
+    // username is available and user is not verified, move to otp page directly
     useEffect(() => {
         setIsOtpSent(authSelector.username && !authSelector.verified);
     }, [authSelector.username, authSelector.verified]);
