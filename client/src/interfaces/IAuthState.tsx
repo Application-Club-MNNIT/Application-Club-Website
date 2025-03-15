@@ -7,6 +7,7 @@ interface IAuthState {
     regNumber: string | null,
     branch: string | null,
     batch: number | null,
+    password?: string | null,
     leetcode: {
         username?: string | null;
         verified: boolean | null,

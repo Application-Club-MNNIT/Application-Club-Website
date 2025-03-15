@@ -182,7 +182,7 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
         });
         return false;
     } else {
-        dispatch(loginSuccess(response.data.user));
+        dispatch(loginSuccess({ ...response.data.user, password: formData.password }));
         toast.update(id, {
             render: "Signup successful!",
             type: "success",

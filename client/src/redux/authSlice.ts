@@ -10,29 +10,30 @@ export const authSlice = createSlice({
         regNumber: null,
         branch: null,
         batch: null,
+        password: null, // password is stored temporarily in state, will be removed after otp verification
         leetcode: {
-            username :null,
+            username: null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
             submissions: [],
         },
         gfg: {
-            username:null,
+            username: null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
             submissions: []
         },
         codeforces: {
-            username:null,
+            username: null,
             verified: false,
             lastSubmissionTimestamp: 0,
             lastRequestTimestamp: 0,
             submissions: []
         },
         github: {
-            username:null,
+            username: null,
             verified: false
         },
         verified: false,
@@ -52,28 +53,28 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.leetcode = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
-                username:null,
+                username: null,
                 verified: false
             };
             state.verified = false;
@@ -97,6 +98,8 @@ export const authSlice = createSlice({
             state._id = action.payload._id;
             state.createdAt = action.payload.createdAt;
             state.updatedAt = action.payload.updatedAt;
+            // FIX: it will save password for login also, handle that
+            state.password = action.payload.password;
         },
         loginFailed: (state) => {
             state.username = null;
@@ -106,29 +109,30 @@ export const authSlice = createSlice({
             state.regNumber = null;
             state.branch = null;
             state.batch = null;
+            state.password = null;
             state.leetcode = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
-                username:null,
+                username: null,
                 verified: false
             };
             state.verified = false;
@@ -144,29 +148,30 @@ export const authSlice = createSlice({
             state.regNumber = null;
             state.branch = null;
             state.batch = null;
+            state.password = null;
             state.leetcode = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.gfg = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.codeforces = {
-                username:null,
+                username: null,
                 verified: false,
                 lastSubmissionTimestamp: 0,
                 lastRequestTimestamp: 0,
                 submissions: []
             };
             state.github = {
-                username:null,
+                username: null,
                 verified: false
             };
             state.verified = false;
@@ -177,10 +182,11 @@ export const authSlice = createSlice({
         otpVerified: (state) => {
             state.verified = true;
             state.isLoggedIn = true;
+            state.password = null;
         },
         verifyPlatformSuccess: (state, action: { payload: IPlatformVerifyData }) => {
-            state[action.payload.platform].verified=true;
-            state[action.payload.platform].username=action.payload.username;
+            state[action.payload.platform].verified = true;
+            state[action.payload.platform].username = action.payload.username;
         },
         verifyPlatformFail: (state) => {
 
