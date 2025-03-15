@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
 import { MouseEffectBackground } from "./MouseEffectBackground.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,21 +6,24 @@ import { AppDispatch, RootState } from "../redux/store";
 import { loginSuccess, resetAll } from "../redux/authSlice";
 
 const OTPVerification = () => {
+    const [otp, setOtp] = useState<string[]>([]);
     const inputRefs = useRef([]);
 
     const handleChange = (e, index) => {
         const { value } = e.target;
         if (!/^[0-9]*$/.test(value)) {
             e.target.value = "";
+            resetAllFieldsAhead(index);
             return;
         }
+        setOtp([...otp.slice(0, index), value]);
         if (value.length === 1 && index < inputRefs.current.length - 1) {
             inputRefs.current[index + 1].focus();
         }
     };
 
-    const handleKeyDown = (e, index) => {
-        if (e.key === "Backspace" && index > 0 && e.target.value === "") {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === "Backspace" && index > 0 && (e.target as HTMLInputElement).value === "") {
             inputRefs.current[index - 1].focus();
         }
     };
@@ -30,6 +33,17 @@ const OTPVerification = () => {
             inputRefs.current[index - 1].focus();
         }
     };
+
+    const resetAllFieldsAhead = (index: number) => {
+        setOtp([...otp.slice(0, index)]);
+        for (let i = index; i < inputRefs.current.length; i++) {
+            inputRefs.current[i].value = "";
+        }
+    }
+
+    const handleSubmit = () => {
+        console.log(otp);
+    }
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -77,6 +91,7 @@ const OTPVerification = () => {
                             change email
                         </button>
                         <button
+                            onClick={handleSubmit}
                             className="bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
                             Submit
                         </button>
