@@ -78,35 +78,6 @@ export const getRandomString = async () => {
 };
 
 
-// export const verifyHandle = async (body: any) => {
-//     const id = toast.loading("Verifying handle...");
-
-//     const [err, res]: any[] = await to(backend.post("/user/verifyCodingPlatform", body));
-
-//     if (err) {
-//         const message =
-//             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
-
-//         toast.update(id, {
-//             render: message,
-//             type: "error",
-//             isLoading: false,
-//             autoClose: 3000,
-//         });
-
-//         return { status: false, message, verified: false };
-//     } else {
-//         toast.update(id, {
-//             render: "Handle verified successfully!",
-//             type: "success",
-//             isLoading: false,
-//             autoClose: 2000,
-//         });
-
-//         return { status: true, message: "Handle verified successfully!", verified: true };
-//     }
-// };
-
 export const verifyHandle: (
     dispatch: Dispatch,
     body: IPlatformVerifyData
@@ -161,6 +132,9 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
     if (!formData.username || !formData.name || !formData.email || !formData.phone || !formData.password) {
         toast.update(id, {
             render: "All fields are required!",
+            type: "error",
+            isLoading: false,
+            autoClose: 2000,
         });
         return false;
     }
@@ -178,7 +152,7 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
             render: errorMessage,
             type: "error",
             isLoading: false,
-            autoClose: 0,
+            autoClose: 2000,
         });
         return false;
     } else {
@@ -187,7 +161,7 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
             render: "Signup successful!",
             type: "success",
             isLoading: false,
-            autoClose: 1000,
+            autoClose: 2000,
         });
         return true;
     }
