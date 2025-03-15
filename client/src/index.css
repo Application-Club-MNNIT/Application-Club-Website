@@ -10,4 +10,6 @@
     --font-poltawski: "Poltawski Nowy, serif";
     --font-poppins: "Poppins, sans-serif";
 
+    --breakpoint-xs: 375px;
+
 }

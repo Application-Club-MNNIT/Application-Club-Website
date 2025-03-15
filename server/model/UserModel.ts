@@ -77,10 +77,9 @@ const userSchema = new mongoose.Schema<IUser>({
         lowercase: true,
         required: [true, "Email is required!"],
         validate: [
-            validator.isEmail,
             {
                 validator: function (value: string) {
-                    return value.endsWith("@mnnit.ac.in");
+                    return validator.isEmail(value) && value.endsWith("@mnnit.ac.in");
                 },
                 message: "Please enter MNNIT GSuit id.",
             }]

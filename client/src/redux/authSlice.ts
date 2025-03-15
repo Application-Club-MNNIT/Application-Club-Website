@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
+
 export const authSlice = createSlice({
     name: "auth",
     initialState: {
@@ -42,7 +43,6 @@ export const authSlice = createSlice({
         updatedAt: null,
     } as IAuthState,
     reducers: {
-        // yes there was no need for all variations of reducers that are basically making user null, but nvm
         resetAll: (state) => {
             state.isLoggedIn = false;
             state.username = null;
@@ -83,6 +83,7 @@ export const authSlice = createSlice({
             state.updatedAt = null;
         },
         loginSuccess: (state, action: { payload: IAuthState }) => {
+            state.isLoggedIn = true;
             state.username = action.payload.username;
             state.name = action.payload.name;
             state.phone = action.payload.phone;
@@ -102,6 +103,7 @@ export const authSlice = createSlice({
             state.password = action.payload.password;
         },
         loginFailed: (state) => {
+            state.isLoggedIn = false;
             state.username = null;
             state.name = null;
             state.phone = null;
@@ -141,6 +143,7 @@ export const authSlice = createSlice({
             state.updatedAt = null;
         },
         logoutSuccess: (state) => {
+            state.isLoggedIn = false;
             state.username = null;
             state.name = null;
             state.phone = null;

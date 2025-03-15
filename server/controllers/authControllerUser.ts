@@ -51,17 +51,6 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
     const phone: number = req.body.phone;
     const password: string = req.body.password;
 
-    if (!(username && email && name && phone && password)) return next(new AppError("Provide all fields!", 400));
-
-    // check if the user already exists
-    const existingUser = await User.findOne({
-        $or: [{username}, {email}]
-    });
-    if (existingUser)
-        if (existingUser.verified) return next(new AppError("User already exists", 401));
-        else await User.deleteOne({_id: existingUser._id});
-
-
     let batch: number, branch: string;
     const p1: string[] = email.toLowerCase().split("@")[0].split(".");
     const regNumber: string = p1[p1.length - 1];
@@ -75,6 +64,18 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
         batch = parseInt(regNumber.substring(0, 4), 10);
         branch = "NA";
     }
+
+
+    if (!(username && email && name && phone && password)) return next(new AppError("Provide all fields!", 400));
+
+    // check if the user already exists
+    const existingUser = await User.findOne({
+        $or: [{username}, {email}, {regNumber}]
+    });
+    if (existingUser)
+        if (existingUser.verified) return next(new AppError("User already exists", 401));
+        else await User.deleteOne({_id: existingUser._id});
+
 
     const otp = Math.floor(10000 + Math.random() * 90000);
 

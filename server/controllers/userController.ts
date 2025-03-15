@@ -2,7 +2,7 @@ import catchAsync from "../util/catchAsync";
 import axios from "axios";
 import AppError from "../util/appError";
 import {RequestWithUser} from "../types";
-import {NextFunction, Response, Request} from "express";
+import {NextFunction, Request, Response} from "express";
 import User from "../model/UserModel";
 
 
@@ -67,7 +67,7 @@ const isUsernameAvailable = catchAsync(async (req: Request, res: Response, next:
     const username: string = req.body.username;
     if (!username) return next(new AppError("Username not provided!", 400));
     //case in-sensitive username search
-    const user = await User.findOne({username: {$regex: new RegExp(`^${username}$`, "i")}});
+    const user = await User.findOne({username: {$regex: new RegExp(`^${username}$`, "i")}, verified: true});
     res.status(200).json({
         status: "success",
         available: !user,
@@ -108,7 +108,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     });
 });
 
-const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response) => {
     const user = req.user;
 
     const lastRequestTimestamp: number = user.profileVerificationData?.lastRequestTimestamp || 0;
@@ -128,14 +128,12 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 
     if (unverifiedPlatforms.length > 0)
         if (hasFifteenMinutesPassed) {
-            const randomString = ((length = 8) => {
+            user.profileVerificationData.randomName = ((length = 8) => {
                 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
                 return letters.charAt(Math.floor(Math.random() * letters.length)) +
                     Array.from({length: length - 1}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
             })();
-
-            user.profileVerificationData.randomName = randomString;
             user.profileVerificationData.lastRequestTimestamp = Date.now();
         } else {
             randomString = user.profileVerificationData.randomName;

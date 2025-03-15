@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
-import { MouseEffectBackground } from "./MouseEffectBackground.js";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import { loginSuccess, resetAll } from "../redux/authSlice";
-import { login, signup } from "../redux/apiCalls/userCalls";
+import {MouseEffectBackground} from "./MouseEffectBackground.js";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
+import {loginSuccess, resetAll} from "../redux/authSlice";
+import {login, signup} from "../redux/apiCalls/userCalls";
 
 const OTP_LENGTH = 5;
 const OTP_RESENT_COOLDOWN = 60;
@@ -14,7 +14,7 @@ const OTPVerification = () => {
     const inputRefs = useRef([]);
 
     const handleChange = (e, index) => {
-        const { value } = e.target;
+        const {value} = e.target;
         if (!/^[0-9]*$/.test(value)) {
             e.target.value = "";
             resetAllFieldsAhead(index);
@@ -91,64 +91,60 @@ const OTPVerification = () => {
 
     // TODO: Show email address at opt verification page
     return (
-        <div className="relative flex justify-center items-center h-screen bg-stone-950">
-            <AnimatedWrapper>
-                <div
-                    className="flex justify-center items-center align-middle flex-col gap-5 bg-neutral-900 text-white p-8 sm:px-12 ">
-                    <h2 className="text-2xl leading-9 text-center font-poltawski">OTP <span
-                        className="ml-1">Verification</span></h2>
-                    <div className="flex flex-col justify-center leading-9">
-                        <p className="self-start">Check your email for OTP</p>
-                        <div className="flex gap-3 sm:gap-5">
-                            {[...Array(OTP_LENGTH)].map((_, index) => (
-                                <input
-                                    key={index}
-                                    type="text"
-                                    maxLength={1}
-                                    ref={(el) => (inputRefs.current[index] = el)}
-                                    onChange={(e) => handleChange(e, index)}
-                                    onKeyDown={(e) => handleKeyDown(e, index)}
-                                    onFocus={() => handleFocus(index)}
-                                    placeholder="0"
-                                    className="w-12 h-12 bg-neutral-800 border border-none text-center text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-AC_Green"
-                                />
-                            ))}
-                        </div>
-                    </div>
+        <AnimatedWrapper>
+            <div
+                className="flex z-10 justify-center items-center align-middle flex-col gap-5 bg-neutral-900 text-white p-8 sm:px-12 ">
 
-                    <div className="mb-4 flex justify-end self-end">
-                        <a href="#" className="text-xs text-AC_Green hover:underline     ">
-                            <button
-                                onClick={handleResendOTP}
-                                disabled={!canResend}
-                                className={`text-xs font-semibold transition ${canResend
-                                    ? "text-AC_Green hover:underline"
-                                    : "text-gray-500 cursor-not-allowed opacity-50"
-                                    }`}>
-                                {canResend ? "Resend OTP?" : `Resend in ${timer}s`}
-                            </button>
-
-                        </a>
-                    </div>
-
-                    <div className="flex justify-center gap-2 ">
-                        <button
-                            className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition" onClick={handleEmailChange}>
-                            change email
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            className="bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
-                            Submit
-                        </button>
+                <h2 className="text-2xl leading-9 text-center font-poltawski">OTP <span
+                    className="ml-1">Verification</span></h2>
+                <div className="flex flex-col justify-center leading-9">
+                    <p className="self-start">Check your email for OTP</p>
+                    <div className="flex gap-3 sm:gap-5">
+                        {[...Array(OTP_LENGTH)].map((_, index) => (
+                            <input
+                                key={index}
+                                type="text"
+                                maxLength={1}
+                                ref={(el) => (inputRefs.current[index] = el)}
+                                onChange={(e) => handleChange(e, index)}
+                                onKeyDown={(e) => handleKeyDown(e, index)}
+                                onFocus={() => handleFocus(index)}
+                                placeholder="0"
+                                className="w-12 h-12 bg-neutral-800 border border-none text-center text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-AC_Green"
+                            />
+                        ))}
                     </div>
                 </div>
-            </AnimatedWrapper>
-            <button
-                className="absolute top-5 right-5 bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
-                Login
-            </button>
-        </div>
+
+                <div className="mb-4 flex justify-end self-end">
+                    <a href="#" className="text-xs text-AC_Green hover:underline     ">
+                        <button
+                            onClick={handleResendOTP}
+                            disabled={!canResend}
+                            className={`text-xs font-semibold transition ${canResend
+                                ? "text-AC_Green hover:underline"
+                                : "text-gray-500 cursor-not-allowed opacity-50"
+                            }`}>
+                            {canResend ? "Resend OTP?" : `Resend in ${timer}s`}
+                        </button>
+
+                    </a>
+                </div>
+
+                <div className="flex justify-center gap-2 ">
+                    <button
+                        className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition"
+                        onClick={handleEmailChange}>
+                        change email
+                    </button>
+                    <button
+                        onClick={handleSubmit}
+                        className="bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </AnimatedWrapper>
     );
 };
 
