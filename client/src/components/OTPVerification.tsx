@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
 import { MouseEffectBackground } from "./MouseEffectBackground.js";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { loginSuccess, resetAll } from "../redux/authSlice";
+import { login, signup } from "../redux/apiCalls/userCalls";
 
 const OTP_LENGTH = 5;
+const OTP_RESENT_COOLDOWN = 60;
 
 const OTPVerification = () => {
     const [otp, setOtp] = useState<string[]>([]);
@@ -47,6 +49,39 @@ const OTPVerification = () => {
         console.log(otp);
     }
 
+    // ============= Timer =============
+    const [timer, setTimer] = useState(OTP_RESENT_COOLDOWN);
+    const [canResend, setCanResend] = useState(false);
+
+    useEffect(() => {
+        if (timer === 0) {
+            setCanResend(true); // Enable the button when timer reaches 0
+            return; // Exit early to avoid setting an interval at 0
+        }
+
+        const interval = setInterval(() => {
+            setTimer((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, [timer]); // ✅ Correct: It stops once `timer` reaches 0
+
+
+    const authSelector = useSelector((state: RootState) => state.auth);
+    const handleResendOTP = () => {
+        setCanResend(false);
+        setTimer(60); // Restart the timer
+        signup(dispatch, {
+            name: authSelector.name,
+            email: authSelector.email,
+            phone: authSelector.phone,
+            username: authSelector.username,
+            password: authSelector.password
+        });
+    };
+
+    // ===================================
+
     const dispatch = useDispatch<AppDispatch>();
 
     // reseting username so that signup page renders again
@@ -83,7 +118,16 @@ const OTPVerification = () => {
 
                     <div className="mb-4 flex justify-end self-end">
                         <a href="#" className="text-xs text-AC_Green hover:underline     ">
-                            Resend OTP ?
+                            <button
+                                onClick={handleResendOTP}
+                                disabled={!canResend}
+                                className={`text-xs font-semibold transition ${canResend
+                                    ? "text-AC_Green hover:underline"
+                                    : "text-gray-500 cursor-not-allowed opacity-50"
+                                    }`}>
+                                {canResend ? "Resend OTP?" : `Resend in ${timer}s`}
+                            </button>
+
                         </a>
                     </div>
 
