@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { loginSuccess, resetAll } from "../redux/authSlice";
 
+const OTP_LENGTH = 5;
+
 const OTPVerification = () => {
     const [otp, setOtp] = useState<string[]>([]);
     const inputRefs = useRef([]);
@@ -63,7 +65,7 @@ const OTPVerification = () => {
                     <div className="flex flex-col justify-center leading-9">
                         <p className="self-start">Check your email for OTP</p>
                         <div className="flex gap-3 sm:gap-5">
-                            {[...Array(5)].map((_, index) => (
+                            {[...Array(OTP_LENGTH)].map((_, index) => (
                                 <input
                                     key={index}
                                     type="text"
