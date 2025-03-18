@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
-import {MouseEffectBackground} from "./MouseEffectBackground.js";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
-import {loginSuccess, resetAll} from "../redux/authSlice";
-import {login, signup} from "../redux/apiCalls/userCalls";
+import { MouseEffectBackground } from "./MouseEffectBackground.js";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import { loginSuccess, resetAll } from "../redux/authSlice";
+import { login, signup, verifyOTP } from "../redux/apiCalls/userCalls";
 
 const OTP_LENGTH = 5;
 const OTP_RESENT_COOLDOWN = 60;
@@ -12,9 +12,10 @@ const OTP_RESENT_COOLDOWN = 60;
 const OTPVerification = () => {
     const [otp, setOtp] = useState<string[]>([]);
     const inputRefs = useRef([]);
+    const authSelector = useSelector((state: RootState) => state.auth);
 
     const handleChange = (e, index) => {
-        const {value} = e.target;
+        const { value } = e.target;
         if (!/^[0-9]*$/.test(value)) {
             e.target.value = "";
             resetAllFieldsAhead(index);
@@ -45,8 +46,12 @@ const OTPVerification = () => {
         }
     }
 
-    const handleSubmit = () => {
-        console.log(otp);
+    const handleSubmit = async () => {
+        const isVarified = await verifyOTP(dispatch, { email: authSelector.email, otp: parseInt(otp.join("")) });
+        console.log(isVarified);
+        if (!isVarified) {
+            resetAllFieldsAhead(0);
+        }
     }
 
     // ============= Timer =============
@@ -66,8 +71,6 @@ const OTPVerification = () => {
         return () => clearInterval(interval); // Cleanup on unmount
     }, [timer]); // ✅ Correct: It stops once `timer` reaches 0
 
-
-    const authSelector = useSelector((state: RootState) => state.auth);
     const handleResendOTP = () => {
         setCanResend(false);
         setTimer(60); // Restart the timer
@@ -124,7 +127,7 @@ const OTPVerification = () => {
                             className={`text-xs font-semibold transition ${canResend
                                 ? "text-AC_Green hover:underline"
                                 : "text-gray-500 cursor-not-allowed opacity-50"
-                            }`}>
+                                }`}>
                             {canResend ? "Resend OTP?" : `Resend in ${timer}s`}
                         </button>
 

@@ -3,6 +3,7 @@ import {
     loginFailed,
     loginSuccess,
     logoutSuccess,
+    otpVerified,
     resetAll,
     verifyPlatformFail,
     verifyPlatformSuccess
@@ -157,6 +158,46 @@ export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
         return false;
     } else {
         dispatch(loginSuccess({ ...response.data.user, password: formData.password }));
+        toast.update(id, {
+            render: "Signup successful!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+        return true;
+    }
+};
+
+export const verifyOTP = async (dispatch: Dispatch<any>, formData: { email: string, otp: number }) => {
+    // Performing data validation
+    const id = toast.loading("Verifying OTP");
+    if (!formData.email || !formData.otp) {
+        toast.update(id, {
+            render: "Invalid Email or OTP",
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+        });
+        return false;
+    }
+
+    const [err, response]: [any, ISignupResponse] = await to(
+        backend.post("/user/verifyEmail", formData)
+    );
+    if (err || ((response.status / 100) | 0) !== 2) {
+        const errorMessage =
+            err.response?.data?.message ||
+            err.response?.data ||
+            "Some error occurred! Please try again later.";
+        toast.update(id, {
+            render: errorMessage,
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+        });
+        return false;
+    } else {
+        dispatch(otpVerified());
         toast.update(id, {
             render: "Signup successful!",
             type: "success",
