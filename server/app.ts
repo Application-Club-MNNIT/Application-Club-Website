@@ -49,9 +49,11 @@ app.get("/test", async (req, res, next) => {
 // todo: routes here
 import userRoutes from "./routes/userRouters";
 import courseRoutes from "./routes/courseRoutes";
+import teacherRoutes from "./routes/teacherRouters";
 
 app.use("/user", userRoutes);
 app.use("/course", courseRoutes);
+app.use("/teacher", teacherRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";
