@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import {AxiosResponse} from 'axios';
 
 export default interface ISignupResponse extends AxiosResponse {
     data: {
@@ -6,6 +6,7 @@ export default interface ISignupResponse extends AxiosResponse {
         user: {
             username: string;
             name: string;
+            isLead: boolean;
             email: string;
             regNumber: string;
             branch: string;

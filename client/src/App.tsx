@@ -11,12 +11,12 @@ import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
 import {getRandomString} from "./redux/apiCalls/userCalls.js";
+import PotdAdditionPage from "./pages/admin/PotdAdditionPage.js";
 
 const App: React.FC = () => {
 
     const PrivateRoute = ({children}: { children: JSX.Element }) => {
         const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);
-
         return user ? children : <Navigate to="/login" replace/>;
     };
 
@@ -24,6 +24,12 @@ const App: React.FC = () => {
         const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);
         return user ? <Navigate to="../" replace/> : children;
     };
+
+    const AdminOnlyRoute = ({children}: { children: JSX.Element }) => {
+        const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified && state.auth.isLead);
+        return user ? children : <Navigate to="../" replace/>;
+    };
+
 
     const router = createBrowserRouter([
         {
@@ -51,6 +57,10 @@ const App: React.FC = () => {
                     },
                     element: <ProfileVerificationPage/>,
                 },
+                {
+                    path: "addPotd",
+                    element: <AdminOnlyRoute><PotdAdditionPage/></AdminOnlyRoute>
+                }
             ],
         },
     ]);

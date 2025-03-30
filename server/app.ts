@@ -48,8 +48,10 @@ app.get("/test", async (req, res, next) => {
 //defining routers
 // todo: routes here
 import userRoutes from "./routes/userRouters";
+import leadRoutes from "./routes/leadRouters";
 
 app.use("/user", userRoutes);
+app.use("/lead", leadRoutes);
 
 
 //for undefined routs

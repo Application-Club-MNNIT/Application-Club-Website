@@ -29,6 +29,7 @@ export interface IProfileVerificationData {
 export interface IUser extends Document {
     username: string;
     name: string;
+    isLead: boolean;
     email: string;
     regNumber: string;
     branch: string;
@@ -70,6 +71,9 @@ const userSchema = new mongoose.Schema<IUser>({
         required: [true, "A user must have a name"],
         minLength: [5, "name too short(min=5)!"],
         maxLength: [15, "name too long(max=25)!"],
+    }, isLead: {
+        type: Boolean,
+        default: false,
     },
     email: {
         type: String,

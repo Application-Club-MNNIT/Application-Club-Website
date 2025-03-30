@@ -146,7 +146,7 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, res: Response, ne
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
     // check if user still exists => to check the case if user has jwt token but the user was deleted!
-    const freshUser = await User.findOne({_id: decoded.id});
+    const freshUser = await User.findOne({_id: decoded.id}).select("+isLead");
     if (!freshUser)
         return next(new AppError("The user belonging to this token does not exist.", 401));
 
@@ -163,7 +163,7 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, res: Response, ne
 const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
 
-    if (!user.leetcode.username || !user.leetcode.verified) {
+    if (!user.leetcode.username || !user.leetcode.verified || !user.gfg.username || !user.gfg.verified || !user.codeforces.username || !user.codeforces.verified) {
         res.status(400).json({
             status: "fail",
             message: "You need to verify all coding platforms to access this feature",
@@ -175,7 +175,7 @@ const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Re
 })];
 
 const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const loginCredential: string = req.body.loginCredential;
+    const loginCredential: string = req.body.loginCredential.toLowerCase();
     const password: string = req.body.password;
 
     //check if email and password exists => user entered these fields
@@ -184,7 +184,13 @@ const login = catchAsync(async (req: Request, res: Response, next: NextFunction)
 
     //check if user exists and password is correct
     //we have restricted the default selection of password, so we explicitly select password
-    const user = await User.findOne({[loginCredential.includes("@") ? "email" : "username"]: loginCredential}).select("+password");
+    const user = await User.findOne({
+        [loginCredential.endsWith("@mnnit.ac.in") ? "email" : "username"]: {
+            $regex: `^${loginCredential}$`,
+            $options: "i"
+        }
+    }).select("+password");
+
     if (!user || !(await user.correctPassword(password, user.password)))
         return next(new AppError("Incorrect email/username or password!", 401));
 

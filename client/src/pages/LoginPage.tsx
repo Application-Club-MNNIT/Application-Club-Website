@@ -11,7 +11,6 @@ import {login} from "../redux/apiCalls/userCalls.js";
 
 const LoginPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const [loginCredential, setLoginCredential] = useState<string>();

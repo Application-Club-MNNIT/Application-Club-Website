@@ -5,6 +5,7 @@ export const authSlice = createSlice({
     initialState: {
         isLoggedIn: false,
         username: null,
+        isLead: false,
         name: null,
         phone: null,
         email: null,
@@ -46,6 +47,7 @@ export const authSlice = createSlice({
         resetAll: (state) => {
             state.isLoggedIn = false;
             state.username = null;
+            state.isLead = false;
             state.name = null;
             state.phone = null;
             state.email = null;
@@ -85,6 +87,7 @@ export const authSlice = createSlice({
         loginSuccess: (state, action: { payload: IAuthState }) => {
             state.isLoggedIn = true;
             state.username = action.payload.username;
+            state.isLead = action.payload.isLead;
             state.name = action.payload.name;
             state.phone = action.payload.phone;
             state.email = action.payload.email;
@@ -105,6 +108,7 @@ export const authSlice = createSlice({
         loginFailed: (state) => {
             state.isLoggedIn = false;
             state.username = null;
+            state.isLead = false;
             state.name = null;
             state.phone = null;
             state.email = null;
@@ -145,6 +149,7 @@ export const authSlice = createSlice({
         logoutSuccess: (state) => {
             state.isLoggedIn = false;
             state.username = null;
+            state.isLead = false;
             state.name = null;
             state.phone = null;
             state.email = null;

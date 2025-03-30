@@ -73,5 +73,3 @@ router.get("/test", catchAsync(async (req: Request, res: Response, next: NextFun
 
 export default router;
 
-
-module.exports = router;
