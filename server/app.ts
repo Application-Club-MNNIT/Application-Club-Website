@@ -45,15 +45,19 @@ app.get("/test", async (req, res, next) => {
     });
 });
 
+
+
 //defining routers
 // todo: routes here
 import userRoutes from "./routes/userRouters";
 import courseRoutes from "./routes/courseRoutes";
 import teacherRoutes from "./routes/teacherRouters";
+import paperRoutes from "./routes/paperRoutes";
 
 app.use("/user", userRoutes);
 app.use("/course", courseRoutes);
 app.use("/teacher", teacherRoutes);
+app.use("/paper", paperRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";

@@ -1,53 +1,74 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
-interface IPreviousYearPaper extends Document {
-  _id: mongoose.Types.ObjectId;
-  title: string;
-  subject: string;
+
+
+//Represents Papers approved by th Admin
+
+interface IPaper extends Document {
+  course: Types.ObjectId;
+  academicSession: string;
   year: number;
-  fileUrl: string;
-  uploadedBy: mongoose.Types.ObjectId;
-  createdAt: Date;
+  semester: number;
+  subject: Types.ObjectId;
+  teacher: Types.ObjectId;
+  examType: string;
+  driveLink: string;
+  uploadedBy:Types.ObjectId;
 }
 
-const PreviousYearPaperSchema = new Schema<IPreviousYearPaper>({
-  _id: {
+const PaperSchema = new Schema<IPaper>({
+  course: {
     type: Schema.Types.ObjectId,
-    auto: true, 
+    ref: "Course",
+    required: true,
   },
-  title: {
+  academicSession: {
     type: String,
     required: true,
-    trim: true,
-  },
-  subject: {
-    type: String,
-    required: true,
-    trim: true,
   },
   year: {
     type: Number,
     required: true,
   },
-  fileUrl: {
+  semester: {
+    type: Number,
+    required: true,
+  },
+  subject: {
+    type: Schema.Types.ObjectId,
+    ref: "Subject",
+    required: true,
+  },
+  teacher: {
+    type: Schema.Types.ObjectId,
+    ref: "Teacher",
+    required: true,
+  },
+  examType: {
+    type: String,
+    required: true,
+    enum: ["Mid-Sem", "End-Sem"],
+  },
+  driveLink: {
     type: String,
     required: true,
     validate: {
       validator: function (v: string) {
         return /^(https?:\/\/(drive\.google\.com\/file\/d\/[^\/]+\/view\?usp=sharing))$/.test(v);
       },
-      message: "Invalid file URL format. Must be a valid Google Drive link."
-    }
+      message: "Invalid file URL format. Must be a valid Google Drive link.",
+    },
   },
-  uploadedBy: {
+
+  uploadedBy:{
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
   }
-});
+} , {timestamps:true});
 
-export default mongoose.model<IPreviousYearPaper>("PreviousYearPaper", PreviousYearPaperSchema);
+
+
+const Paper = mongoose.model<IPaper>("Paper",PaperSchema);
+
+export default Paper;
