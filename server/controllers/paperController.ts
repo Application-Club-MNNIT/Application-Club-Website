@@ -9,8 +9,8 @@ import QuestionPaperUploadRequestModel from "../model/QuestionPaperUploadRequest
 
 //Store paper request by user for admins approval
 const createPaper = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { course, subject, academicSession, year, semester, teacher,examType,file ,uploadedBy } = req.body;
-    if (!course || !subject || !teacher || !uploadedBy || !file) {
+    const { course, subject, academicSession, year, semester, teacher,examType,driveLink ,uploadedBy } = req.body;
+    if (!course || !subject || !teacher || !uploadedBy || !driveLink) {
       return next(new AppError("All fields are required", 400));
     }
   
@@ -22,7 +22,7 @@ const createPaper = catchAsync(async (req: Request, res: Response, next: NextFun
         semester,
         teacher,
         examType,
-        file,
+        driveLink,
         uploadedBy
     });
   
@@ -119,12 +119,9 @@ const createPaper = catchAsync(async (req: Request, res: Response, next: NextFun
   // It includes functions to create a new paper request, get all paper requests, get a specific paper request by ID,
 
 
-  
-  
-  
   //Here controller to add papers after the admins actions
 
-
+  
 
   
   export default {
