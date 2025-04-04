@@ -61,6 +61,12 @@ router.post(
     userController.getProfileData
 )
 
+router.get(
+    "/getSubmissions/:platform",
+    authController.protect,
+    userController.getSubmissionData
+)
+
 //
 // //for logging in
 // router.post(

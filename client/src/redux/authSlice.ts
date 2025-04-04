@@ -13,31 +13,6 @@ export const authSlice = createSlice({
         branch: null,
         batch: null,
         password: null, // password is stored temporarily in state, will be removed after otp verification
-        leetcode: {
-            username: null,
-            verified: false,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0,
-            submissions: [],
-        },
-        gfg: {
-            username: null,
-            verified: false,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0,
-            submissions: []
-        },
-        codeforces: {
-            username: null,
-            verified: false,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0,
-            submissions: []
-        },
-        github: {
-            username: null,
-            verified: false
-        },
         verified: false,
         _id: null,
         createdAt: null,
@@ -54,31 +29,6 @@ export const authSlice = createSlice({
             state.regNumber = null;
             state.branch = null;
             state.batch = null;
-            state.leetcode = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.gfg = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.codeforces = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.github = {
-                username: null,
-                verified: false
-            };
             state.verified = false;
             state._id = null;
             state.createdAt = null;
@@ -94,10 +44,6 @@ export const authSlice = createSlice({
             state.regNumber = action.payload.regNumber;
             state.branch = action.payload.branch;
             state.batch = action.payload.batch;
-            state.leetcode = action.payload.leetcode;
-            state.gfg = action.payload.gfg;
-            state.codeforces = action.payload.codeforces;
-            state.github = action.payload.github;
             state.verified = action.payload.verified;
             state._id = action.payload._id;
             state.createdAt = action.payload.createdAt;
@@ -116,31 +62,6 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.password = null;
-            state.leetcode = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.gfg = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.codeforces = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.github = {
-                username: null,
-                verified: false
-            };
             state.verified = false;
             state._id = null;
             state.createdAt = null;
@@ -157,31 +78,6 @@ export const authSlice = createSlice({
             state.branch = null;
             state.batch = null;
             state.password = null;
-            state.leetcode = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.gfg = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.codeforces = {
-                username: null,
-                verified: false,
-                lastSubmissionTimestamp: 0,
-                lastRequestTimestamp: 0,
-                submissions: []
-            };
-            state.github = {
-                username: null,
-                verified: false
-            };
             state.verified = false;
             state._id = null;
             state.createdAt = null;

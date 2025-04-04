@@ -10,7 +10,7 @@ import React from "react";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
-import {getDictionary, getProfileData, getRandomString,} from "./redux/apiCalls/userCalls.js";
+import {getDictionary, getRandomString, getSubmissions,} from "./redux/apiCalls/userCalls.js";
 import PotdAdditionPage from "./pages/admin/PotdAdditionPage.js";
 import ProfilePage from "./pages/ProfilePage.js";
 
@@ -68,8 +68,10 @@ const App: React.FC = () => {
                     element: <PrivateRoute><ProfilePage/></PrivateRoute>,
                     loader: async () => {
                         await getDictionary(Dispatch);
-                        const response = await getProfileData(Dispatch);
-                        return response.profileData;
+                        const leetcode = await getSubmissions("leetcode", 1);
+                        const codeforces = await getSubmissions("codeforces", 1);
+                        const gfg = await getSubmissions("gfg", 1);
+                        return {leetcode, gfg, codeforces};
                     },
                 },
                 {

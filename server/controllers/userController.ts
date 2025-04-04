@@ -127,7 +127,8 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
 });
 
 const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response) => {
-    const user = req.user;
+    const user = await User.findOne({id: req.user.id}).select("profileVerificationData leetcode gfg codeforces github");
+    console.log(user);
 
     const lastRequestTimestamp: number = user.profileVerificationData?.lastRequestTimestamp || 0;
     const fifteenMinutesInMs = 15 * 60 * 1000;
@@ -167,6 +168,38 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 
 });
 
+const getSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const platform = req.params.platform?.toLowerCase(); // leetcode, gfg, codeforces
+    const page = parseInt(req.query.page as string) || 1;
+
+    if (!platform) return next(new AppError("Platform not provided", 400));
+    if (!["gfg", "codeforces", "leetcode"].includes(platform)) return next(new AppError("We are not concerned with this platform", 400));
+
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
+
+    console.log(req.user);
+
+    const user = await User.findOne(
+        {_id: req.user.id},
+        {
+            [`${platform}.submissions`]: {$slice: [skip, pageSize]}, // paginate here
+            [`${platform}.username`]: 1,
+            [`${platform}.verified`]: 1,
+        }
+    );
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            platform,
+            submissions: user[platform].submissions,
+            username: user[platform].username,
+            verified: user[platform].verified,
+        }
+    })
+
+});
 
 const getProfileData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     console.log(req.user.id);
@@ -193,5 +226,6 @@ export default {
     verifyCodingProfile,
     isUsernameAvailable,
     getProfileData,
-    getDictionary
+    getDictionary,
+    getSubmissionData
 };

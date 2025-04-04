@@ -6,15 +6,14 @@ import {generateLink} from "../util/generateLink.js";
 
 function ProfilePage() {
 
-    const profileData = useLoaderData() as IUserState;
+    //todo: also add a next button so that previous submissions can be seen for each platform
+    //rout to call is /user/getSubmissions/platform?page=2
+    //change platform to platform name and also page
+    //there is no way to tell yet how many pages are there
+
+    const submissionData = useLoaderData() as IUserState;
     const dictionary = useSelector((state: RootState) => state.dictionary.data);
-
-    const uniqueQuestions = {
-        leetcode: new Set(profileData.leetcode.submissions.map(s => s.questionId)).size,
-        gfg: new Set(profileData.gfg.submissions.map(s => s.questionId)).size,
-        codeforces: new Set(profileData.codeforces.submissions.map(s => s.questionId)).size
-    }
-
+    const profileData = useSelector((state: RootState) => state.auth);
 
     return (
         <div>
@@ -25,24 +24,15 @@ function ProfilePage() {
             <div>{profileData.branch}</div>
             <div>{profileData.batch}</div>
             <div>{profileData.phone}</div>
-            <div>
-                {uniqueQuestions.gfg + uniqueQuestions.leetcode + uniqueQuestions.codeforces} Unique questions solved
-            </div>
 
-            {[
-                {profileData: profileData.codeforces, name: "codeforces"},
-                {profileData: profileData.leetcode, name: "leetcode"},
-                {profileData: profileData.gfg, name: "gfg"},
-            ].map((platform) => {
-                const p = platform.profileData;
-                const dict = dictionary[platform.name];
+            {["leetcode", "gfg", "codeforces"].map((platform) => {
+                const dict = dictionary[platform];
+                console.log(submissionData[platform]);
                 return (
-                    <div key={platform.name} className="relative shadow-md sm:rounded-lg max-w-[1200px]">
+                    <div key={platform} className="relative shadow-md sm:rounded-lg max-w-[1200px]">
                         <div className="flex gap-4">
-                            <div className="uppercase">{platform.name}</div>
-                            <div>{platform.profileData.username}</div>
-                            <div>{platform.profileData.submissions.length} Correct submissions</div>
-                            <div>{uniqueQuestions[platform.name]} Unique questions</div>
+                            <div className="uppercase">{platform}</div>
+                            <div>{submissionData[platform].username}</div>
                         </div>
                         <div className="max-h-80 overflow-y-auto">
                             <table className="w-full text-sm text-left">
@@ -54,9 +44,9 @@ function ProfilePage() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {p.submissions.map((s, i) => {
-                                        const link = generateLink(dict[s.questionId], s.questionId, platform.name);
-                                        return <tr key={`${i}${platform.name[0]}${s.questionId}`}
+                                {submissionData[platform].submissions.map((s, i) => {
+                                        const link = generateLink(dict[s.questionId], s.questionId, platform);
+                                        return <tr key={`${i}${platform[0]}${s.questionId}`}
                                                    className="odd:bg-white even:bg-gray-50 border-b">
                                             <td className="px-6 py-4">
                                                 {new Date(s.timestamp * 1000).toLocaleString()}

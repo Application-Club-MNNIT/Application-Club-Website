@@ -72,7 +72,23 @@ export interface IUser extends Document {
     changePasswordAfter(JWTTimeStamp: number): boolean;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+
+///////////////
+
+const SubmissionSchema = new mongoose.Schema({
+    questionId: {type: String, required: true},
+    timestamp: {type: Number, required: true}
+}, {_id: false});
+
+const PlatformSchema = new mongoose.Schema({
+    username: {type: String, unique: true, sparse: true},
+    submissions: {type: [SubmissionSchema], default: []},
+    verified: {type: Boolean, default: false},
+    lastSubmissionTimestamp: {type: Number, required: true, min: 0, default: 0},
+    lastRequestTimestamp: {type: Number, required: true, min: 0, default: 0}
+}, {_id: false});
+
+const userSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
@@ -80,153 +96,121 @@ const userSchema = new mongoose.Schema<IUser>({
         minlength: [3, "username must be at least 3 characters long"],
         maxlength: [15, "username must be at max 15 characters long"],
         validate: {
-            validator: function (value: string) {
+            validator: function (value) {
                 return /^[a-zA-Z0-9_]+$/.test(value);
             },
-            message: "username can only contain alphabets, numbers, and underscores!",
-        },
+            message: "username can only contain alphabets, numbers, and underscores!"
+        }
     },
     name: {
         type: String,
         required: [true, "A user must have a name"],
-        minLength: [5, "name too short(min=5)!"],
-        maxLength: [15, "name too long(max=25)!"],
-    }, isLead: {
+        minlength: [5, "name too short(min=5)!"],
+        maxlength: [25, "name too long(max=25)!"]
+    },
+    isLead: {
         type: Boolean,
-        default: false,
+        default: false
     },
     email: {
         type: String,
         unique: true,
         lowercase: true,
         required: [true, "Email is required!"],
-        validate: [
-            {
-                validator: function (value: string) {
-                    return validator.isEmail(value) && value.endsWith("@mnnit.ac.in");
-                },
-                message: "Please enter MNNIT GSuit id.",
-            }]
-    }, regNumber: {
-        type: "string",
+        validate: {
+            validator: function (value) {
+                return validator.isEmail(value) && value.endsWith("@mnnit.ac.in");
+            },
+            message: "Please enter MNNIT GSuit id."
+        }
+    },
+    regNumber: {
+        type: String,
         required: true,
         unique: true
-    }, branch: {
+    },
+    branch: {
         type: String,
         required: true,
         default: "NA"
-    }, batch: {
+    },
+    batch: {
         type: Number,
-        required: true,
-    }, phone: {
+        required: true
+    },
+    phone: {
         type: Number,
-        required: true,
-    }, leetcode: {
-        username: {type: String, unique: true, sparse: true},
-        submissions: {
-            type: [
-                {
-                    questionId: {type: String, required: true},
-                    timestamp: {type: Number, required: true},
-                },
-            ],
-            default: [],
-        }, verified: {
-            type: Boolean,
-            default: false,
-        }, lastSubmissionTimestamp: {
-            type: Number,
-            required: true,
-            min: 0,
-            default: 0
-        }, lastRequestTimestamp: {
-            type: Number, required: true, min: 0, default: 0
-        }
-    }, gfg: {
-        username: {type: String, unique: true, sparse: true},
-        submissions: {
-            type: [
-                {
-                    questionId: {type: String, required: true},
-                    timestamp: {type: Number, required: true},
-                },
-            ],
-            default: [],
-        }, verified: {
-            type: Boolean,
-            default: false,
-        }, lastSubmissionTimestamp: {
-            type: Number,
-            required: true,
-            min: 0,
-            default: 0
-        }, lastRequestTimestamp: {
-            type: Number, required: true, min: 0, default: 0
-        }
-    }, codeforces: {
-        username: {type: String, unique: true, sparse: true},
-        submissions: {
-            type: [
-                {
-                    questionId: {type: String, required: true},
-                    timestamp: {type: Number, required: true},
-                },
-            ],
-            default: [],
-        }, verified: {
-            type: Boolean,
-            default: false,
-        }, lastSubmissionTimestamp: {
-            type: Number,
-            required: true,
-            min: 0,
-            default: 0
-        }, lastRequestTimestamp: {
-            type: Number, required: true, min: 0, default: 0
-        }
-    }, github: {
-        username: {type: String, unique: true, sparse: true},
-        verified: {
-            type: Boolean,
-            default: false,
-        }, randomName: {
-            type: String,
-        }
+        required: true
+    },
+    leetcode: {type: PlatformSchema, select: false},
+    gfg: {type: PlatformSchema, select: false},
+    codeforces: {type: PlatformSchema, select: false},
+    github: {
+        type: new mongoose.Schema({
+            username: {type: String, unique: true, sparse: true},
+            verified: {type: Boolean, default: false},
+            randomName: {type: String}
+        }, {_id: false}),
+        select: false
     },
     password: {
         type: String,
         required: [true, "Please create a password!"],
         minlength: [8, "password must be at least 8 characters long"],
-        select: false,
-    }, passwordChangedAt: {
+        select: false
+    },
+    passwordChangedAt: {
+        type: Number
+    },
+    otp: {
         type: Number,
-        required: false,
-    }, otp: {
-        type: Number,
-        select: false,
-        required: false,
-    }, verified: {
+        select: false
+    },
+    verified: {
         type: Boolean,
         required: true,
-        default: false,
-    }, profileVerificationData: {
-        randomName: String,
-        lastRequestTimestamp: Number,
-    }, past14Days: [{
-        date: {type: String, required: true}, uniqueQuestionsSolved: {type: Number, default: 0}
-    }], sheets: [
-        {
-            name: {type: String, required: true}, // Sheet name (e.g., "striver")
-            status: {type: String, required: true} // String of 0s and 1s representing solved status
-        }
-    ], potds: {
-        status: {type: String, required: true},
-        sumOfTime: {type: Number, required: true, default: 0},
-        count: {type: Number, default: 0, required: true},
+        default: false
+    },
+    profileVerificationData: {
+        type: new mongoose.Schema({
+            randomName: String,
+            lastRequestTimestamp: Number
+        }, {_id: false}),
+        select: false
+    },
+    past14Days: {
+        type: [
+            new mongoose.Schema({
+                date: {type: String, required: true},
+                uniqueQuestionsSolved: {type: Number, default: 0}
+            }, {_id: false})
+        ],
+        select: false
+    },
+    sheets: {
+        type: [
+            new mongoose.Schema({
+                name: {type: String, required: true},
+                status: {type: String, required: true}
+            }, {_id: false})
+        ],
+        select: false
+    },
+    potds: {
+        type: new mongoose.Schema({
+            status: {type: String, required: true},
+            sumOfTime: {type: Number, required: true, default: 0},
+            count: {type: Number, required: true, default: 0}
+        }, {_id: false}),
+        select: false
     }
 }, {
-    timestamps: true,
+    timestamps: true
 });
+
+
+//////////////
+
 
 userSchema.pre<IUser>("save", async function (next) {
     if (!this.isModified("password")) return next();

@@ -241,10 +241,15 @@ export const getDictionary = async (dispatch: Dispatch) => {
     dispatch(dictionaryUpdate(response.data["dictionary"]));
     return {status: true, message: "Dictionary retrieved!", dictionary: response.data["dictionary"]};
 }
+//
+// export const getProfileData = async (dispatch: Dispatch) => {
+//     const response = await backend.post("/user/getProfileData");
+//     dispatch(updateProfile(response.data["user"]));
+//     return {status: true, message: "Profile retrieved!", profileData: response.data["user"]};
+//
+// }
 
-export const getProfileData = async (dispatch: Dispatch) => {
-    const response = await backend.post("/user/getProfileData");
-    dispatch(updateProfile(response.data["user"]));
-    return {status: true, message: "Profile retrieved!", profileData: response.data["user"]};
-
+export const getSubmissions = async (platform: string, page: number) => {
+    const response = await backend.get(`/user/getSubmissions/${platform}?page=${page || 1}`);
+    return response.data.data;
 }

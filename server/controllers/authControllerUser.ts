@@ -17,13 +17,6 @@ const createSendToken = (user: IUser, status: number, res: Response) => {
     const token = signToken(user._id);
 
     user.password = undefined;
-    user.leetcode = undefined;
-    user.codeforces = undefined;
-    user.gfg = undefined;
-    user.github = undefined;
-    user.past14Days = undefined;
-    user.sheets = undefined;
-    user.potds = undefined;
 
     //set cookies
     const options =
@@ -79,9 +72,11 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
     const existingUser = await User.findOne({
         $or: [{username}, {email}, {regNumber}]
     });
+
+    console.log(existingUser);
     if (existingUser)
         if (existingUser.verified) return next(new AppError("User already exists", 401));
-        else await User.deleteOne({_id: existingUser._id});
+        else await User.deleteOne({_id: existingUser.id});
 
 
     const otp = Math.floor(10000 + Math.random() * 90000);
@@ -101,6 +96,9 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
     user.password = undefined;
     user.otp = undefined;
     user._id = undefined;
+    user.past14Days = undefined;
+    user.sheets = undefined;
+    user.potds = undefined;
 
     await sendEmail({
         email: email,
@@ -120,12 +118,9 @@ const verifyEmail = catchAsync(async (req: Request, res: Response, next: NextFun
     const email = req.body.email;
     const otp = req.body.otp;
 
-    const user = await User.findOne({email: email}).select("-password +otp");
-    console.log(user)
+    const user = await User.findOne({email: email}).select("+otp");
     if (!user) return next(new AppError("No user with this email id!", 401));
     if (user.verified) return next(new AppError("User is already verified!", 401));
-
-    console.log(user.otp === otp);
 
     if (user.otp && otp && user.otp === otp) {
         user.verified = true;
@@ -142,7 +137,7 @@ const verifyEmail = catchAsync(async (req: Request, res: Response, next: NextFun
 //makes sure that user is logged in == has a valid bearer token
 //if all is good, that user is added to the req
 //this protection does not require all coding profiles to be verified
-const shallowProtect = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunction) => {
     let token = req.cookies.jwt;
 
     if (!token)
@@ -153,7 +148,8 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, res: Response, ne
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
     // check if user still exists => to check the case if user has jwt token but the user was deleted!
-    const freshUser = await User.findOne({_id: decoded.id}).select("+isLead");
+    const freshUser = await User.findOne({_id: decoded.id}).select("isLead _id");
+
     if (!freshUser)
         return next(new AppError("The user belonging to this token does not exist.", 401));
 
@@ -168,10 +164,10 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, res: Response, ne
 });
 
 const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const user = req.user;
-
+    const user = await User.findOne({_id: req.user.id}).select("leetcode.verified gfg.verified codeforces.verified leetcode.username gfg.username codeforces.username");
+    
     if (!user.leetcode.username || !user.leetcode.verified || !user.gfg.username || !user.gfg.verified || !user.codeforces.username || !user.codeforces.verified) {
-        res.status(400).json({
+        return res.status(400).json({
             status: "fail",
             message: "You need to verify all coding platforms to access this feature",
             redirectionUrl: "/setting/verifyProfiles"
