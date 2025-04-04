@@ -8,27 +8,33 @@ import SignupPage from "./pages/SignupPage.js";
 import LoginPage from "./pages/LoginPage.js";
 import React from "react";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
-import {getRandomString} from "./redux/apiCalls/userCalls.js";
+import {getDictionary, getProfileData, getRandomString,} from "./redux/apiCalls/userCalls.js";
 import PotdAdditionPage from "./pages/admin/PotdAdditionPage.js";
+import ProfilePage from "./pages/ProfilePage.js";
 
 const App: React.FC = () => {
 
+    //only logged in users have access to this page
     const PrivateRoute = ({children}: { children: JSX.Element }) => {
         const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);
         return user ? children : <Navigate to="/login" replace/>;
     };
 
+    //only non logged in users have access to this page
     const PublicOnlyRoute = ({children}: { children: JSX.Element }) => {
         const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);
         return user ? <Navigate to="../" replace/> : children;
     };
 
+    //only admins have access to this page
     const AdminOnlyRoute = ({children}: { children: JSX.Element }) => {
         const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified && state.auth.isLead);
         return user ? children : <Navigate to="../" replace/>;
     };
+
+    const Dispatch = useDispatch();
 
 
     const router = createBrowserRouter([
@@ -55,7 +61,16 @@ const App: React.FC = () => {
                         const {randomString} = await getRandomString();
                         return {randomName: randomString || "randomstring"};
                     },
-                    element: <ProfileVerificationPage/>,
+                    element: <PrivateRoute><ProfileVerificationPage/></PrivateRoute>,
+                },
+                {
+                    path: "profile",
+                    element: <PrivateRoute><ProfilePage/></PrivateRoute>,
+                    loader: async () => {
+                        await getDictionary(Dispatch);
+                        const response = await getProfileData(Dispatch);
+                        return response.profileData;
+                    },
                 },
                 {
                     path: "addPotd",

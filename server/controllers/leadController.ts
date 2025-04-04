@@ -7,6 +7,7 @@ import {getQuestionId} from "../util/getQuestionId";
 import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
+import axios from "axios";
 
 const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
@@ -46,8 +47,11 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
     }
 
     // Add new POTD entry
-    potdDoc.potds.push({date, questionId});
+    potdDoc.potds.push({date: new Date(new Date(date).setHours(0, 0, 0, 0)), questionId});
     await potdDoc.save();
+
+    //call extension server to recache potds. no need to await
+    axios.get(`${process.env.EXTENSION_SERVER}/user/recachePotd`);
 
     res.status(200).json({
         status: "success",

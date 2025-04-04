@@ -50,6 +50,17 @@ router.post(
     authController.logout
 )
 
+router.get(
+    "/getDictionary",
+    userController.getDictionary
+)
+
+router.post(
+    "/getProfileData",
+    authController.protect,
+    userController.getProfileData
+)
+
 //
 // //for logging in
 // router.post(

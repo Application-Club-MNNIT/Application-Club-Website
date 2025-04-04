@@ -4,7 +4,26 @@ import AppError from "../util/appError";
 import {RequestWithUser} from "../types";
 import {NextFunction, Request, Response} from "express";
 import User from "../model/UserModel";
+import LeetcodeDictionary from "../model/LeetcodeDictionary";
+import GfgDictionary from "../model/GfgDictionary";
+import CodeforcesDictionary from "../model/CodeforcesDictionary";
 
+//cache
+let dictionary;
+const initializeDictionary = async (): Promise<void> => {
+    const leetcodeDocs = await LeetcodeDictionary.find({}).select("-_id -__v");
+    const gfgDocs = await GfgDictionary.find({}).select("-_id -__v");
+    const codeforcesDocs = await CodeforcesDictionary.find({}).select("-_id -__v");
+
+    const leetcode = {}, gfg = {}, codeforces = {};
+    leetcodeDocs.forEach(doc => leetcode[doc.questionId] = doc.slug);
+    gfgDocs.forEach(doc => gfg[doc.questionId] = doc.slug);
+    codeforcesDocs.forEach(doc => codeforces[doc.questionId] = doc.slug);
+
+    dictionary = {leetcode, gfg, codeforces};
+    console.log("dictionary initialized");
+}
+initializeDictionary()
 
 const getLeetcodeName = async (username: string): Promise<string> => {
     try {
@@ -79,7 +98,6 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     const platform: string = req.body.platform;
     const username: string = req.body.username;
 
-    //todo: add more platform names as needed
     if (!platform || !username) return next(new AppError("username or platform not provided!", 400));
 
     if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
@@ -150,4 +168,30 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 });
 
 
-export default {makeUserCodingProfileVerificationReady, verifyCodingProfile, isUsernameAvailable};
+const getProfileData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    console.log(req.user.id);
+    const user = await User.findOne({_id: req.user.id}).select("" +
+        "username name email regNumber branch batch phone leetcode gfg codeforces github past14Days sheets potds"
+    );
+    if (!user) return next(new AppError("Failed to retrieve profile details", 400));
+    res.status(200).json({
+        status: "success",
+        user: user
+    })
+});
+
+const getDictionary = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    res.status(200).json({
+        status: "success",
+        dictionary
+    })
+});
+
+
+export default {
+    makeUserCodingProfileVerificationReady,
+    verifyCodingProfile,
+    isUsernameAvailable,
+    getProfileData,
+    getDictionary
+};

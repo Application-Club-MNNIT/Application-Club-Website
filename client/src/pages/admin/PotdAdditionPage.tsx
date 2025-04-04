@@ -20,6 +20,11 @@ const PotdAdditionPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        console.log(potd.date)
+        console.log(new Date(potd.date))
+        console.log(new Date(new Date(potd.date).setHours(0, 0, 0, 0)));
+
         const res = await addPotd(potd);
         if (res.status) setPotd({date: "", questionLink: ""});
     };

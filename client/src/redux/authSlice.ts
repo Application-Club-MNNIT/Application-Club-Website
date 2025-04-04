@@ -211,5 +211,5 @@ export const {
     verifyPlatformFail,
     verifyPlatformSuccess,
 } = authSlice.actions;
-const userReducer = authSlice.reducer;
-export default userReducer;
+const authReducer = authSlice.reducer;
+export default authReducer;

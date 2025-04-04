@@ -17,6 +17,13 @@ const createSendToken = (user: IUser, status: number, res: Response) => {
     const token = signToken(user._id);
 
     user.password = undefined;
+    user.leetcode = undefined;
+    user.codeforces = undefined;
+    user.gfg = undefined;
+    user.github = undefined;
+    user.past14Days = undefined;
+    user.sheets = undefined;
+    user.potds = undefined;
 
     //set cookies
     const options =

@@ -1,6 +1,7 @@
 import mongoose, {Document} from "mongoose";
 
 interface PotdEntry {
+    link?: string;
     date: Date;
     questionId: string;
 }

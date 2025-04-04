@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 
 export interface ISubmission {
     questionId: string;
-    timestamp: Date;
+    timestamp: number;
 }
 
 export interface IPlatformSubmissions {
@@ -26,6 +26,22 @@ export interface IProfileVerificationData {
     lastRequestTimestamp?: number;
 }
 
+interface Past14DaysEntry {
+    date: string; // Date as a string (e.g., "YYYY-MM-DD")
+    uniqueQuestionsSolved: number;
+}
+
+interface Sheet {
+    name: string;  // Sheet name (e.g., "striver")
+    status: string; // String of 0s and 1s representing solved status
+}
+
+interface Potds {
+    status: string; // "0" for unsolved, "1" for solved
+    sumOfTime: number; // Sum of timestamps when the POTD was first solved
+    count: number; // Number of POTDs solved
+}
+
 export interface IUser extends Document {
     username: string;
     name: string;
@@ -44,6 +60,10 @@ export interface IUser extends Document {
     passwordChangedAt?: number;
     verified: boolean;
     profileVerificationData: IProfileVerificationData;
+    past14Days: Past14DaysEntry[];
+    sheets: Sheet[];
+    potds: Potds;
+
     createdAt: Date;
     updatedAt: Date;
 
@@ -192,6 +212,17 @@ const userSchema = new mongoose.Schema<IUser>({
     }, profileVerificationData: {
         randomName: String,
         lastRequestTimestamp: Number,
+    }, past14Days: [{
+        date: {type: String, required: true}, uniqueQuestionsSolved: {type: Number, default: 0}
+    }], sheets: [
+        {
+            name: {type: String, required: true}, // Sheet name (e.g., "striver")
+            status: {type: String, required: true} // String of 0s and 1s representing solved status
+        }
+    ], potds: {
+        status: {type: String, required: true},
+        sumOfTime: {type: Number, required: true, default: 0},
+        count: {type: Number, default: 0, required: true},
     }
 }, {
     timestamps: true,
