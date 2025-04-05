@@ -26,3 +26,13 @@ export const addPotd = async (body: any) => {
     }
     return {status: true, message: res.message || "Podd added successfully"};
 }
+
+export const getAllLeads = async () => {
+    const response = await backend.get("/lead/getAllLeads");
+    return response.data.leads;
+}
+
+export const getAllPotdsSubmissionData = async () => {
+    const response = await backend.get("/lead/getAllPotdsSubmissionData");
+    return response.data.potdSubmissionData
+}

@@ -11,8 +11,11 @@ import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
 import {getDictionary, getRandomString, getSubmissions,} from "./redux/apiCalls/userCalls.js";
-import PotdAdditionPage from "./pages/admin/PotdAdditionPage.js";
+import PotdAdditionPage from "./pages/Lead/PotdAdditionPage.js";
+import LeadPage from "./pages/Lead/LeadPage.js";
 import ProfilePage from "./pages/ProfilePage.js";
+import AllLeadPage from "./pages/Lead/AllLeadPage.js";
+import PotdStatusPage from "./pages/Lead/PotdStatusPage.js";
 
 const App: React.FC = () => {
 
@@ -75,8 +78,21 @@ const App: React.FC = () => {
                     },
                 },
                 {
-                    path: "addPotd",
-                    element: <AdminOnlyRoute><PotdAdditionPage/></AdminOnlyRoute>
+                    path: "leadDashboard",
+                    element: <AdminOnlyRoute><LeadPage/></AdminOnlyRoute>,
+                    children: [
+                        {
+                            path: "addPotd",
+                            element: <PotdAdditionPage/>,
+
+                        }, {
+                            path: "allLeads",
+                            element: <AllLeadPage/>,
+                        }, {
+                            path: "potdStatus",
+                            element: <PotdStatusPage/>
+                        }
+                    ]
                 }
             ],
         },

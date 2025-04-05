@@ -7,6 +7,7 @@ import User from "../model/UserModel";
 import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
+import Potd from "../model/PotdModel";
 
 //cache
 let dictionary;
@@ -220,6 +221,31 @@ const getDictionary = catchAsync(async (req: RequestWithUser, res: Response, nex
     })
 });
 
+const getAllPotds = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    let potds = [];
+    const potdDoc = await Potd.findOne({batch: user.batch + 1, branch: user.branch});
+    if (user.isLead) {
+        potds = potdDoc.potds;
+    } else {
+        const today = new Date(new Date().setHours(0, 0, 0, 0));
+
+        for (let potd of potdDoc.potds) {
+            const potdDate = new Date(potd.date);
+            if (potdDate.getTime() <= today.getTime())
+                potds.push(potd);
+            else
+                break;
+        }
+    }
+
+    res.status(200).json({
+        status: "success",
+        potds: potds,
+    })
+})
+
 
 export default {
     makeUserCodingProfileVerificationReady,
@@ -227,5 +253,6 @@ export default {
     isUsernameAvailable,
     getProfileData,
     getDictionary,
-    getSubmissionData
+    getSubmissionData,
+    getAllPotds
 };

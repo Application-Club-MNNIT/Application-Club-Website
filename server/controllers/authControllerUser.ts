@@ -148,7 +148,7 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunc
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
     // check if user still exists => to check the case if user has jwt token but the user was deleted!
-    const freshUser = await User.findOne({_id: decoded.id}).select("isLead _id");
+    const freshUser = await User.findOne({_id: decoded.id});
 
     if (!freshUser)
         return next(new AppError("The user belonging to this token does not exist.", 401));
@@ -165,7 +165,7 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunc
 
 const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = await User.findOne({_id: req.user.id}).select("leetcode.verified gfg.verified codeforces.verified leetcode.username gfg.username codeforces.username");
-    
+
     if (!user.leetcode.username || !user.leetcode.verified || !user.gfg.username || !user.gfg.verified || !user.codeforces.username || !user.codeforces.verified) {
         return res.status(400).json({
             status: "fail",

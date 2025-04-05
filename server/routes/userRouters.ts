@@ -67,6 +67,12 @@ router.get(
     userController.getSubmissionData
 )
 
+router.get(
+    "/getAllPotds",
+    authController.protect,
+    userController.getAllPotds
+)
+
 //
 // //for logging in
 // router.post(

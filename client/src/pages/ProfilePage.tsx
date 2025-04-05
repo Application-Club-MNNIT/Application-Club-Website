@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useLoaderData} from "react-router-dom";
+import {NavLink, useLoaderData} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {RootState} from "../redux/store.js";
 import {generateLink} from "../util/generateLink.js";
@@ -17,6 +17,7 @@ function ProfilePage() {
 
     return (
         <div>
+            {profileData.isLead && (<NavLink to="/lead">Lead</NavLink>)}
             <div>{profileData.username}</div>
             <div>{profileData.name}</div>
             <div>{profileData.email}</div>
@@ -51,7 +52,7 @@ function ProfilePage() {
                                             <td className="px-6 py-4">
                                                 {new Date(s.timestamp * 1000).toLocaleString()}
                                             </td>
-                                            <td className="px-6 py-4 capitalize ">{dict[s.questionId].replace(/[-]/g, ' ').replace(/[0-9]/g, '')}</td>
+                                            <td className="px-6 py-4 capitalize ">{dict[s.questionId]?.replace(/[-]/g, ' ')?.replace(/[0-9]/g, '') || "NA"}</td>
                                             <td className="px-6 py-4"><a href={link}>{link}</a></td>
                                         </tr>
                                     }

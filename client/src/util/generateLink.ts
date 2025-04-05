@@ -1,4 +1,6 @@
 export function generateLink(slug: string, questionId: string, platform: string): string {
+    
+    if (!slug || !questionId) return 'NA';
 
     switch (platform) {
         case "leetcode":

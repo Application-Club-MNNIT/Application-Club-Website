@@ -253,3 +253,9 @@ export const getSubmissions = async (platform: string, page: number) => {
     const response = await backend.get(`/user/getSubmissions/${platform}?page=${page || 1}`);
     return response.data.data;
 }
+
+
+export const getAllPotds = async () => {
+    const response = await backend.get("/user/getAllPotds");
+    return response.data;
+}

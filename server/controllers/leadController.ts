@@ -8,10 +8,11 @@ import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
 import axios from "axios";
+import User from "../model/UserModel";
 
 const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
-    if (!user.isLead) return next(new AppError("User is not a Lead", 400));
+    if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
     const {date, questionLink} = req.body;
     if (!date || !questionLink) return next(new AppError("All data not provided", 400));
@@ -51,7 +52,9 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
     await potdDoc.save();
 
     //call extension server to recache potds. no need to await
-    axios.get(`${process.env.EXTENSION_SERVER}/user/recachePotd`);
+    axios.get(`${process.env.EXTENSION_SERVER}/user/recachePotd`).catch((err: Error) => {
+        //pass
+    })
 
     res.status(200).json({
         status: "success",
@@ -60,4 +63,27 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
     });
 });
 
-export default {addPotd};
+
+const getAllLeads = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
+
+    const leads = await User.find({isLead: true}).select("email");
+    res.status(200).json({
+        status: "success",
+        leads: leads,
+    })
+});
+
+const getAllPotdSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
+
+    const users = await User.find({batch: user.batch + 1, branch: user.branch}).select("regNumber potds.status");
+    res.status(200).json({
+        status: "success",
+        potdSubmissionData: users,
+    })
+})
+
+export default {addPotd, getAllLeads, getAllPotdSubmissionData};
