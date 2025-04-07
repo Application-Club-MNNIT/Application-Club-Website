@@ -259,3 +259,7 @@ export const getAllPotds = async () => {
     const response = await backend.get("/user/getAllPotds");
     return response.data;
 }
+export const getSheetQuestions = async (sheetName: string) => {
+    const response = await backend.get(`/user/getSheetQuestions/${sheetName}`);
+    return response.data;
+}

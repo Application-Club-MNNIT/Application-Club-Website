@@ -8,6 +8,7 @@ import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
 import Potd from "../model/PotdModel";
+import Sheet from "../model/Sheet";
 
 //cache
 let dictionary;
@@ -246,6 +247,15 @@ const getAllPotds = catchAsync(async (req: RequestWithUser, res: Response, next:
     })
 })
 
+const getSheetQuestions = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const sheetName = req.params.sheetName;
+    const sheet = await Sheet.findOne({name: sheetName});
+    res.status(200).json({
+        status: "success",
+        sheet
+    })
+})
+
 
 export default {
     makeUserCodingProfileVerificationReady,
@@ -254,5 +264,6 @@ export default {
     getProfileData,
     getDictionary,
     getSubmissionData,
-    getAllPotds
+    getAllPotds,
+    getSheetQuestions
 };

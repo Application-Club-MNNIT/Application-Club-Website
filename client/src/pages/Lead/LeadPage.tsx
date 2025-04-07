@@ -14,6 +14,9 @@ function LeadPage() {
         }, {
             name: "Get potd status",
             path: "./potdStatus"
+        }, {
+            name: "Sheet status",
+            path: "./sheetStatus"
         }
     ]
 

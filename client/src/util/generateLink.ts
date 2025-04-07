@@ -1,6 +1,9 @@
 export function generateLink(slug: string, questionId: string, platform: string): string {
-    
-    if (!slug || !questionId) return 'NA';
+
+    if (!slug || !questionId) {
+        console.log(slug + " " + questionId + " " + platform);
+        return 'NA';
+    }
 
     switch (platform) {
         case "leetcode":

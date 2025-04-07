@@ -86,4 +86,16 @@ const getAllPotdSubmissionData = catchAsync(async (req: RequestWithUser, res: Re
     })
 })
 
-export default {addPotd, getAllLeads, getAllPotdSubmissionData};
+const getSheetSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
+
+    const users = await User.find({
+        batch: user.batch + 1,
+        branch: user.branch,
+    }).select("regNumber sheets");
+
+    res.status(200).json({status: "success", users});
+})
+
+export default {addPotd, getAllLeads, getAllPotdSubmissionData, getSheetSubmissionData};

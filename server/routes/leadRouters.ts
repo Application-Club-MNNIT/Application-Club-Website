@@ -9,6 +9,7 @@ const router = express.Router();
 router.post("/addPotd", authControllerUser.protect, leadController.addPotd);
 router.get("/getAllLeads", authControllerUser.protect, leadController.getAllLeads);
 router.get("/getAllPotdsSubmissionData", authControllerUser.protect, leadController.getAllPotdSubmissionData);
+router.get("/getSheetSubmissionData", authControllerUser.protect, leadController.getSheetSubmissionData);
 
 router.get("/test", catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({

@@ -73,6 +73,12 @@ router.get(
     userController.getAllPotds
 )
 
+router.get(
+    "/getSheetQuestions/:sheetName",
+    authController.protect,
+    userController.getSheetQuestions
+)
+
 //
 // //for logging in
 // router.post(

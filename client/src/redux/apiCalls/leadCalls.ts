@@ -36,3 +36,8 @@ export const getAllPotdsSubmissionData = async () => {
     const response = await backend.get("/lead/getAllPotdsSubmissionData");
     return response.data.potdSubmissionData
 }
+
+export const getSheetSubmissionData = async () => {
+    const response = await backend.get(`/lead/getSheetSubmissionData`);
+    return response.data.users;
+};
