@@ -41,3 +41,8 @@ export const getSheetSubmissionData = async () => {
     const response = await backend.get(`/lead/getSheetSubmissionData`);
     return response.data.users;
 };
+
+export const getJuniorsData = async () => {
+    const response = await backend.get(`/lead/getJuniorsData`);
+    return response.data.users;
+};

@@ -68,7 +68,7 @@ const getAllLeads = catchAsync(async (req: RequestWithUser, res: Response, next:
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
-    const leads = await User.find({isLead: true}).select("email");
+    const leads = await User.find({isLead: true}).select("email").lean();
     res.status(200).json({
         status: "success",
         leads: leads,
@@ -79,7 +79,7 @@ const getAllPotdSubmissionData = catchAsync(async (req: RequestWithUser, res: Re
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
-    const users = await User.find({batch: user.batch + 1, branch: user.branch}).select("regNumber potds.status");
+    const users = await User.find({batch: user.batch + 1, branch: user.branch}).select("regNumber potds.status").lean();
     res.status(200).json({
         status: "success",
         potdSubmissionData: users,
@@ -93,9 +93,36 @@ const getSheetSubmissionData = catchAsync(async (req: RequestWithUser, res: Resp
     const users = await User.find({
         batch: user.batch + 1,
         branch: user.branch,
-    }).select("regNumber sheets");
+    }).select("regNumber sheets").lean();
 
     res.status(200).json({status: "success", users});
 })
 
-export default {addPotd, getAllLeads, getAllPotdSubmissionData, getSheetSubmissionData};
+const getJuniorsData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
+
+    const users = await User.find(
+        {
+            batch: user.batch + 1,
+            branch: user.branch
+        },
+        {
+            name: 1,
+            regNumber: 1,
+            phone: 1,
+            "leetcode.username": 1,
+            "gfg.username": 1,
+            "codeforces.username": 1,
+            "github.username": 1,
+            sheets: 1,
+            potds: 1,
+            past14Days: 1
+        }
+    ).lean();
+
+
+    res.status(200).json({status: "success", users});
+})
+
+export default {addPotd, getAllLeads, getAllPotdSubmissionData, getSheetSubmissionData, getJuniorsData};

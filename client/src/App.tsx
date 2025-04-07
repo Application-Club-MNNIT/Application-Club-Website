@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage.js";
 import AllLeadPage from "./pages/Lead/AllLeadPage.js";
 import PotdStatusPage from "./pages/Lead/PotdStatusPage.js";
 import SheetStatusPage from "./pages/Lead/SheetStatusPage.js";
+import JuniorsStatusPage from "./pages/Lead/JuniorsStatusPage.js";
 
 const App: React.FC = () => {
 
@@ -95,6 +96,9 @@ const App: React.FC = () => {
                         }, {
                             path: "sheetStatus",
                             element: <SheetStatusPage/>,
+                        }, {
+                            path: "juniorsStatus",
+                            element: <JuniorsStatusPage/>,
                         }
                     ]
                 }

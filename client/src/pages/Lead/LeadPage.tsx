@@ -17,6 +17,9 @@ function LeadPage() {
         }, {
             name: "Sheet status",
             path: "./sheetStatus"
+        }, {
+            name: "Juniors Status",
+            path: "./juniorsStatus"
         }
     ]
 
