@@ -18,6 +18,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "express-rate-limit": "^7.4.0",
+    "github-username-regex": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.4",
@@ -27,15 +28,16 @@
     "validator": "^13.12.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "@types/node": "^22.13.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/github-username-regex": "^1.0.2",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.4",
     "@types/nodemailer": "^6.4.17",
-    "@types/validator": "^13.12.2"
+    "@types/validator": "^13.12.2",
+    "ts-node": "^10.9.2"
   }
 }
