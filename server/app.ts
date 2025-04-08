@@ -53,11 +53,13 @@ import userRoutes from "./routes/userRouters";
 import courseRoutes from "./routes/courseRoutes";
 import teacherRoutes from "./routes/teacherRouters";
 import paperRoutes from "./routes/paperRoutes";
+import subjectRoutes from "./routes/subjectRoutes";
 
 app.use("/user", userRoutes);
 app.use("/course", courseRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/paper", paperRoutes);
+app.use("/subject", subjectRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";

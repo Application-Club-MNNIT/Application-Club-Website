@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 
 interface ISubject extends Document {
   _id: mongoose.Types.ObjectId;
-  title: string;
+  name: string;
   subjectCode:string;
   courses:Types.ObjectId[];
   
@@ -13,7 +13,7 @@ const SubjectSchema = new Schema<ISubject>({
     type: Schema.Types.ObjectId,
     auto: true, 
   },
-  title: {
+  name: {
     type: String,
     required: true,
     trim: true,
