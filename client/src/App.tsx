@@ -11,6 +11,8 @@ import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
 import {getRandomString} from "./redux/apiCalls/userCalls.js";
+import SeniorsPage from "./pages/SeniorsPage.js";
+import SeniorPage from "./pages/SeniorPage.js";
 
 const App: React.FC = () => {
 
@@ -50,6 +52,14 @@ const App: React.FC = () => {
                         return {randomName: randomString || "randomstring"};
                     },
                     element: <ProfileVerificationPage/>,
+                },
+                {
+                    path: "seniors",
+                    element: <SeniorsPage/>,
+                },
+                {
+                    path: "seniors/:id",
+                    element: <SeniorPage/>,
                 },
             ],
         },

@@ -34,6 +34,7 @@ export interface IUser extends Document {
     branch: string;
     batch: number;
     phone: number;
+    followedSeniors: mongoose.Types.ObjectId[];
     password: string;
     leetcode: IPlatformSubmissions;
     gfg: IPlatformSubmissions;
@@ -97,7 +98,13 @@ const userSchema = new mongoose.Schema<IUser>({
     }, phone: {
         type: Number,
         required: true,
-    }, leetcode: {
+    },followedSeniors: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Senior",
+        },
+    ],
+     leetcode: {
         username: {type: String, unique: true, sparse: true},
         submissions: {
             type: [
