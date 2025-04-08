@@ -23,7 +23,7 @@ const CourseSchema = new Schema<ICourse>({
     type: Number,
     required: true,
   },
-});
+} , {timestamps:true});
 
 CourseSchema.pre("validate", function (next) {
   if (courseDurations[this.name]) {
