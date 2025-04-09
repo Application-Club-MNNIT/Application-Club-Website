@@ -11,6 +11,7 @@ import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
 import {getRandomString} from "./redux/apiCalls/userCalls.js";
+import LeaderBoard from "./pages/LeaderBoard.js";
 
 const App: React.FC = () => {
 
@@ -50,6 +51,10 @@ const App: React.FC = () => {
                         return {randomName: randomString || "randomstring"};
                     },
                     element: <ProfileVerificationPage/>,
+                },
+                {
+                    path: "leaderboard",
+                    element: <LeaderBoard/>,
                 },
             ],
         },
