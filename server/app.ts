@@ -51,6 +51,8 @@ import userRoutes from "./routes/userRouters";
 
 app.use("/user", userRoutes);
 
+import leaderboardRoutes from "./routes/leaderboardroutes";
+app.use("/api/leaderboard", leaderboardRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";
