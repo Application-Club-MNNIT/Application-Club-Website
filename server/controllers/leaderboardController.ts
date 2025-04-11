@@ -10,7 +10,7 @@ interface GitHubUser {
 }
 
 // Controller to get GitHub commits leaderboard
-export const getGithubCommitsLeaderboard = catchAsync(async (req: Request, res: Response) => {
+export const getGithubCommitsLeaderboard = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
   // Try to get from cache first
   const limit = req.query.limit ? parseInt(req.query.limit as string) : TOP_USERS_COUNT;
   const cachedLeaderboard = await getGithubLeaderboard(limit);
