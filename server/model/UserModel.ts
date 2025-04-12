@@ -21,6 +21,12 @@ export interface IGithub {
     randomName?: string;
 }
 
+export interface IPotds {
+    status: string;
+    sumOfTime: number;
+    count: number;
+}
+
 export interface IProfileVerificationData {
     randomName?: string;
     lastRequestTimestamp?: number;
@@ -35,6 +41,8 @@ export interface IUser extends Document {
     batch: number;
     phone: number;
     password: string;
+    isLead: boolean;
+    potds: IPotds;
     leetcode: IPlatformSubmissions;
     gfg: IPlatformSubmissions;
     codeforces: IPlatformSubmissions;
@@ -97,7 +105,26 @@ const userSchema = new mongoose.Schema<IUser>({
     }, phone: {
         type: Number,
         required: true,
-    }, leetcode: {
+    },
+    isLead: {
+        type: Boolean,
+        default: false
+    },
+    potds: {
+        status: {
+            type: String,
+            default: ""
+        },
+        sumOfTime: {
+            type: Number,
+            default: 0
+        },
+        count: {
+            type: Number,
+            default: 0
+        }
+    },
+    leetcode: {
         username: {type: String, unique: true, sparse: true},
         submissions: {
             type: [
