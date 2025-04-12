@@ -17,16 +17,19 @@ interface Senior {
 const SeniorsPage = () => {
   const userId = useSelector((state: RootState) => state.auth._id);
   const [seniors, setSeniors] = useState<Senior[]>([]);
+  const [companySearch, setCompanySearch] = useState(""); // Local state for search query
 
   useEffect(() => {
     const getSeniors = async () => {
-      const result = await fetchAllSeniors();
+      const result = await fetchAllSeniors(companySearch); // Pass companySearch as the query
       if (result.status && result.data) {
         setSeniors(result.data);
       }
     };
+    console.log(seniors);
     getSeniors();
-  }, []);
+  }, [companySearch]); // Trigger the effect when companySearch changes
+
 
   const handleFollow = async (seniorId: string) => {
     setSeniors((prev) =>
@@ -50,7 +53,15 @@ const SeniorsPage = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+    <div>
+        <input
+        type="text"
+        value={companySearch}
+        onChange={(e) => setCompanySearch(e.target.value)} // Update state as user types
+        placeholder="Search by company"
+        className="p-2 border rounded"
+      />
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
       {seniors.map((senior) => (
         <div
           key={senior._id}
@@ -109,6 +120,8 @@ const SeniorsPage = () => {
         </div>
       ))}
     </div>
+    </div>
+ 
   );
 };
 

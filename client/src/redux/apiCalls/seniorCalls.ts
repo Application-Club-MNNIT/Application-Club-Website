@@ -4,13 +4,13 @@ import to from "await-to-js";
 import { backend } from "../../AxiosRequests/backendRequestAxios";
 
 // Fetch all seniors
-export const fetchAllSeniors = async (): Promise<{
+export const fetchAllSeniors = async (company?: string): Promise<{
   status: boolean;
   data?: any[];
   message?: string;
 }> => {
   const id = toast.loading("Fetching seniors...");
-  const [err, res]: any = await to(backend.get("/seniors", { withCredentials: true }));
+  const [err, res]: any = await to(backend.get("/seniors", {     params: { company },withCredentials: true }));
 
   if (err) {
     const msg = err.response?.data?.message || err.message || "Failed to fetch seniors";
