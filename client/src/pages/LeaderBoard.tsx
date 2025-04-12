@@ -12,6 +12,7 @@ interface Student {
   githubUsername?: string;
   codeforcesUsername?: string;
   rating?: number; // Rating for CodeForces students
+  cfRank?: string; // Codeforces rank
   commits?: number; // Commits for GitHub users
   verified?: boolean;
 }
@@ -45,6 +46,7 @@ interface CodeforcesLeaderboardResponse {
       username: string;
       codeforcesUsername: string;
       rating: number;
+      rank?: string; // Codeforces rank 
       verified: boolean;
     }>;
     timestamp: number;
@@ -59,6 +61,36 @@ function App() {
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Function to get appropriate color for Codeforces rank
+  const getCodeforcesRankColor = (cfRank: string | undefined) => {
+    if (!cfRank) return "text-gray-400";
+    
+    switch (cfRank.toLowerCase()) {
+      case "newbie":
+        return "text-gray-400";
+      case "pupil":
+        return "text-green-500";
+      case "specialist":
+        return "text-cyan-500";
+      case "expert":
+        return "text-blue-500";
+      case "candidate master":
+        return "text-purple-500";
+      case "master":
+        return "text-orange-500";
+      case "international master":
+        return "text-orange-600";
+      case "grandmaster":
+        return "text-red-500";
+      case "international grandmaster":
+        return "text-red-600";
+      case "legendary grandmaster":
+        return "text-red-700";
+      default:
+        return "text-gray-400";
+    }
+  };
 
   // Fetch leaderboard data based on active tab
   useEffect(() => {
@@ -99,6 +131,7 @@ function App() {
               username: user.username,
               codeforcesUsername: user.codeforcesUsername,
               rating: user.rating,
+              cfRank: user.rank, // Codeforces rank
               verified: user.verified
             }));
 
@@ -269,8 +302,14 @@ function App() {
                           <div className="text-sm font-xxl text-white font-poppins">
                             {student.rank <= 3 && <Trophy className="inline-block w-5 h-5 mr-2 text-yellow-500" />}
                             {student.name || student.username}
-                            {(activeTab === 'github' || activeTab === 'codeforces') && student.verified && (
+                            {activeTab === 'github' && student.verified && (
                               <span className="ml-2 text-xs bg-green-600 text-white px-1 py-0.5 rounded">Verified</span>
+                            )}
+                            {/* Show rank for Codeforces */}
+                            {activeTab === 'codeforces' && student.cfRank && (
+                              <span className={`ml-2 text-xs px-1 py-0.5 rounded font-semibold ${getCodeforcesRankColor(student.cfRank)} border border-current`}>
+                                {student.cfRank}
+                              </span>
                             )}
                           </div>
                         </td>
