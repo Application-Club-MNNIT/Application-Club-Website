@@ -13,6 +13,7 @@ import {RootState} from "./redux/store.js";
 import {getRandomString} from "./redux/apiCalls/userCalls.js";
 import SeniorsPage from "./pages/SeniorsPage.js";
 import SeniorPage from "./pages/SeniorPage.js";
+import AddSeniorForm from "./test/AddSenior.js";
 
 const App: React.FC = () => {
 
@@ -60,6 +61,10 @@ const App: React.FC = () => {
                 {
                     path: "seniors/:id",
                     element: <SeniorPage/>,
+                },
+                {
+                    path: "/test",
+                    element: <AddSeniorForm/>,
                 },
             ],
         },

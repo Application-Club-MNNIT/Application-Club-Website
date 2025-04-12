@@ -115,3 +115,43 @@ export const followSenior = catchAsync(async (req: Request, res: Response, next:
         followers: senior.followers.length
     });
 });
+
+
+export const addSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      name,
+      regNumber,
+      linkedin,
+      batch,
+      branch,
+      interviews = [],
+    } = req.body;
+  
+    // Optional validation
+    if (!name || !regNumber || !linkedin || !batch || !branch) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+  
+    // Check for existing entry
+    const existingSenior = await Senior.findOne({ regNumber });
+    if (existingSenior) {
+      return res.status(409).json({ message: "Senior already exists" });
+    }
+  
+    const newSenior = new Senior({
+      name,
+      regNumber,
+      linkedin,
+      batch,
+      branch,
+      interviews,
+    });
+  
+    await newSenior.save();
+  
+    res.status(201).json({
+      message: "Senior added successfully",
+      data: newSenior,
+    });
+  });
+  

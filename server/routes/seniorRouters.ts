@@ -17,4 +17,5 @@ router.get("/", rateLimiter, authController.shallowProtect,seniorController.getA
 router.get("/:id", rateLimiter,authController.shallowProtect, seniorController.getSeniorById);
 router.post("/follow/:id", authController.shallowProtect, seniorController.followSenior);
 
+router.post("/", authController.shallowProtect, seniorController.addSenior);
 export default router;
