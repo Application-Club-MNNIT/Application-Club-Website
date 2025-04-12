@@ -10,6 +10,7 @@ interface Student {
   name?: string;
   username: string;
   githubUsername?: string;
+  codeforcesUsername?: string;
   rating?: number; // Rating for CodeForces students
   commits?: number; // Commits for GitHub users
   verified?: boolean;
@@ -29,6 +30,21 @@ interface GithubLeaderboardResponse {
       username: string;
       githubUsername: string;
       commits: number;
+      verified: boolean;
+    }>;
+    timestamp: number;
+    fromCache: boolean;
+  };
+}
+
+interface CodeforcesLeaderboardResponse {
+  status: string;
+  message: string;
+  data: {
+    users: Array<{
+      username: string;
+      codeforcesUsername: string;
+      rating: number;
       verified: boolean;
     }>;
     timestamp: number;
@@ -72,21 +88,32 @@ function App() {
           } else {
             throw new Error('Failed to fetch GitHub leaderboard');
           }
+        } else if (activeTab === 'codeforces') {
+          // Fetch Codeforces data from the API
+          const response = await backend.get<CodeforcesLeaderboardResponse>('/api/leaderboard/codeforces');
+          
+          if (response.data && response.data.status === 'success') {
+            // Map the API response to our leaderboard format
+            const codeforcesUsers = response.data.data.users.map((user, index) => ({
+              rank: index + 1,
+              username: user.username,
+              codeforcesUsername: user.codeforcesUsername,
+              rating: user.rating,
+              verified: user.verified
+            }));
+
+            // Update just the Codeforces section of our data
+            setData(prevData => ({
+              ...prevData || { codeforces: [], github: [], potd: [] },
+              codeforces: codeforcesUsers
+            }));
+          } else {
+            throw new Error('Failed to fetch Codeforces leaderboard');
+          }
         } else {
           // Simulated data with 10 students for other tabs
           const mockData: LeaderboardData = {
-            codeforces: [
-              { rank: 1, name: "John Doe", username: "john_doe", rating: 2300 },
-              { rank: 2, name: "Jane Smith", username: "jane_smith", rating: 2200 },
-              { rank: 3, name: "Eve Adams", username: "eve_adams", rating: 2100 },
-              { rank: 4, name: "Robert Green", username: "robert_green", rating: 2000 },
-              { rank: 5, name: "Mia Taylor", username: "mia_taylor", rating: 1900 },
-              { rank: 6, name: "Lucas Scott", username: "lucas_scott", rating: 1800 },
-              { rank: 7, name: "Sophie White", username: "sophie_white", rating: 1700 },
-              { rank: 8, name: "Ethan Harris", username: "ethan_harris", rating: 1600 },
-              { rank: 9, name: "Charlotte Lee", username: "charlotte_lee", rating: 1500 },
-              { rank: 10, name: "Benjamin Clark", username: "benjamin_clark", rating: 1400 },
-            ],
+            codeforces: data?.codeforces || [],
             github: data?.github || [],
             potd: [
               { rank: 1, name: "Eva Brown", username: "eva_brown" },
@@ -102,10 +129,10 @@ function App() {
             ]
           };
 
-          // Only update the non-github parts of the data to avoid losing github data when switching tabs
+          // Only update the POTD part of the data
           setData(prevData => ({
-            ...mockData,
-            github: prevData?.github || mockData.github
+            ...prevData || { codeforces: [], github: [], potd: [] },
+            potd: mockData.potd
           }));
         }
       } catch (err) {
@@ -242,14 +269,19 @@ function App() {
                           <div className="text-sm font-xxl text-white font-poppins">
                             {student.rank <= 3 && <Trophy className="inline-block w-5 h-5 mr-2 text-yellow-500" />}
                             {student.name || student.username}
-                            {activeTab === 'github' && student.verified && (
+                            {(activeTab === 'github' || activeTab === 'codeforces') && student.verified && (
                               <span className="ml-2 text-xs bg-green-600 text-white px-1 py-0.5 rounded">Verified</span>
                             )}
                           </div>
                         </td>
                         <td className="px-1 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-300 font-poppins">
-                            {activeTab === 'github' ? student.githubUsername || student.username : student.username}
+                            {activeTab === 'github' 
+                              ? student.githubUsername || student.username 
+                              : activeTab === 'codeforces'
+                                ? student.codeforcesUsername || student.username
+                                : student.username
+                            }
                           </div>
                         </td>
                         {activeTab === 'codeforces' && (
