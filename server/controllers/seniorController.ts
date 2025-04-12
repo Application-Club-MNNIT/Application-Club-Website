@@ -5,41 +5,28 @@ import User from "../model/UserModel";
 import AppError from "../util/appError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
+import { IUser } from "../model/UserModel";
+import { Document } from "mongoose";
 
-export const getAllSeniors = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    let token = req.cookies.jwt;
-    let loggedInUserId: string | null = null;
+export interface AuthenticatedRequest extends Request {
+    user?: Document<unknown, {}, IUser> & IUser;
+  }
+  export const getAllSeniors = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const loggedInUserId = req.user._id;
 
-    if (token) {
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-            loggedInUserId = decoded.id;
-        } catch (error) {
-            console.error("JWT verification failed:", error);
-        }
-    }
-
-    const seniors = await Senior.find().populate("interviews");
-
+    const seniors = await Senior.find();
+  
     const formattedSeniors = seniors.map((senior) => ({
-        ...senior.toObject(),
-        isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId)) : false,
+      ...senior.toObject(),
+      isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId as string)) : false,
     }));
-
+  
     res.status(200).json({ status: "success", data: formattedSeniors });
-});
-export const getSeniorById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    let token = req.cookies.jwt;
-    let loggedInUserId: string | null = null;
+  });
+  
+export const getSeniorById = catchAsync(async (req:AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const loggedInUserId = req.user._id;
 
-    if (token) {
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-            loggedInUserId = decoded.id;
-        } catch (error) {
-            console.error("JWT verification failed:", error);
-        }
-    }
 
     const senior = await Senior.findById(req.params.id).populate("interviews followers").exec();
 
@@ -51,28 +38,16 @@ export const getSeniorById = catchAsync(async (req: Request, res: Response, next
         status: "success",
         data: {
             ...senior.toObject(),
-            isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId)) : false,
+            isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId as string)) : false,
         },
     });
 });
 
-export const followSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.jwt;
+export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    
+    const userId= req.user._id;
 
-    if (!token) {
-        return next(new AppError("You are not logged in! Please log in again.", 401));
-    }
-
-    let decoded: JwtPayload;
-    try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    } catch (err) {
-        return next(new AppError("Invalid token. Please log in again.", 401));
-    }
-
-    const userId = decoded.id;
-
-    if (!Types.ObjectId.isValid(userId)) {
+    if (!Types.ObjectId.isValid(userId as string)) {
         return next(new AppError("Invalid user ID.", 400));
     }
 
@@ -85,7 +60,7 @@ export const followSenior = catchAsync(async (req: Request, res: Response, next:
         return next(new AppError("Senior or User not found", 404));
     }
 
-    const userObjectId = new Types.ObjectId(userId);
+    const userObjectId = new Types.ObjectId(userId as string);
     const seniorObjectId = new Types.ObjectId(senior.id);
 
     console.log("seniorObjectId", seniorObjectId);
