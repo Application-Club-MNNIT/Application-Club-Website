@@ -1,11 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../model/UserModel';
 import { totalCommitsFetcher, getGithubLeaderboard, setGithubLeaderboardCache, TOP_USERS_COUNT } from '../util/fetchers/github';
+import { fetchMultipleCodeforcesRatings, getCodeforcesLeaderboard, setCodeforcesLeaderboardCache, TOP_USERS_COUNT as CF_TOP_USERS_COUNT } from '../util/fetchers/codeforces';
 import catchAsync from '../util/catchAsync';
 
 interface GitHubUser {
   username: string;
   commits: number;
+  verified: boolean;
+}
+
+interface CodeforcesUser {
+  username: string;
+  codeforcesUsername: string;
+  rating: number;
+  rank?: string;
+  name?: string;
   verified: boolean;
 }
 
@@ -115,3 +125,84 @@ export const getUserGithubCommits = catchAsync(async (req: Request, res: Respons
     });
   }
 });
+
+// Controller to get Codeforces rating leaderboard
+export const getCodeforcesRatingLeaderboard = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  // Try to get from cache first
+  const limit = req.query.limit ? parseInt(req.query.limit as string) : CF_TOP_USERS_COUNT;
+  const cachedLeaderboard = await getCodeforcesLeaderboard(limit);
+  
+  if (cachedLeaderboard) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Codeforces leaderboard retrieved from cache',
+      data: cachedLeaderboard
+    });
+  }
+  
+  // If not in cache, fetch all users with Codeforces usernames
+  const users = await User.find({ 'codeforces.username': { $exists: true, $ne: '' } })
+    .select('username codeforces.username codeforces.verified');
+  
+  if (!users || users.length === 0) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'No users with Codeforces usernames found',
+      data: {
+        users: []
+      }
+    });
+  }
+
+  try {
+    // Extract just the Codeforces usernames
+    const codeforcesUsernames = users.map(user => user.codeforces.username);
+    
+    // Fetch all ratings in a single batch request
+    const codeforcesData = await fetchMultipleCodeforcesRatings(codeforcesUsernames);
+    
+    // Map the API data back to our users
+    const leaderboardData = users.map(user => {
+      // Find the corresponding Codeforces data for this user
+      const cfData = codeforcesData.find(
+        data => data.username.toLowerCase() === user.codeforces.username.toLowerCase()
+      );
+      
+      return {
+        username: user.username,
+        codeforcesUsername: user.codeforces.username,
+        rating: cfData?.rating || 0,
+        rank: cfData?.rank || 'unrated',
+        name: cfData?.name || null,
+        verified: user.codeforces.verified
+      };
+    });
+    
+    // Sort by rating (descending)
+    const sortedData = leaderboardData.sort((a, b) => b.rating - a.rating);
+    
+    // Cache the full leaderboard data
+    setCodeforcesLeaderboardCache(sortedData);
+    
+    // Return only the requested number of users
+    const topUsers = sortedData.slice(0, limit);
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Codeforces leaderboard generated',
+      data: {
+        users: topUsers,
+        timestamp: Date.now(),
+        fromCache: false
+      }
+    });
+  } catch (error) {
+    console.error('Error generating Codeforces leaderboard:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to generate Codeforces leaderboard',
+      error: error.message
+    });
+  }
+});
+

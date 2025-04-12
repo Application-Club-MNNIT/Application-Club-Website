@@ -1,19 +1,10 @@
 import express from 'express';
-import { getCodeforcesRating } from '../util/fetchers/codeforces';
-import { getGithubCommitsLeaderboard, getUserGithubCommits } from '../controllers/leaderboardController';
+import { getGithubCommitsLeaderboard, getUserGithubCommits,getCodeforcesRatingLeaderboard } from '../controllers/leaderboardController';
 
 const router = express.Router();
 
 // Codeforces routes
-router.get('/codeforces/:username', getCodeforcesRating);
-
-// Todo
-router.get('/codeforces', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Codeforces leaderboard '
-  });
-});
+router.get('/codeforces', getCodeforcesRatingLeaderboard);
 
 // GitHub routes
 router.get('/github', getGithubCommitsLeaderboard);
