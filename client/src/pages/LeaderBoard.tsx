@@ -14,6 +14,8 @@ interface Student {
   rating?: number; // Rating for CodeForces students
   cfRank?: string; // Codeforces rank
   commits?: number; // Commits for GitHub users
+  solvedCount?: number; // Solved count for POTD
+  timeTaken?: number; // Time taken for POTD
   verified?: boolean;
 }
 
@@ -47,6 +49,21 @@ interface CodeforcesLeaderboardResponse {
       codeforcesUsername: string;
       rating: number;
       rank?: string; // Codeforces rank 
+      verified: boolean;
+    }>;
+    timestamp: number;
+    fromCache: boolean;
+  };
+}
+
+interface PotdLeaderboardResponse {
+  status: string;
+  message: string;
+  data: {
+    users: Array<{
+      username: string;
+      solvedCount: number;
+      timeTaken: number;
       verified: boolean;
     }>;
     timestamp: number;
@@ -143,30 +160,28 @@ function App() {
           } else {
             throw new Error('Failed to fetch Codeforces leaderboard');
           }
-        } else {
-          // Simulated data with 10 students for other tabs
-          const mockData: LeaderboardData = {
-            codeforces: data?.codeforces || [],
-            github: data?.github || [],
-            potd: [
-              { rank: 1, name: "Eva Brown", username: "eva_brown" },
-              { rank: 2, name: "Mike Davis", username: "mike_davis" },
-              { rank: 3, name: "Sara White", username: "sara_white" },
-              { rank: 4, name: "Oliver King", username: "oliver_king" },
-              { rank: 5, name: "Lily Gray", username: "lily_gray" },
-              { rank: 6, name: "James Walker", username: "james_walker" },
-              { rank: 7, name: "Chloe Adams", username: "chloe_adams" },
-              { rank: 8, name: "Amelia Green", username: "amelia_green" },
-              { rank: 9, name: "Lucas Scott", username: "lucas_scott" },
-              { rank: 10, name: "Jackson Moore", username: "jackson_moore" },
-            ]
-          };
+        } else if (activeTab === 'potd') {
+          // Fetch POTD data from the API
+          const response = await backend.get<PotdLeaderboardResponse>('/api/leaderboard/potd');
+          
+          if (response.data && response.data.status === 'success') {
+            // Map the API response to our leaderboard format
+            const potdUsers = response.data.data.users.map((user, index) => ({
+              rank: index + 1,
+              username: user.username,
+              solvedCount: user.solvedCount,
+              timeTaken: user.timeTaken,
+              verified: user.verified
+            }));
 
-          // Only update the POTD part of the data
-          setData(prevData => ({
-            ...prevData || { codeforces: [], github: [], potd: [] },
-            potd: mockData.potd
-          }));
+            // Update just the POTD section of our data
+            setData(prevData => ({
+              ...prevData || { codeforces: [], github: [], potd: [] },
+              potd: potdUsers
+            }));
+          } else {
+            throw new Error('Failed to fetch POTD leaderboard');
+          }
         }
       } catch (err) {
         console.error('Error fetching leaderboard data:', err);
@@ -287,6 +302,12 @@ function App() {
                       {activeTab === 'github' && (
                         <th className="px-1 sm:px-6 py-4 text-left text-xs font-xxl text-gray-300 uppercase tracking-wider font-poppins">Commits</th>
                       )}
+                      {activeTab === 'potd' && (
+                        <>
+                          <th className="px-1 sm:px-6 py-4 text-left text-xs font-xxl text-gray-300 uppercase tracking-wider font-poppins">Solved</th>
+                          <th className="px-1 sm:px-6 py-4 text-left text-xs font-xxl text-gray-300 uppercase tracking-wider font-poppins">Time (hours)</th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
@@ -302,9 +323,6 @@ function App() {
                           <div className="text-sm font-xxl text-white font-poppins">
                             {student.rank <= 3 && <Trophy className="inline-block w-5 h-5 mr-2 text-yellow-500" />}
                             {student.name || student.username}
-                            {activeTab === 'github' && student.verified && (
-                              <span className="ml-2 text-xs bg-green-600 text-white px-1 py-0.5 rounded">Verified</span>
-                            )}
                             {/* Show rank for Codeforces */}
                             {activeTab === 'codeforces' && student.cfRank && (
                               <span className={`ml-2 text-xs px-1 py-0.5 rounded font-semibold ${getCodeforcesRankColor(student.cfRank)} border border-current`}>
@@ -332,6 +350,18 @@ function App() {
                           <td className="px-1 sm:px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-300 font-poppins">{student.commits}</div>
                           </td>
+                        )}
+                        {activeTab === 'potd' && (
+                          <>
+                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-300 font-poppins">{student.solvedCount}</div>
+                            </td>
+                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-300 font-poppins">
+                                {(student.timeTaken / 3600).toFixed(2)}
+                              </div>
+                            </td>
+                          </>
                         )}
                       </tr>
                     ))}
