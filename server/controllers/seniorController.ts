@@ -3,7 +3,6 @@ import catchAsync from "../util/catchAsync";
 import Senior from "../model/Senior";
 import User from "../model/UserModel";
 import AppError from "../util/appError";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 import { IUser } from "../model/UserModel";
 import { Document } from "mongoose";
@@ -13,9 +12,21 @@ export interface AuthenticatedRequest extends Request {
   }
   export const getAllSeniors = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const loggedInUserId = req.user._id;
+    const searchQuery = req.query.company?.toString();
 
-    const seniors = await Senior.find();
-  
+    const filter = searchQuery
+    ? {
+        interviews: {
+          $elemMatch: {
+            company: { $regex: searchQuery, $options: "i" }, // case-insensitive match
+          },
+        },
+      }
+    : {};
+   console.log("filter", filter);
+    console.log("searchQuery", searchQuery);
+  const seniors = await Senior.find(filter);
+  console.log("seniors", seniors);
     const formattedSeniors = seniors.map((senior) => ({
       ...senior.toObject(),
       isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId as string)) : false,
@@ -63,8 +74,7 @@ export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Re
     const userObjectId = new Types.ObjectId(userId as string);
     const seniorObjectId = new Types.ObjectId(senior.id);
 
-    console.log("seniorObjectId", seniorObjectId);
-    console.log("userObjectId", userObjectId);
+
     
     const isAlreadyFollowing = senior.followers.some((follower) => follower.equals(userObjectId));
 
@@ -92,41 +102,51 @@ export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Re
 });
 
 
+
 export const addSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      name,
-      regNumber,
-      linkedin,
-      batch,
-      branch,
-      interviews = [],
-    } = req.body;
-  
-    // Optional validation
-    if (!name || !regNumber || !linkedin || !batch || !branch) {
-      return res.status(400).json({ message: "All fields are required" });
+  const {
+    name,
+    regNumber,
+    linkedin,
+    batch,
+    branch,
+    interviews = [], // default value as an empty array
+  } = req.body;
+  // Validate required fields
+  if (!name || !regNumber || !linkedin || !batch || !branch) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  // Validate the format of interview dates if necessary
+  if (interviews.length > 0) {
+    const invalidInterview = interviews.find((interview) => !interview.date || !interview.company || !interview.role);
+    if (invalidInterview) {
+      return res.status(400).json({ message: "Each interview must have a valid date, company, and role" });
     }
-  
-    // Check for existing entry
-    const existingSenior = await Senior.findOne({ regNumber });
-    if (existingSenior) {
-      return res.status(409).json({ message: "Senior already exists" });
-    }
-  
-    const newSenior = new Senior({
-      name,
-      regNumber,
-      linkedin,
-      batch,
-      branch,
-      interviews,
-    });
-  
-    await newSenior.save();
-  
-    res.status(201).json({
-      message: "Senior added successfully",
-      data: newSenior,
-    });
+  }
+
+  // Check for existing entry based on regNumber
+  const existingSenior = await Senior.findOne({ regNumber });
+  if (existingSenior) {
+    return res.status(409).json({ message: "Senior already exists" });
+  }
+
+  // Create a new senior instance
+  const newSenior = new Senior({
+    name,
+    regNumber,
+    linkedin,
+    batch,
+    branch,
+    interviews, // Array of interviews
   });
-  
+
+  // Save the senior
+  await newSenior.save();
+
+  // Respond with the newly added senior
+  res.status(201).json({
+    message: "Senior added successfully",
+    data: newSenior,
+  });
+});
