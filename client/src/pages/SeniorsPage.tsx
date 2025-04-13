@@ -69,7 +69,7 @@ const SeniorsPage = () => {
   };
 
   return (
-    <div className="bg-black">
+    <div className="bg-black min-h-screen p-4">
       <input
         type="text"
         value={companySearch}
@@ -77,7 +77,7 @@ const SeniorsPage = () => {
         placeholder="Search by company"
         className="p-2 border rounded"
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
         {seniors.map((senior) => (
           <div
             key={senior._id}
@@ -112,7 +112,7 @@ const SeniorsPage = () => {
               Linked Profile
             </a>
 
-            {/* Interviews Section - one line per interview */}
+            {/* Interviews Section */}
             <div className="mt-3 w-full text-center">
               {senior.interviews && senior.interviews.length > 0 ? (
                 <div className="space-y-2 mt-2">
@@ -144,25 +144,18 @@ const SeniorsPage = () => {
               </span>
             )}
 
-            {/* Follow/Unfollow Button + Heart */}
+            {/* Heart Icon with Followers Count */}
             <div className="flex items-center gap-2 mt-3">
-              <button
-                onClick={() => handleFollow(senior._id)}
-                className={`px-2 py-1 rounded-full text-xs font-bold transition ${
-                  likes[senior._id]
-                    ? "bg-red-500 text-white hover:bg-red-600"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
-              >
-                {likes[senior._id] ? "Unfollow" : "Follow"}
-              </button>
               <button onClick={() => handleFollow(senior._id)} aria-label="Toggle Follow">
                 {likes[senior._id] ? (
-                  <FaHeart className="text-red-500 text-base" />
+                  <FaHeart className="text-red-500 text-xl" />
                 ) : (
-                  <FaRegHeart className="text-gray-500 text-base hover:text-red-400" />
+                  <FaRegHeart className="text-gray-500 text-xl hover:text-red-400" />
                 )}
               </button>
+              <span className="text-sm font-semibold text-[#333333]">
+                {senior.followers.length}
+              </span>
             </div>
 
             {/* View Details Link */}

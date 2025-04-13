@@ -43,7 +43,7 @@ const SeniorPage = () => {
             <div
                 className="flex flex-col lg:flex-row gap-4 rounded-lg shadow-lg p-4 w-full max-w-5xl"
                 style={{
-                    background: "linear-gradient(to bottom right, #87CEEB, #f5deb3)", // Retaining the gradient inside
+                    background: "linear-gradient(to bottom right, #87CEEB, #f5deb3)",
                 }}
             >
                 {/* Left Section - Profile */}
@@ -85,31 +85,33 @@ const SeniorPage = () => {
                                               month: "short",
                                               day: "numeric",
                                           })
-                                        : "Invalid Date";
+                                        : null;
 
                                 return (
                                     <div
                                         key={interview._id}
                                         className="p-4 rounded-lg shadow w-full"
                                         style={{
-                                            background: "linear-gradient(to bottom right, #87CEEB, #f5deb3)", // Keep gradient inside
+                                            background: "linear-gradient(to bottom right, #87CEEB, #f5deb3)",
                                         }}
                                     >
-                                        <h3 className="text-lg sm:text-xl font-bold text-white mb-3">
-                                            {interview.company}
-                                        </h3>
+                                        {/* Role with Date */}
+                                        <p className="text-white font-bold text-base sm:text-lg mb-3">
+                                            {interview.role}
+                                            {offerDate && (
+                                                <span className="text-gray-300 font-normal text-sm"> ({offerDate})</span>
+                                            )}
+                                        </p>
 
                                         {/* Basic Info */}
                                         <div className="mb-2 text-sm sm:text-base text-gray-300 space-y-1">
-                                            <p><strong>Role:</strong> {interview.role}</p>
                                             <p><strong>Status:</strong> {interview.status}</p>
-                                            <p><strong>Offer Date:</strong> {offerDate}</p>
                                         </div>
 
                                         {/* Questions */}
-                                        {interview.questionTypes && interview.questionTypes.length > 0 && (
+                                        {interview.questionTypes?.length > 0 && (
                                             <div className="pt-2 pb-2 bg-black rounded px-2">
-                                                 <strong className="text-white">Questions:</strong>
+                                                <strong className="text-white">Questions:</strong>
                                                 <p className="text-sm sm:text-base text-gray-300">
                                                     {interview.questionTypes.join(", ")}
                                                 </p>
@@ -119,9 +121,9 @@ const SeniorPage = () => {
                                         {/* Experience */}
                                         {interview.interviewExperience && (
                                             <div className="pt-2 pb-2 bg-black rounded px-2 mt-2">
-                                                 <strong className="text-white">Experience:</strong> 
+                                                <strong className="text-white">Experience:</strong>
                                                 <p className="text-sm sm:text-base text-gray-300">
-                                                   {interview.interviewExperience}
+                                                    {interview.interviewExperience}
                                                 </p>
                                             </div>
                                         )}
@@ -131,7 +133,7 @@ const SeniorPage = () => {
                                             <div className="pt-2 pb-2 bg-black rounded px-2 mt-2">
                                                 <strong className="text-white">Advice:</strong>
                                                 <p className="text-sm sm:text-base text-gray-300">
-                                                     {interview.adviceToJuniors}
+                                                    {interview.adviceToJuniors}
                                                 </p>
                                             </div>
                                         )}
