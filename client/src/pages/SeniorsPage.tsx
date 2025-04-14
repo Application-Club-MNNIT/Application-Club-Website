@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchAllSeniors, toggleFollowSenior } from "../redux/apiCalls/seniorCalls";
 import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import debounce from "lodash/debounce";
 import AnimatedWrapper from "../components/AnimatedWrapper";
 import { MouseEffectBackground } from "../components/MouseEffectBackground";
 
@@ -29,6 +30,18 @@ const SeniorsPage = () => {
   const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
   const [companySearch, setCompanySearch] = useState("");
 
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchTerm: string) => {
+        setCompanySearch(searchTerm);
+      }, 300),
+    []
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearch(e.target.value);
+  };
+
   useEffect(() => {
     const getSeniors = async () => {
       const result = await fetchAllSeniors(companySearch);
@@ -43,6 +56,12 @@ const SeniorsPage = () => {
     };
     getSeniors();
   }, [companySearch]);
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel(); // Cleanup debounce on unmount
+    };
+  }, [debouncedSearch]);
 
   const handleFollow = async (seniorId: string) => {
     setSeniors((prev) =>
@@ -82,8 +101,7 @@ const SeniorsPage = () => {
           <div className="flex justify-center mb-6">
             <input
               type="text"
-              value={companySearch}
-              onChange={(e) => setCompanySearch(e.target.value)}
+              onChange={handleSearchChange}
               placeholder="Search by company"
               className="p-3 rounded-lg bg-[rgba(74,74,74,0.42)] text-white focus:outline-none w-full max-w-md"
             />
