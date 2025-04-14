@@ -4,6 +4,8 @@ import { RootState } from "../redux/store";
 import { fetchAllSeniors, toggleFollowSenior } from "../redux/apiCalls/seniorCalls";
 import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import AnimatedWrapper from "../components/AnimatedWrapper";
+import { MouseEffectBackground } from "../components/MouseEffectBackground";
 
 interface Senior {
   isFollowing: boolean;
@@ -17,7 +19,7 @@ interface Senior {
   interviews?: {
     company: string;
     role: string;
-    date: string; // ISO date string
+    date: string;
   }[];
 }
 
@@ -69,105 +71,106 @@ const SeniorsPage = () => {
   };
 
   return (
-    <div className="bg-black min-h-screen p-4">
-      <input
-        type="text"
-        value={companySearch}
-        onChange={(e) => setCompanySearch(e.target.value)}
-        placeholder="Search by company"
-        className="p-2 border rounded"
-      />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-        {seniors.map((senior) => (
-          <div
-            key={senior._id}
-            className="m-2 bg-gradient-to-br from-AC_Orange to-AC_Green rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.2)] p-3 flex flex-col items-center transition duration-200 ease-in-out hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] hover:scale-[1.01]"
-          >
-            {/* Profile Photo */}
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow mb-3">
-              {senior.photoUrl ? (
-                <img
-                  src={senior.photoUrl}
-                  alt={senior.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-400 flex items-center justify-center text-3xl font-bold text-white">
-                  {senior.name[0].toUpperCase()}
-                </div>
-              )}
-            </div>
+    <div className="relative bg-black flex flex-col items-center justify-center px-4 py-8 min-h-[90dvh]">
+      <MouseEffectBackground />
+      <AnimatedWrapper>
+        <div className="bg-neutral-900 w-full max-w-[95vw] p-6 rounded-lg shadow-lg">
+          <h2 className="text-center text-white text-2xl sm:text-3xl font-poltawski mb-6">
+            Explore Top Seniors
+          </h2>
 
-            <p className="text-base font-semibold text-[#333333] text-center">
-              {senior.name}
-            </p>
-
-            {/* LinkedIn Link */}
-            <a
-              href={senior.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base font-semibold text-[#333333] mt-1 hover:underline text-center"
-            >
-              Linked Profile
-            </a>
-
-            {/* Interviews Section */}
-            <div className="mt-3 w-full text-center">
-              {senior.interviews && senior.interviews.length > 0 ? (
-                <div className="space-y-2 mt-2">
-                  {senior.interviews.map((interview, index) => {
-                    const interviewDate = new Date(interview.date);
-                    const formattedDate = interviewDate.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                    });
-
-                    return (
-                      <p key={index} className="text-sm text-[#333333]">
-                        <strong>Company:</strong> {interview.company}, {interview.role}, {formattedDate}
-                      </p>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-base font-semibold text-[#333333]">
-                  No interview company details available.
-                </p>
-              )}
-            </div>
-
-            {/* Top Mentor Badge */}
-            {senior.isTopMentor && (
-              <span className="mt-1 bg-yellow-400 text-white px-2 py-0.5 text-[10px] rounded-full font-bold">
-                🌟 Top Mentor
-              </span>
-            )}
-
-            {/* Heart Icon with Followers Count */}
-            <div className="flex items-center gap-2 mt-3">
-              <button onClick={() => handleFollow(senior._id)} aria-label="Toggle Follow">
-                {likes[senior._id] ? (
-                  <FaHeart className="text-red-500 text-xl" />
-                ) : (
-                  <FaRegHeart className="text-gray-500 text-xl hover:text-red-400" />
-                )}
-              </button>
-              <span className="text-sm font-semibold text-[#333333]">
-                {senior.followers.length}
-              </span>
-            </div>
-
-            {/* View Details Link */}
-            <Link
-              to={`/seniors/${senior._id}`}
-              className="mt-3 bg-white border border-gray-300 hover:bg-gray-200 text-base font-semibold text-[#333333] px-3 py-1 rounded-full transition"
-            >
-              View Details
-            </Link>
+          <div className="flex justify-center mb-6">
+            <input
+              type="text"
+              value={companySearch}
+              onChange={(e) => setCompanySearch(e.target.value)}
+              placeholder="Search by company"
+              className="p-3 rounded-lg bg-[rgba(74,74,74,0.42)] text-white focus:outline-none w-full max-w-md"
+            />
           </div>
-        ))}
-      </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {seniors.map((senior) => (
+              <div
+                key={senior._id}
+                className="bg-gradient-to-br from-AC_Orange to-AC_Green rounded-2xl shadow-xl p-4 flex flex-col items-center transition-transform duration-300 hover:scale-[1.015]"
+              >
+                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow mb-3">
+                  {senior.photoUrl ? (
+                    <img
+                      src={senior.photoUrl}
+                      alt={senior.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-500 flex items-center justify-center text-2xl font-bold text-white">
+                      {senior.name[0].toUpperCase()}
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-lg font-semibold text-white text-center">
+                  {senior.name}
+                </p>
+
+                <a
+                  href={senior.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-white font-medium mt-1 underline hover:text-AC_Orange"
+                >
+                  LinkedIn Profile
+                </a>
+
+                <div className="mt-3 w-full text-center text-sm text-white space-y-1">
+                  {senior.interviews && senior.interviews.length > 0 ? (
+                    senior.interviews.map((interview, index) => {
+                      const interviewDate = new Date(interview.date);
+                      const formattedDate = interviewDate.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                      });
+                      return (
+                        <p key={index}>
+                          <strong>Company:</strong> {interview.company}, {interview.role}, {formattedDate}
+                        </p>
+                      );
+                    })
+                  ) : (
+                    <p>No interview details available.</p>
+                  )}
+                </div>
+
+                {senior.isTopMentor && (
+                  <span className="mt-2 bg-yellow-400 text-white text-xs px-3 py-1 rounded-full font-bold">
+                    🌟 Top Mentor
+                  </span>
+                )}
+
+                <div className="flex items-center gap-2 mt-4">
+                  <button onClick={() => handleFollow(senior._id)} aria-label="Toggle Follow">
+                    {likes[senior._id] ? (
+                      <FaHeart className="text-red-500 text-xl" />
+                    ) : (
+                      <FaRegHeart className="text-white text-xl hover:text-red-400" />
+                    )}
+                  </button>
+                  <span className="text-white text-sm font-semibold">
+                    {senior.followers.length}
+                  </span>
+                </div>
+
+                <Link
+                  to={`/seniors/${senior._id}`}
+                  className="mt-4 bg-white text-black font-medium px-4 py-2 rounded-full hover:bg-gray-200 transition"
+                >
+                  View Details
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </AnimatedWrapper>
     </div>
   );
 };
