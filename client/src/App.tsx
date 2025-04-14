@@ -12,7 +12,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
 import {getRandomString} from "./redux/apiCalls/userCalls.js";
 import LeaderBoard from "./pages/LeaderBoard.js";
-
+import OPCLeaderboard from "./pages/OpcLeaderBoard.js";
 const App: React.FC = () => {
 
     const PrivateRoute = ({children}: { children: JSX.Element }) => {
@@ -55,6 +55,10 @@ const App: React.FC = () => {
                 {
                     path: "leaderboard",
                     element: <LeaderBoard/>,
+                },
+                {
+                    path: "opcLeaderboard",
+                    element: <OPCLeaderboard/>,
                 },
             ],
         },
