@@ -58,15 +58,26 @@ const AddSeniorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formattedInterviews = interviews.map((i) => ({
-      date: new Date(i.date),
-      company: i.company,
-      role: i.role,
-      status: i.status,
-      questionTypes: i.questionTypes.split(",").map((q) => q.trim()),
-      interviewExperience: i.interviewExperience,
-      adviceToJuniors: i.adviceToJuniors
-    }));
+    const formattedInterviews = interviews.map((i) => {
+      const formatted = {
+        date: new Date(i.date),
+        company: i.company,
+        role: i.role,
+        status: i.status,
+        questionTypes: i.questionTypes ? i.questionTypes.split(",").map((q) => q.trim()) : undefined,
+        interviewExperience: i.interviewExperience || undefined,
+        adviceToJuniors: i.adviceToJuniors || undefined,
+      };
+
+      // Remove undefined fields
+      Object.keys(formatted).forEach((key) => {
+        if (formatted[key] === undefined) {
+          delete formatted[key];
+        }
+      });
+
+      return formatted;
+    });
 
     const payload = {
       ...formData,

@@ -104,6 +104,7 @@ export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Re
 
 
 export const addSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
   const {
     name,
     regNumber,
@@ -119,10 +120,21 @@ export const addSenior = catchAsync(async (req: Request, res: Response, next: Ne
 
   // Validate the format of interview dates if necessary
   if (interviews.length > 0) {
-    const invalidInterview = interviews.find((interview) => !interview.date || !interview.company || !interview.role);
+    const invalidInterview = interviews.find(
+      (interview) => !interview.date || !interview.company || !interview.role
+    );
     if (invalidInterview) {
-      return res.status(400).json({ message: "Each interview must have a valid date, company, and role" });
+      return res.status(400).json({
+        message: "Each interview must have a valid date, company, and role",
+      });
     }
+
+    // Remove undefined optional fields
+    interviews.forEach((interview) => {
+      if (!interview.questionTypes) delete interview.questionTypes;
+      if (!interview.interviewExperience) delete interview.interviewExperience;
+      if (!interview.adviceToJuniors) delete interview.adviceToJuniors;
+    });
   }
 
   // Check for existing entry based on regNumber

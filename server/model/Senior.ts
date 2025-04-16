@@ -13,7 +13,7 @@ export interface ISenior extends Document {
         company: string;
         role: string;
         status: string;
-        questionTypes: string[];
+        questionTypes?: string[];
         interviewExperience?: string;
         adviceToJuniors?: string;
     }[];
@@ -35,7 +35,7 @@ const SeniorSchema = new Schema<ISenior>({
             company: { type: String, required: true },
             role: { type: String, required: true },
             status: { type: String, required: true },
-            questionTypes: [{ type: String, required: true }],
+            questionTypes: [{ type: String }],
             interviewExperience: { type: String },
             adviceToJuniors: { type: String }
         }
