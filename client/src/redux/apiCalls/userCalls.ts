@@ -67,7 +67,6 @@ export const getRandomString = async () => {
         });
         return {status: false, message, unverifiedPlatforms: []};
     } else {
-        const {randomString} = res.data;
 
         toast.update(id, {
             render: "Verification strings generated successfully!",
@@ -76,7 +75,7 @@ export const getRandomString = async () => {
             autoClose: 2000,
         });
 
-        return {status: true, message: "Verification strings generated successfully!", randomString};
+        return {status: true, message: "Verification strings generated successfully!", res};
     }
 };
 
@@ -93,7 +92,6 @@ export const verifyHandle: (
     const [err, res]: [any, any] = await to(backend.post("/user/verifyCodingPlatform", body));
 
     if (err) {
-        dispatch(verifyPlatformFail());
         const message =
             err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
 
@@ -106,8 +104,6 @@ export const verifyHandle: (
 
         return {status: false, message, verified: false};
     } else {
-        dispatch(verifyPlatformSuccess({platform: body.platform, username: body.username}));
-
         toast.update(id, {
             render: "Handle verified successfully!",
             type: "success",
@@ -126,6 +122,16 @@ export const isUsernameAvailable = async (username: string) => {
         return false;
     } else {
         return res.data.available;
+    }
+}
+
+export const getHomeStats = async () => {
+    let [err, res]: any[] = await to(backend.get("/user/getHomeStats"));
+    if (err) {
+        console.error("Error while getting home stats: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res;
     }
 }
 

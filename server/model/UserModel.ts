@@ -88,6 +88,14 @@ const PlatformSchema = new mongoose.Schema({
     lastRequestTimestamp: {type: Number, required: true, min: 0, default: 0}
 }, {_id: false});
 
+const defaultPlatform = {
+    username: null,
+    submissions: [],
+    verified: false,
+    lastSubmissionTimestamp: 0,
+    lastRequestTimestamp: 0
+};
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -142,16 +150,33 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    leetcode: {type: PlatformSchema, select: false},
-    gfg: {type: PlatformSchema, select: false},
-    codeforces: {type: PlatformSchema, select: false},
+    leetcode: {
+        type: PlatformSchema,
+        select: false,
+        default: defaultPlatform
+    },
+    gfg: {
+        type: PlatformSchema,
+        select: false,
+        default: defaultPlatform
+    },
+    codeforces: {
+        type: PlatformSchema,
+        select: false,
+        default: defaultPlatform
+    },
     github: {
         type: new mongoose.Schema({
             username: {type: String, unique: true, sparse: true},
             verified: {type: Boolean, default: false},
             randomName: {type: String}
         }, {_id: false}),
-        select: false
+        select: false,
+        default: {
+            username: null,
+            verified: false,
+            randomName: null,
+        }
     },
     password: {
         type: String,
@@ -176,7 +201,10 @@ const userSchema = new mongoose.Schema({
             randomName: String,
             lastRequestTimestamp: Number
         }, {_id: false}),
-        select: false
+        select: false,
+        default: {
+            lastRequestTimestamp: 0
+        }
     },
     past14Days: {
         type: [

@@ -2,7 +2,7 @@ import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import {ToastContainer, Zoom} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Root from "./pages/Root.js";
-import LandingPage from "./pages/LandingPage.js";
+import HomePage from "./pages/HomePage.js";
 import ErrorPage from "./pages/ErrorPage.js";
 import SignupPage from "./pages/SignupPage.js";
 import LoginPage from "./pages/LoginPage.js";
@@ -10,7 +10,7 @@ import React from "react";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
-import {getDictionary, getRandomString, getSubmissions,} from "./redux/apiCalls/userCalls.js";
+import {getDictionary, getHomeStats, getRandomString, getSubmissions,} from "./redux/apiCalls/userCalls.js";
 import PotdAdditionPage from "./pages/Lead/PotdAdditionPage.js";
 import LeadPage from "./pages/Lead/LeadPage.js";
 import ProfilePage from "./pages/ProfilePage.js";
@@ -50,7 +50,10 @@ const App: React.FC = () => {
             children: [
                 {
                     path: "",
-                    element: <LandingPage/>,
+                    element: <HomePage/>,
+                    loader: async () => {
+                        return await getHomeStats()
+                    }
                 },
                 {
                     path: "signup",
@@ -63,8 +66,7 @@ const App: React.FC = () => {
                 {
                     path: "profileVerification",
                     loader: async () => {
-                        const {randomString} = await getRandomString();
-                        return {randomName: randomString || "randomstring"};
+                        return await getRandomString();
                     },
                     element: <PrivateRoute><ProfileVerificationPage/></PrivateRoute>,
                 },

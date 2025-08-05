@@ -13,57 +13,69 @@ import {useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
+import {useNavigate} from "react-router-dom";
 
 const ProfileVerificationPage: React.FC = () => {
-
-    //yes it looks weird in typescript
-    //const data = useLoaderData() in js
     const dispatch = useDispatch<AppDispatch>();
-    const data: { randomName: string } = useLoaderData() as { randomName: string };
-    const randomName: string = data.randomName;
-    const leetcode = useSelector((state: RootState) => state.auth.leetcode);
-    const gfg = useSelector((state: RootState) => state.auth.gfg);
-    const github = useSelector((state: RootState) => state.auth.github);
-    const codeforces = useSelector((state: RootState) => state.auth.codeforces);
+    const navigate = useNavigate();
+    const data = useLoaderData().res.data;
+    const randomName: string = data.randomString;
+    const [verifiedPlatforms, setVerifiedPlatforms] = useState(data.verifiedPlatforms || []);
+    const [unverifiedPlatforms, setUnverifiedPlatforms] = useState(data.unverifiedPlatforms || []);
 
-    // Initialize usernames from the user state
-    const [usernames, setUsernames] = useState({
-        leetcode: leetcode?.username || "",
-        gfg: gfg?.username || "",
-        github: github?.username || "",
-        codeforces: codeforces?.username || "",
-    });
+    console.log(data)
+    console.log(verifiedPlatforms)
+    console.log(unverifiedPlatforms)
 
-    const [verified, setVerified] = useState({
-        leetcode: leetcode?.verified || false,
-        gfg: gfg?.verified || false,
-        github: github?.verified || false,
-        codeforces: codeforces?.verified || false,
+    // Initialize usernames state for all platforms
+    const [usernames, setUsernames] = useState(() => {
+        // Start with verified platforms' usernames
+        const initialState = {};
+        (data.verifiedPlatforms || []).forEach(platform => {
+            initialState[platform.platform] = platform.username;
+        });
+        // Add empty strings for unverified platforms
+        (data.unverifiedPlatforms || []).forEach(platform => {
+            initialState[platform] = "";
+        });
+        return initialState;
     });
 
     // Handler to update the username for a specific platform
     const handleChange = (platform: string, value: string) => {
-        if (!verified[platform]) {
+        if (unverifiedPlatforms.includes(platform)) {
             setUsernames({...usernames, [platform]: value});
         }
     };
 
     // Handler to verify the username for a specific platform
     const handleVerify = async (platform: "leetcode" | "gfg" | "codeforces" | "github") => {
-        console.log(`Verifying ${platform} username: ${usernames[platform]}`);
-        let username: string = usernames[platform];
+        const username = usernames[platform];
+        console.log(`Verifying ${platform} username: ${username}`);
         const response = await verifyHandle(dispatch, {platform, username});
         if (response.status) {
-            setUsernames({...usernames, [platform]: username});
-            setVerified({...verified, [platform]: true});
+            // Move platform from unverified to verified
+            setVerifiedPlatforms([...verifiedPlatforms, {platform, username}]);
+            setUnverifiedPlatforms(unverifiedPlatforms.filter(p => p !== platform));
         }
+    };
+
+    // Check if a platform is verified
+    const isPlatformVerified = (platform: string) => {
+        return verifiedPlatforms.some(p => p.platform === platform);
+    };
+
+    // Get username for a platform
+    const getUsername = (platform: string) => usernames[platform] || "";
+
+    const handleSubmit = () => {
+        navigate('/');
     };
 
     return (
         <div className="relative bg-black flex flex-col items-center justify-center px-4 py-8 min-h-[90dvh]">
             <MouseEffectBackground/>
             <AnimatedWrapper>
-                {/* Inner container with background and shadow */}
                 <div
                     className="bg-neutral-900 w-full flex flex-col items-center justify-center max-w-[95vw] overflow-hidden">
                     <h2 className="text-center text-white p-4 mt-4 text-2xl sm:text-3xl font-poltawski mb-4 sm:mb-2">
@@ -75,12 +87,10 @@ const ProfileVerificationPage: React.FC = () => {
                         className="font-medium text-AC_Orange">{randomName}</span> on
                         each platform, then click verify</p>
 
-                    <p className="text-red-500 font-medium w-[100%] md:w-[90%] px-4 text-lg mb-8">Caution: You won't be
-                        allowed to change your
-                        username once
-                        verified!</p>
+                    <p className="text-red-500 font-medium w-[100%] md:w-[90%] px-4 text-lg mb-8">
+                        Caution: You won't be allowed to modify your profile details once verified!
+                    </p>
 
-                    {/* List of platforms for username verification */}
                     {[
                         {name: "Leetcode", key: "leetcode", icon: LeetCodeIcon, link: "https://leetcode.com/profile/"},
                         {
@@ -94,7 +104,6 @@ const ProfileVerificationPage: React.FC = () => {
                     ].map(({name, key, icon, link}) => (
                         <div key={key}
                              className="flex flex-wrap md:flex-row px-1 md:px-10 items-center mb-2 sm:mb-3 space-y-3 sm:space-y-0 w-full">
-                            {/* Platform icon and label */}
                             <label
                                 className="text-white font-poppins text-lg flex items-center w-full sm:w-1/4 py-2 px-1 sm:justify-end sm:mr-4 justify-between m-0">
                                 <div className="flex">
@@ -102,43 +111,38 @@ const ProfileVerificationPage: React.FC = () => {
                                     <span>{name} :</span>
                                 </div>
                                 <a href={link} target="_blank" rel="noopener noreferrer"
-                                   className="xs:hidden flex  p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 items-center justify-center">
+                                   className="xs:hidden flex p-0 sm:p-2 rounded-md w-9 h-9 sm:h-12 sm:w-12 items-center justify-center">
                                     <img src={VerifyIcon} alt="Verify Icon"
                                          className="w-6 h-6 p-0.5 sm:w-6 sm:h-6"/>
                                 </a>
                             </label>
 
-                            {/* Input field and verify button */}
-                            <div className="flex-1 flex items-center  space-x-2 sm:space-x-4 relative">
+                            <div className="flex-1 flex items-center space-x-2 sm:space-x-4 relative">
                                 <input
                                     type="text"
-                                    value={usernames[key]}
+                                    value={getUsername(key)}
                                     onChange={(e) => handleChange(key, e.target.value)}
                                     className={`flex-1 p-3 rounded-xl bg-[rgba(74,74,74,0.42)] text-white focus:outline-none w-[200px] sm:w-[75px] md:w-[140px]
-                                         ${verified[key] ? 'border-2 border-green-400' : 'border-none'}`}
+                                         ${isPlatformVerified(key) ? 'border-2 border-green-400' : 'border-none'}`}
                                     placeholder={`Enter your ${name} username`}
-                                    readOnly={verified[key]}
+                                    readOnly={isPlatformVerified(key)}
                                 />
 
-                                {verified[key] && (
+                                {isPlatformVerified(key) && (
                                     <img src={TickIcon} alt="Verified" className="absolute right-6 w-6 h-6"/>
                                 )}
 
-                                {/* Verify section with icon and button */}
                                 <div className="flex items-center space-x-3 h-12">
-                                    {!verified[key] && (
+                                    {!isPlatformVerified(key) && (
                                         <>
-                                            {/* Verify icon inside a box */}
-
                                             <a href={link} target="_blank" rel="noopener noreferrer"
                                                className="hidden xs:flex bg-[rgba(74,74,74,0.42)] p-0 sm:p-2 rounded-md w-12 h-12 items-center justify-center">
                                                 <img src={VerifyIcon} alt="Verify Icon"
                                                      className="w-6 h-6 p-0.5 sm:w-6 sm:h-6"/>
                                             </a>
-                                            {/* Verify button */}
                                             <button
                                                 onClick={() => handleVerify(key as "leetcode" | "codeforces" | "gfg" | "github")}
-                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green py-2 px-2 h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski "
+                                                className="bg-[rgba(74,74,74,0.42)] text-AC_Green py-2 px-2 h-12 rounded-md font-semibold hover:opacity-90 transition font-poltawski"
                                             >
                                                 Verify
                                             </button>
@@ -148,14 +152,15 @@ const ProfileVerificationPage: React.FC = () => {
                             </div>
                         </div>
                     ))}
-                    {/* Submit button */}
+
                     <div className="p-2 px-10 rounded-lg flex justify-center w-[300px]">
                         <button
-                            className={`bg-AC_Green text-black px-8 py-2 w-full rounded-lg text-lg font-medium transition ${(verified.leetcode && verified.gfg && verified.github && verified.codeforces)
+                            onClick={handleSubmit}
+                            className={`bg-AC_Green text-black px-8 py-2 w-full rounded-lg text-lg font-medium transition ${unverifiedPlatforms.length === 0
                                 ? "hover:opacity-90"
                                 : "opacity-50 cursor-not-allowed"
                             }`}
-                            disabled={!(verified.leetcode && verified.gfg && verified.github && verified.codeforces)}
+                            disabled={unverifiedPlatforms.length > 0}
                         >
                             Submit
                         </button>

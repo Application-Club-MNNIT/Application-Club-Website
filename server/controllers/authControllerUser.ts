@@ -144,11 +144,11 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunc
         return next(new AppError("You are not logged in! Please log in again.", 401));
 
     // verify the token
-    //verify also accepts a callback function, but we will make it return a promise
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
     // check if user still exists => to check the case if user has jwt token but the user was deleted!
-    const freshUser = await User.findOne({_id: decoded.id});
+    const freshUser = await User.findOne({_id: decoded.id})
+        .select("+leetcode +gfg +codeforces +github +profileVerificationData");
 
     if (!freshUser)
         return next(new AppError("The user belonging to this token does not exist.", 401));
@@ -157,7 +157,7 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunc
     if (freshUser.changePasswordAfter(decoded.iat))
         return next(new AppError("User recently changed their password! Please login again.", 401));
 
-    //grant access to the protected rout
+    //grant access to the protected route
     //also add this user to the request object
     req.user = freshUser;
     next();
@@ -229,6 +229,3 @@ export default {
     login,
     logout
 }
-
-
-

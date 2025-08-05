@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
-import { MouseEffectBackground } from "./MouseEffectBackground.js";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import { loginSuccess, resetAll } from "../redux/authSlice";
-import { login, signup, verifyOTP } from "../redux/apiCalls/userCalls";
+import {MouseEffectBackground} from "./MouseEffectBackground.js";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
+import {loginSuccess, resetAll} from "../redux/authSlice";
+import {login, signup, verifyOTP} from "../redux/apiCalls/userCalls";
+import {useNavigate} from "react-router-dom";
 
 const OTP_LENGTH = 5;
 const OTP_RESENT_COOLDOWN = 60;
@@ -13,9 +14,11 @@ const OTPVerification = () => {
     const [otp, setOtp] = useState<string[]>([]);
     const inputRefs = useRef([]);
     const authSelector = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
 
     const handleChange = (e, index) => {
-        const { value } = e.target;
+        const {value} = e.target;
         if (!/^[0-9]*$/.test(value)) {
             e.target.value = "";
             resetAllFieldsAhead(index);
@@ -47,12 +50,19 @@ const OTPVerification = () => {
     }
 
     const handleSubmit = async () => {
-        const isVarified = await verifyOTP(dispatch, { email: authSelector.email, otp: parseInt(otp.join("")) });
+        const isVarified = await verifyOTP(dispatch, {email: authSelector.email, otp: parseInt(otp.join(""))});
         console.log(isVarified);
         if (!isVarified) {
             resetAllFieldsAhead(0);
+        } else {
+            navigate('/profileVerification');
         }
     }
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await handleSubmit();
+    };
 
     // ============= Timer =============
     const [timer, setTimer] = useState(OTP_RESENT_COOLDOWN);
@@ -83,10 +93,6 @@ const OTPVerification = () => {
         });
     };
 
-    // ===================================
-
-    const dispatch = useDispatch<AppDispatch>();
-
     // reseting username so that signup page renders again
     const handleEmailChange = () => {
         dispatch(resetAll());
@@ -95,9 +101,8 @@ const OTPVerification = () => {
     // TODO: Show email address at opt verification page
     return (
         <AnimatedWrapper>
-            <div
-                className="flex z-10 justify-center items-center align-middle flex-col gap-5 bg-neutral-900 text-white p-8 sm:px-12 ">
-
+            <form onSubmit={handleFormSubmit}
+                  className="flex z-10 justify-center items-center align-middle flex-col gap-5 bg-neutral-900 text-white p-8 sm:px-12">
                 <h2 className="text-2xl leading-9 text-center font-poltawski">OTP <span
                     className="ml-1">Verification</span></h2>
                 <div className="flex flex-col justify-center leading-9">
@@ -120,33 +125,34 @@ const OTPVerification = () => {
                 </div>
 
                 <div className="mb-4 flex justify-end self-end">
-                    <a href="#" className="text-xs text-AC_Green hover:underline     ">
+                    <a href="#" className="text-xs text-AC_Green hover:underline">
                         <button
+                            type="button"
                             onClick={handleResendOTP}
                             disabled={!canResend}
                             className={`text-xs font-semibold transition ${canResend
                                 ? "text-AC_Green hover:underline"
                                 : "text-gray-500 cursor-not-allowed opacity-50"
-                                }`}>
+                            }`}>
                             {canResend ? "Resend OTP?" : `Resend in ${timer}s`}
                         </button>
-
                     </a>
                 </div>
 
-                <div className="flex justify-center gap-2 ">
+                <div className="flex justify-center gap-2">
                     <button
-                        className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition"
+                        type="button"
+                        className="border-2 border-AC_Green text-white font-semibold py-1 px-5 rounded-lg hover:bg-opacity-80 transition"
                         onClick={handleEmailChange}>
                         change email
                     </button>
                     <button
-                        onClick={handleSubmit}
-                        className="bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg  hover:bg-opacity-80 transition">
+                        type="submit"
+                        className="bg-AC_Green text-black font-semibold py-1 px-5 rounded-lg hover:bg-opacity-80 transition">
                         Submit
                     </button>
                 </div>
-            </div>
+            </form>
         </AnimatedWrapper>
     );
 };

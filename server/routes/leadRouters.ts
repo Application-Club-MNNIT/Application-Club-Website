@@ -12,6 +12,8 @@ router.get("/getAllPotdsSubmissionData", authControllerUser.protect, leadControl
 router.get("/getSheetSubmissionData", authControllerUser.protect, leadController.getSheetSubmissionData);
 router.get("/getJuniorsData", authControllerUser.protect, leadController.getJuniorsData);
 
+router.post("/specialSignup", authControllerUser.protect, leadController.specialSignup);
+
 router.get("/test", catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
         status: "success",

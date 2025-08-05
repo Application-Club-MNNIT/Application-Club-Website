@@ -79,6 +79,11 @@ router.get(
     userController.getSheetQuestions
 )
 
+router.get(
+    "/getHomeStats",
+    userController.getHomeStats
+)
+
 //
 // //for logging in
 // router.post(

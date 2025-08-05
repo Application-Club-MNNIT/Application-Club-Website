@@ -71,7 +71,7 @@ function JuniorsStatusPage() {
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="flex text-xs border-b p-2 gap-1">
-                                {junior.past14Days.map((day) => {
+                                {junior.past14Days.sort((a, b) => a.date.localeCompare(b.date)).map((day) => {
                                     return (
                                         <div key={`${junior.regNumber}${day.date}`} className="outline p-1 rounded-sm">
                                             <div className="border-b">{day.date}</div>
@@ -91,7 +91,7 @@ function JuniorsStatusPage() {
                             </div>
                             <div className="text-xs flex gap-2 border-b p-2 justify-between ">
                                 <span>POTD:</span>
-                                <div>{junior.potds.status.split("").map(el => {
+                                <div>{junior.potds?.status?.split("").map(el => {
                                     potdTotal += el === "1" ? 1 : 0;
                                     return <span
                                         className={`w-1.5 inline-block ${el === "1" ? "bg-green-300" : ""}`}>{el}</span>

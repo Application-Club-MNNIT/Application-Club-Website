@@ -9,6 +9,12 @@ import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
 import Potd from "../model/PotdModel";
 import Sheet from "../model/Sheet";
+import mongoose from "mongoose";
+
+// Create a minimal schema that allows any fields
+// Register the model with the existing collection name 'globaldatas'
+const globalDataSchema = new mongoose.Schema({}, {strict: false});
+const GlobalData = mongoose.model('globaldatas', globalDataSchema);
 
 //cache
 let dictionary;
@@ -25,7 +31,7 @@ const initializeDictionary = async (): Promise<void> => {
     dictionary = {leetcode, gfg, codeforces};
     console.log("dictionary initialized");
 }
-initializeDictionary()
+setTimeout(() => initializeDictionary(), 10000);
 
 const getLeetcodeName = async (username: string): Promise<string> => {
     try {
@@ -103,6 +109,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     if (!platform || !username) return next(new AppError("username or platform not provided!", 400));
 
     if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
+    console.log(user)
     if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
     if (!user.profileVerificationData.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
@@ -129,8 +136,7 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
 });
 
 const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response) => {
-    const user = await User.findOne({id: req.user.id}).select("profileVerificationData leetcode gfg codeforces github");
-    console.log(user);
+    const user = await User.findOne({_id: req.user._id}).select("profileVerificationData leetcode gfg codeforces github");
 
     const lastRequestTimestamp: number = user.profileVerificationData?.lastRequestTimestamp || 0;
     const fifteenMinutesInMs = 15 * 60 * 1000;
@@ -149,16 +155,19 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 
     if (unverifiedPlatforms.length > 0)
         if (hasFifteenMinutesPassed) {
+            console.log("one")
             user.profileVerificationData.randomName = ((length = 8) => {
+                console.log("one.1")
                 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
                 return letters.charAt(Math.floor(Math.random() * letters.length)) +
                     Array.from({length: length - 1}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
             })();
             user.profileVerificationData.lastRequestTimestamp = Date.now();
-        } else {
-            randomString = user.profileVerificationData.randomName;
         }
+
+    randomString = user.profileVerificationData.randomName;
+
 
     await user.save();
     res.status(200).json({
@@ -257,6 +266,57 @@ const getSheetQuestions = catchAsync(async (req: RequestWithUser, res: Response,
 })
 
 
+const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const mcaUserCount = await User.countDocuments({verified: true, branch: "MCA"});
+    const mscUserCount = await User.countDocuments({verified: true, branch: "MSC"});
+    const leadCount = await User.countDocuments({verified: true, isLead: true});
+
+    const globalStats = await GlobalData.find({}).select('-__v');
+
+    const past14DaysData = (() => {
+        const today = new Date();
+        const dates = Array.from({length: 14}, (_, i) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            return date.toLocaleDateString('en-CA');
+        }).reverse();
+
+        const statsMap = dates.reduce((acc, date) => {
+            acc[date] = 0;
+            return acc;
+        }, {});
+
+        globalStats.forEach(doc => {
+            (doc as any).past14Days?.forEach(day => {
+                if (statsMap.hasOwnProperty(day.date)) {
+                    statsMap[day.date] += (day.uniqueQuestionsSolved || 0);
+                }
+            });
+        });
+
+        return dates.map(date => ({
+            date,
+            uniqueQuestionsSolved: statsMap[date] || 10
+        }));
+    })();
+
+    const dsaToday = past14DaysData[past14DaysData.length - 1].uniqueQuestionsSolved;
+    const dsaPast14Days = past14DaysData.reduce((sum, day) => sum + day.uniqueQuestionsSolved, 0)
+
+
+    res.status(200).json({
+        message: "success",
+        mcaUserCount,
+        mscUserCount,
+        dsaToday,
+        dsaPast14Days,
+        past14DaysData,
+        leadCount
+
+    })
+})
+
+
 export default {
     makeUserCodingProfileVerificationReady,
     verifyCodingProfile,
@@ -265,5 +325,6 @@ export default {
     getDictionary,
     getSubmissionData,
     getAllPotds,
-    getSheetQuestions
+    getSheetQuestions,
+    getHomeStats
 };

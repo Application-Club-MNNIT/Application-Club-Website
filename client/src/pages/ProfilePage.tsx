@@ -16,58 +16,109 @@ function ProfilePage() {
     const profileData = useSelector((state: RootState) => state.auth);
 
     return (
-        <div>
-            {profileData.isLead && (<NavLink to="/lead">Lead</NavLink>)}
-            <div>{profileData.username}</div>
-            <div>{profileData.name}</div>
-            <div>{profileData.email}</div>
-            <div>{profileData.regNumber}</div>
-            <div>{profileData.branch}</div>
-            <div>{profileData.batch}</div>
-            <div>{profileData.phone}</div>
+        <div className="min-h-screen bg-gray-100 text-gray-800 p-6">
+            {/* Header Section */}
+            <div className="max-w-7xl mx-auto">
+                {profileData.isLead && (
+                    <NavLink
+                        to="/leadDashboard"
+                        className="inline-block mb-6 px-6 py-2 bg-AC_Green text-white rounded-lg hover:opacity-90 transition-opacity font-semibold"
+                    >
+                        Lead Dashboard
+                    </NavLink>
+                )}
 
-            {["leetcode", "gfg", "codeforces"].map((platform) => {
-                const dict = dictionary[platform];
-                console.log(submissionData[platform]);
-                return (
-                    <div key={platform} className="relative shadow-md sm:rounded-lg max-w-[1200px]">
-                        <div className="flex gap-4">
-                            <div className="uppercase">{platform}</div>
-                            <div>{submissionData[platform].username}</div>
+                {/* Profile Info Card */}
+                <div className="bg-white rounded-xl p-6 mb-8 shadow-md">
+                    <h2 className="text-2xl font-bold mb-6 text-AC_Green">Profile Information</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Username</p>
+                            <p className="font-semibold text-gray-800">{profileData.username}</p>
                         </div>
-                        <div className="max-h-80 overflow-y-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="text-xs uppercase bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3">Date</th>
-                                    <th className="px-6 py-3">Name</th>
-                                    <th className="px-6 py-3">Link</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {submissionData[platform].submissions.map((s, i) => {
-                                        const link = generateLink(dict[s.questionId], s.questionId, platform);
-                                        return <tr key={`${i}${platform[0]}${s.questionId}`}
-                                                   className="odd:bg-white even:bg-gray-50 border-b">
-                                            <td className="px-6 py-4">
-                                                {new Date(s.timestamp * 1000).toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-4 capitalize ">{dict[s.questionId]?.replace(/[-]/g, ' ')?.replace(/[0-9]/g, '') || "NA"}</td>
-                                            <td className="px-6 py-4"><a href={link}>{link}</a></td>
-                                        </tr>
-                                    }
-                                )}
-                                </tbody>
-                            </table>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Full Name</p>
+                            <p className="font-semibold text-gray-800">{profileData.name}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Email</p>
+                            <p className="font-semibold text-gray-800">{profileData.email}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Registration Number</p>
+                            <p className="font-semibold text-gray-800">{profileData.regNumber}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Branch</p>
+                            <p className="font-semibold text-gray-800">{profileData.branch}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Batch</p>
+                            <p className="font-semibold text-gray-800">{profileData.batch}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-gray-500">Phone</p>
+                            <p className="font-semibold text-gray-800">{profileData.phone}</p>
                         </div>
                     </div>
+                </div>
 
-
-                )
-            })}
-
+                {/* Coding Profiles Section */}
+                <div className="space-y-6">
+                    {["leetcode", "gfg", "codeforces"].map((platform) => {
+                        const dict = dictionary[platform];
+                        return (
+                            <div key={platform} className="bg-white rounded-xl overflow-hidden shadow-md">
+                                <div className="p-6 border-b border-gray-200">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-lg font-semibold text-AC_Green uppercase">
+                                                {platform}
+                                            </span>
+                                            <span className="text-gray-600">
+                                                @{submissionData[platform].username}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="max-h-80 overflow-y-auto">
+                                    <table className="w-full text-sm text-gray-600">
+                                        <thead className="text-xs uppercase bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-4 font-medium text-gray-700">Date</th>
+                                            <th className="px-6 py-4 font-medium text-gray-700">Name</th>
+                                            <th className="px-6 py-4 font-medium text-gray-700">Link</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {submissionData[platform].submissions?.map((submission, index) => (
+                                            <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {new Date(submission.timestamp * 1000).toLocaleString()}
+                                                </td>
+                                                <td className="px-6 py-4">{dict[submission.questionId]?.replace(/[-]/g, ' ')?.replace(/[0-9]/g, '') || "NA"}</td>
+                                                <td className="px-6 py-4">
+                                                    <a
+                                                        href={generateLink(dict[submission.questionId], submission.questionId, platform)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-AC_Green hover:underline"
+                                                    >
+                                                        View Problem
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
-    )
+    );
 }
 
 

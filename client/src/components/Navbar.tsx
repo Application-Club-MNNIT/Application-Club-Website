@@ -22,7 +22,7 @@ const Navbar = () => {
     }
 
     const underlineIfActive = ({isActive}) =>
-        `${isActive ? "box-border transition-all border-black border-b-2" : ""}`;
+        `cursor-pointer ${isActive ? "box-border transition-all border-black border-b-2" : ""}`;
 
     const links = (
         <>
@@ -40,13 +40,13 @@ const Navbar = () => {
                 </NavLink>
             )}
             {user && (
-                <span onClick={handleLogout}>Logout</span>
+                <span className="cursor-pointer" onClick={handleLogout}>Logout</span>
             )}
         </>
     );
 
     return (
-        <div className="sticky top-0 font-montserrat w-full bg-AC_Orange p-1 z-50">
+        <div className="sticky top-0 font-montserrat w-full bg-black text-white p-1 z-50">
             <div className="flex justify-between items-center">
                 <div className="p-1 bg-black rounded-md h-12 w-12 flex justify-center items-center">
                     <img src={ACLogo} alt="AC Logo" className=""/>
