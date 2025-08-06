@@ -10,7 +10,9 @@ import React from "react";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
-import {getDictionary, getHomeStats, getRandomString, getSubmissions,} from "./redux/apiCalls/userCalls.js";
+import LeaderBoard from "./pages/LeaderBoard.js";
+import OPCLeaderboard from "./pages/OpcLeaderBoard.js";
+import {getDictionary, getHomeStats, getSubmissions,} from "./redux/apiCalls/userCalls.js";
 import PotdAdditionPage from "./pages/Lead/PotdAdditionPage.js";
 import LeadPage from "./pages/Lead/LeadPage.js";
 import ProfilePage from "./pages/ProfilePage.js";
@@ -106,7 +108,7 @@ const App: React.FC = () => {
                             element: <JuniorsStatusPage/>,
                         }
                     ]
-                }
+                },
                 {
                     path: "seniors",
                     element: <SeniorsPage/>,
@@ -118,6 +120,14 @@ const App: React.FC = () => {
                 {
                     path: "/test",
                     element: <AddSeniorForm/>,
+                },
+                {
+                    path: "leaderboard",
+                    element: <LeaderBoard/>,
+                },
+                {
+                    path: "opcLeaderboard",
+                    element: <OPCLeaderboard/>,
                 },
             ],
         },

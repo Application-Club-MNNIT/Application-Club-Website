@@ -57,6 +57,8 @@ app.use("/lead", leadRoutes);
 import seniorRoutes from "./routes/seniorRouters";
 app.use("/seniors", seniorRoutes);
 
+import leaderboardRoutes from "./routes/leaderboardroutes";
+app.use("/api/leaderboard", leaderboardRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";
