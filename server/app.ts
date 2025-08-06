@@ -54,6 +54,10 @@ app.use("/user", userRoutes);
 app.use("/lead", leadRoutes);
 
 
+import seniorRoutes from "./routes/seniorRouters";
+app.use("/seniors", seniorRoutes);
+
+
 //for undefined routs
 import AppError from "./util/appError";
 

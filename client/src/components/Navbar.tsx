@@ -19,6 +19,7 @@ const Navbar = () => {
 
     async function handleLogout() {
         await logoutUser(dispatch);
+        navigate("/"); // Redirect to Home after logout
     }
 
     const underlineIfActive = ({isActive}) =>
@@ -40,7 +41,12 @@ const Navbar = () => {
                 </NavLink>
             )}
             {user && (
-                <span className="cursor-pointer" onClick={handleLogout}>Logout</span>
+                <NavLink to="/seniors" className={underlineIfActive}>
+                    Seniors
+                </NavLink>
+            )}
+            {user && (
+                <span onClick={handleLogout}>Logout</span>
             )}
         </>
     );

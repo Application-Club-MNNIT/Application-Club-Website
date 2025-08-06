@@ -18,6 +18,9 @@ import AllLeadPage from "./pages/Lead/AllLeadPage.js";
 import PotdStatusPage from "./pages/Lead/PotdStatusPage.js";
 import SheetStatusPage from "./pages/Lead/SheetStatusPage.js";
 import JuniorsStatusPage from "./pages/Lead/JuniorsStatusPage.js";
+import SeniorsPage from "./pages/SeniorsPage.js";
+import SeniorPage from "./pages/SeniorPage.js";
+import AddSeniorForm from "./test/AddSenior.js";
 
 const App: React.FC = () => {
 
@@ -104,6 +107,18 @@ const App: React.FC = () => {
                         }
                     ]
                 }
+                {
+                    path: "seniors",
+                    element: <SeniorsPage/>,
+                },
+                {
+                    path: "seniors/:id",
+                    element: <SeniorPage/>,
+                },
+                {
+                    path: "/test",
+                    element: <AddSeniorForm/>,
+                },
             ],
         },
     ]);

@@ -51,6 +51,7 @@ export interface IUser extends Document {
     branch: string;
     batch: number;
     phone: number;
+    followedSeniors: mongoose.Types.ObjectId[];
     password: string;
     leetcode: IPlatformSubmissions;
     gfg: IPlatformSubmissions;
