@@ -14,7 +14,7 @@ const TeacherSchema = new Schema<ITeacher>({
     type: String,
     required: true,
   },
-});
+} , {timestamps:true});
 
 const Teacher = mongoose.model<ITeacher>("Teacher", TeacherSchema);
 

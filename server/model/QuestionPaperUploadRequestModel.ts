@@ -1,16 +1,16 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 interface IQuestionPaperUploadRequest extends Document {
-  course: Types.ObjectId;
+  course: Types.ObjectId;//
+  subject:Types.ObjectId;//
   academicSession: string;
-  year: number;
-  semester: number;
-  paper: Types.ObjectId;
-  teacher: Types.ObjectId;
-  examType: string;
-  driveLink: string;
+  year: number;//
+  semester: number;//
+  teacher: Types.ObjectId;//
+  examType: string;//
+  driveLink: string;//
   status: "pending" | "approved" | "rejected";
-  submittedAt: Date;
+  uploadedBy:Types.ObjectId;//
 }
 
 const QuestionPaperUploadRequestSchema = new Schema<IQuestionPaperUploadRequest>({
@@ -18,6 +18,11 @@ const QuestionPaperUploadRequestSchema = new Schema<IQuestionPaperUploadRequest>
     type: Schema.Types.ObjectId,
     ref: "Course",
     required: true,
+  },
+  subject:{
+    type:Schema.Types.ObjectId,
+    ref:"Subject",
+    required:true,
   },
   academicSession: {
     type: String,
@@ -31,15 +36,10 @@ const QuestionPaperUploadRequestSchema = new Schema<IQuestionPaperUploadRequest>
     type: Number,
     required: true,
   },
-  paper: {
-    type: Schema.Types.ObjectId,
-    ref: "Paper",
-    required: true,
-  },
+
   teacher: {
     type: Schema.Types.ObjectId,
     ref: "Teacher",
-    required: true,
   },
   examType: {
     type: String,
@@ -61,11 +61,15 @@ const QuestionPaperUploadRequestSchema = new Schema<IQuestionPaperUploadRequest>
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
-  submittedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  uploadedBy:{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  }
+
+
+  //Mongodb will auto add created and updated at
+}, { timestamps: true });
 
 // Validation Middleware
 QuestionPaperUploadRequestSchema.pre("validate", async function (next) {
