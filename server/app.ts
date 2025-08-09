@@ -49,6 +49,8 @@ app.get("/test", async (req, res, next) => {
 // todo: routes here
 import userRoutes from "./routes/userRouters";
 import leadRoutes from "./routes/leadRouters";
+import courseRoutes from "./routes/courseRoutes";
+import teacherRoutes from "./routes/teacherRouters";
 
 app.use("/user", userRoutes);
 app.use("/lead", leadRoutes);
@@ -59,6 +61,8 @@ app.use("/seniors", seniorRoutes);
 
 import leaderboardRoutes from "./routes/leaderboardroutes";
 app.use("/api/leaderboard", leaderboardRoutes);
+app.use("/course", courseRoutes);
+app.use("/teacher", teacherRoutes);
 
 //for undefined routs
 import AppError from "./util/appError";
