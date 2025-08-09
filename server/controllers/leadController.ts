@@ -124,63 +124,63 @@ const getJuniorsData = catchAsync(async (req: RequestWithUser, res: Response, ne
 
     res.status(200).json({status: "success", users});
 })
+//
+// const specialSignup = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+//     if (!req.user.isLead) return next(new AppError("User is not a LeadPage", 400));
+//
+//     const {username, name, email, phone, password, leetcode, codeforces, gfg, github} = req.body;
+//     let batch: number, branch: string;
+//     const p1: string[] = email.toLowerCase().split("@")[0].split(".");
+//     const regNumber: string = p1[p1.length - 1];
+//     if (regNumber.startsWith("ca", 4)) {
+//         batch = parseInt(regNumber.substring(0, 4), 10) + 3;
+//         branch = "MCA";
+//     } else if (regNumber.startsWith("msc", 4)) {
+//         batch = parseInt(regNumber.substring(0, 4), 10) + 2;
+//         branch = "MSC";
+//     } else {
+//         batch = parseInt(regNumber.substring(0, 4), 10);
+//         branch = "NA";
+//     }
+//
+//     const user = await User.create({
+//         username,
+//         name,
+//         email,
+//         regNumber,
+//         batch,
+//         branch,
+//         phone,
+//         password,
+//         verified: true,
+//         codeforces: {
+//             username: codeforces,
+//             submissions: [],
+//             verified: true,
+//             lastSubmissionTimestamp: 0,
+//             lastRequestTimestamp: 0
+//         }, leetcode: {
+//             username: leetcode,
+//             submissions: [],
+//             verified: true,
+//             lastSubmissionTimestamp: 0,
+//             lastRequestTimestamp: 0
+//         }, gfg: {
+//             username: gfg,
+//             submissions: [],
+//             verified: true,
+//             lastSubmissionTimestamp: 0,
+//             lastRequestTimestamp: 0
+//         }, github: {
+//             username: github,
+//             verified: true
+//         }
+//     });
+//
+//     res.status(200).json({
+//         status: "success",
+//         user
+//     })
+// })
 
-const specialSignup = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    if (!req.user.isLead) return next(new AppError("User is not a LeadPage", 400));
-
-    const {username, name, email, phone, password, leetcode, codeforces, gfg, github} = req.body;
-    let batch: number, branch: string;
-    const p1: string[] = email.toLowerCase().split("@")[0].split(".");
-    const regNumber: string = p1[p1.length - 1];
-    if (regNumber.startsWith("ca", 4)) {
-        batch = parseInt(regNumber.substring(0, 4), 10) + 3;
-        branch = "MCA";
-    } else if (regNumber.startsWith("msc", 4)) {
-        batch = parseInt(regNumber.substring(0, 4), 10) + 2;
-        branch = "MSC";
-    } else {
-        batch = parseInt(regNumber.substring(0, 4), 10);
-        branch = "NA";
-    }
-
-    const user = await User.create({
-        username,
-        name,
-        email,
-        regNumber,
-        batch,
-        branch,
-        phone,
-        password,
-        verified: true,
-        codeforces: {
-            username: codeforces,
-            submissions: [],
-            verified: true,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0
-        }, leetcode: {
-            username: leetcode,
-            submissions: [],
-            verified: true,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0
-        }, gfg: {
-            username: gfg,
-            submissions: [],
-            verified: true,
-            lastSubmissionTimestamp: 0,
-            lastRequestTimestamp: 0
-        }, github: {
-            username: github,
-            verified: true
-        }
-    });
-
-    res.status(200).json({
-        status: "success",
-        user
-    })
-})
-
-export default {addPotd, getAllLeads, getAllPotdSubmissionData, getSheetSubmissionData, getJuniorsData, specialSignup};
+export default {addPotd, getAllLeads, getAllPotdSubmissionData, getSheetSubmissionData, getJuniorsData};

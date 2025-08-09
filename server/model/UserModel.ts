@@ -151,6 +151,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    followedSeniors: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
     leetcode: {
         type: PlatformSchema,
         select: false,

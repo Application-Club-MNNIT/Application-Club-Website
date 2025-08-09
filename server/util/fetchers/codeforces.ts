@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import {Request, Response, NextFunction} from "express";
 import axios from "axios";
-import catchAsync from "../catchAsync" 
-import AppError from "../appError";     
-import { log } from "node:console";
+import catchAsync from "../catchAsync"
+import AppError from "../appError";
+import {log} from "node:console";
 
 // Configurable constants
 const TOP_USERS_COUNT = 20; // Number of top users to return in leaderboard
@@ -39,7 +39,7 @@ const fetchMultipleCodeforcesRatings = async (usernames: string[]) => {
             const response = await axios.get(
                 `https://codeforces.com/api/user.info?handles=${handlesParam}`
             );
-
+            
             const data = response.data;
             if (!data || data.status !== "OK" || !Array.isArray(data.result)) {
                 throw new Error("Invalid response from Codeforces API");
@@ -56,7 +56,7 @@ const fetchMultipleCodeforcesRatings = async (usernames: string[]) => {
 
             results.push(...usersData);
         } catch (error) {
-            console.error(`Error fetching Codeforces data for batch:`, error.message);
+            console.error(`Error fetching Codeforces data for batch for `, handlesParam, error.message);
             // Add placeholder data for failed users in this chunk
             const failedUsers = chunk.map(username => ({
                 username,
@@ -76,7 +76,7 @@ const fetchMultipleCodeforcesRatings = async (usernames: string[]) => {
 //Checks if the cache is valid
 const isCacheValid = () => {
     if (!codeforcesLeaderboardCache.data) return false;
-    
+
     const now = Date.now();
     return now - codeforcesLeaderboardCache.timestamp < CACHE_DURATION_MS;
 };
@@ -107,10 +107,10 @@ const setCodeforcesLeaderboardCache = (leaderboardData) => {
     };
 };
 
-export { 
+export {
     fetchMultipleCodeforcesRatings,
-    getCodeforcesLeaderboard, 
-    setCodeforcesLeaderboardCache, 
+    getCodeforcesLeaderboard,
+    setCodeforcesLeaderboardCache,
     TOP_USERS_COUNT,
     MAX_USERS_PER_REQUEST
 };

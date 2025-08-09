@@ -10,9 +10,15 @@ import React from "react";
 import ProfileVerificationPage from "./pages/ProfileVerificationPage.js";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./redux/store.js";
+import {
+    getDictionary,
+    getHomeStats,
+    getRandomString,
+    getSheetPotdDaysData,
+    getSubmissions,
+} from "./redux/apiCalls/userCalls.js";
 import LeaderBoard from "./pages/LeaderBoard.js";
 import OPCLeaderboard from "./pages/OpcLeaderBoard.js";
-import {getDictionary, getHomeStats, getSubmissions,} from "./redux/apiCalls/userCalls.js";
 import PotdAdditionPage from "./pages/Lead/PotdAdditionPage.js";
 import LeadPage from "./pages/Lead/LeadPage.js";
 import ProfilePage from "./pages/ProfilePage.js";
@@ -83,8 +89,20 @@ const App: React.FC = () => {
                         const leetcode = await getSubmissions("leetcode", 1);
                         const codeforces = await getSubmissions("codeforces", 1);
                         const gfg = await getSubmissions("gfg", 1);
-                        return {leetcode, gfg, codeforces};
+                        const sheetPotdDaysData = await getSheetPotdDaysData()
+                        return {leetcode, gfg, codeforces, sheetPotdDaysData};
                     },
+                }, {
+                    path: "seniors",
+                    element: <SeniorsPage/>,
+                },
+                {
+                    path: "seniors/:id",
+                    element: <SeniorPage/>,
+                },
+                {
+                    path: "/test",
+                    element: <AddSeniorForm/>,
                 },
                 {
                     path: "leadDashboard",
@@ -118,7 +136,7 @@ const App: React.FC = () => {
                     element: <SeniorPage/>,
                 },
                 {
-                    path: "/test",
+                    path: "/addSeniorInterview",
                     element: <AddSeniorForm/>,
                 },
                 {

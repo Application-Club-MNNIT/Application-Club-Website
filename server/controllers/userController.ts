@@ -316,6 +316,22 @@ const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next
     })
 })
 
+const getSheetPotdDaysData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    const userData = await User.findOne(
+        {
+            _id: user.id
+        },
+        {
+            sheets: 1,
+            potds: 1,
+            past14Days: 1
+        }
+    ).lean();
+
+    res.status(200).json({status: "success", userData});
+})
 
 export default {
     makeUserCodingProfileVerificationReady,
@@ -326,5 +342,6 @@ export default {
     getSubmissionData,
     getAllPotds,
     getSheetQuestions,
-    getHomeStats
+    getHomeStats,
+    getSheetPotdDaysData,
 };

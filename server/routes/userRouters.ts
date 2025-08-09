@@ -84,6 +84,12 @@ router.get(
     userController.getHomeStats
 )
 
+router.get(
+    "/getSheetPotdDaysData",
+    authController.protect,
+    userController.getSheetPotdDaysData
+)
+
 //
 // //for logging in
 // router.post(

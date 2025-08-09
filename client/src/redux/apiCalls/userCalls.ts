@@ -136,6 +136,16 @@ export const getHomeStats = async () => {
     }
 }
 
+export const getSheetPotdDaysData = async () => {
+    let [err, res]: any[] = await to(backend.get("/user/getSheetPotdDaysData"));
+    if (err) {
+        console.error("Error while getting getSheetPotdDaysData: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res.data.userData;
+    }
+}
+
 export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
     // Performing data validation
     const id = toast.loading("Signing you in");
