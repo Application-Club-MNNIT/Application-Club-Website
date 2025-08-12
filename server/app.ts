@@ -46,12 +46,10 @@ app.get("/test", async (req, res, next) => {
 });
 
 
-
 //defining routers
 // todo: routes here
 import userRoutes from "./routes/userRouters";
 import leadRoutes from "./routes/leadRouters";
-import courseRoutes from "./routes/courseRoutes";
 import teacherRoutes from "./routes/teacherRouters";
 import paperRoutes from "./routes/paperRoutes";
 import subjectRoutes from "./routes/subjectRoutes";
@@ -61,11 +59,12 @@ app.use("/lead", leadRoutes);
 
 
 import seniorRoutes from "./routes/seniorRouters";
+
 app.use("/seniors", seniorRoutes);
 
 import leaderboardRoutes from "./routes/leaderboardroutes";
+
 app.use("/api/leaderboard", leaderboardRoutes);
-app.use("/course", courseRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/paper", paperRoutes);
 app.use("/subject", subjectRoutes);

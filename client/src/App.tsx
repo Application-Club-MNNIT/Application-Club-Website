@@ -29,6 +29,11 @@ import JuniorsStatusPage from "./pages/Lead/JuniorsStatusPage.js";
 import SeniorsPage from "./pages/SeniorsPage.js";
 import SeniorPage from "./pages/SeniorPage.js";
 import AddSeniorForm from "./test/AddSenior.js";
+import TeacherDashboard from "./pages/TeacherDashboard.js";
+import SubjectDashboard from "./pages/SubjectDashboard.js";
+import AddPaperPage from "./pages/AddPaperPage.js";
+import PapersListPage from "./pages/PapersListPage.js";
+import AdminPapersPage from "./pages/AdminPapersPage.js";
 
 const App: React.FC = () => {
 
@@ -92,17 +97,6 @@ const App: React.FC = () => {
                         const sheetPotdDaysData = await getSheetPotdDaysData()
                         return {leetcode, gfg, codeforces, sheetPotdDaysData};
                     },
-                }, {
-                    path: "seniors",
-                    element: <SeniorsPage/>,
-                },
-                {
-                    path: "seniors/:id",
-                    element: <SeniorPage/>,
-                },
-                {
-                    path: "/test",
-                    element: <AddSeniorForm/>,
                 },
                 {
                     path: "leadDashboard",
@@ -112,7 +106,8 @@ const App: React.FC = () => {
                             path: "addPotd",
                             element: <PotdAdditionPage/>,
 
-                        }, {
+                        },
+                        {
                             path: "allLeads",
                             element: <AllLeadPage/>,
                         }, {
@@ -124,6 +119,22 @@ const App: React.FC = () => {
                         }, {
                             path: "juniorsStatus",
                             element: <JuniorsStatusPage/>,
+                        },
+                        {
+                            path: "addSeniorInterview",
+                            element: <AddSeniorForm/>,
+                        },
+                        {
+                            path: "teachersDashboard",
+                            element: <TeacherDashboard/>
+                        },
+                        {
+                            path: "subjectDashboard",
+                            element: <SubjectDashboard/>
+                        },
+                        {
+                            path: "adminPapersPage",
+                            element: <AdminPapersPage/>
                         }
                     ]
                 },
@@ -133,11 +144,7 @@ const App: React.FC = () => {
                 },
                 {
                     path: "seniors/:id",
-                    element: <SeniorPage/>,
-                },
-                {
-                    path: "/addSeniorInterview",
-                    element: <AddSeniorForm/>,
+                    element: <PrivateRoute><SeniorPage/></PrivateRoute>,
                 },
                 {
                     path: "leaderboard",
@@ -147,6 +154,14 @@ const App: React.FC = () => {
                     path: "opcLeaderboard",
                     element: <OPCLeaderboard/>,
                 },
+                {
+                    path: "addPaper",
+                    element: <PrivateRoute><AddPaperPage/></PrivateRoute>
+                },
+                {
+                    path: "listPapers",
+                    element: <PrivateRoute><PapersListPage/></PrivateRoute>
+                }
             ],
         },
     ]);
@@ -155,11 +170,16 @@ const App: React.FC = () => {
         <div>
             <div>
                 <ToastContainer
-                    position="top-right"
-                    autoClose={1000}
+                    position="bottom-right"
+                    autoClose={3000}
                     closeOnClick={true}
                     transition={Zoom}
                     draggable={true}
+                    theme="dark"
+                    toastClassName="font-mono bg-neutral-900 text-white"
+                    style={{fontSize: '14px'}}
+                    progressClassName="bg-teal-500"
+                    bodyClassName="text-white"
                 />
                 <RouterProvider router={router}/>
             </div>

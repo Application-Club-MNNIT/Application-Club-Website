@@ -20,6 +20,18 @@ function LeadPage() {
         }, {
             name: "Juniors Status",
             path: "./juniorsStatus"
+        }, {
+            name: "AddInterview",
+            path: "./addSeniorInterview"
+        }, {
+            name: "AddTeacher",
+            path: "./teachersDashboard"
+        }, {
+            name: "AddSubject",
+            path: "./subjectDashboard"
+        }, {
+            name: "verifyPapers",
+            path: "./adminPapersPage"
         }
     ]
 

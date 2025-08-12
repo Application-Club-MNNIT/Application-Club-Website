@@ -3,109 +3,159 @@ import React from "react";
 
 function HomePageTiles({data}) {
     return (
-        <div className="rounded-md bg-white shadow-lg p-2 grid-cols-4 grid gap-4">
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded row-span-2">
-                <div className="text-3xl font-medium mb-4">About Application Club</div>
-                <div className="">The Application Club is a student-led initiative at MNNIT Allahabad
-                    where selected MCA students annually take on leadership roles to mentor and upskill their
-                    juniors, aligning their growth with current industry standards.
+        <div className="rounded-xl bg-white p-4 grid-cols-4 grid gap-4">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-gray-600 font-medium">Actively monitoring</div>
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        {data['mcaUserCount'] + data['mscUserCount']}
+                    </div>
+                    <div className="text-gray-600">Students</div>
+                    <div className="flex gap-3 flex-wrap justify-center mt-4">
+                        <div className="bg-orange-50 px-3 py-1 rounded-full">
+                            <span className="font-semibold text-AC_Orange">{data['mcaUserCount']}</span>
+                            <span className="text-gray-600 ml-1">MCA</span>
+                        </div>
+                        <div className="bg-orange-50 px-3 py-1 rounded-full">
+                            <span className="font-semibold text-AC_Orange">{data['mscUserCount']}</span>
+                            <span className="text-gray-600 ml-1">MSC</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-lg">Actively monitoring</div>
-                    <div
-                        className="text-center text-3xl font-bold my-5">{data['mcaUserCount'] + data['mscUserCount']} Students
+
+            {/*<div className="col-span-2 row-span-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6*/}
+            {/*    transition-all duration-300 hover:shadow-xl group border border-gray-100">*/}
+            {/*    <div className="flex justify-evenly mb-6">*/}
+            {/*        <div className="flex flex-col items-center">*/}
+            {/*            <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600*/}
+            {/*                bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600*/}
+            {/*                transition-all duration-300">*/}
+            {/*                {data['dsaToday']}*/}
+            {/*            </div>*/}
+            {/*            <div className="text-gray-600 font-medium">DSA Today</div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex flex-col items-center">*/}
+            {/*            <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600*/}
+            {/*                bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600*/}
+            {/*                transition-all duration-300">*/}
+            {/*                {data['dsaPast14Days']}*/}
+            {/*            </div>*/}
+            {/*            <div className="text-gray-600 font-medium">DSA Past 14 Days</div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*    <div><Days14LineGraph data={data['past14DaysData']}/></div>*/}
+            {/*</div>*/}
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center justify-center h-full">
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        73
                     </div>
-                    <div className="flex items-center justify-evenly align-middle w-full font-medium">
-                        <span>{data['mcaUserCount']} MCA</span>
-                        <span>{data['mscUserCount']} MSC</span>
-                    </div>
+                    <div className="text-gray-600 font-medium">PYQ with solutions</div>
                 </div>
             </div>
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded col-span-2 row-span-3">
-                <div className="flex justify-evenly">
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex gap-4 items-center justify-center h-full">
+                    <div className="flex flex-col items-center ">
+                        <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                            10+
+                        </div>
+                        <div className="text-gray-600 font-medium">Coding Contest</div>
+                    </div>
                     <div className="flex flex-col items-center">
-                        <div className="text-center text-3xl font-bold my-5">{data['dsaToday']} DSA</div>
-                        <div className="text-lg">Questions solved today</div>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <div className="text-center text-3xl font-bold my-5">{data['dsaPast14Days']} DSA</div>
-                        <div className="text-lg">Questions solved in past 14 days</div>
-                    </div>
-                </div>
-                <div><Days14LineGraph data={data['past14DaysData']}/></div>
-            </div>
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">73</div>
-                    <div className="text-lg">PYQ with solutions</div>
-                </div>
-            </div>
-
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">147</div>
-                    <div className="text-lg">Academic resources and Notes</div>
-                </div>
-            </div>
-
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">786</div>
-                    <div className="text-lg">Connections eager to help</div>
-                </div>
-            </div>
-
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-lg">People placed in</div>
-                    <div className="text-center text-3xl font-bold my-5">36+</div>
-                    <div className="text-lg">Companies to guide you</div>
-                </div>
-            </div>
-
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">{data['leadCount']}</div>
-                    <div className="text-lg">AC Leads</div>
-                </div>
-            </div>
-
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">11 OPC</div>
-                    <div className="text-lg mb-4">Conducted</div>
-                    <div className="flex gap-2 flex-wrap">
-                        <div>
-                            <span className="font-medium">2024</span>
-                            <span>(5)</span>
+                        <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                            3
                         </div>
-                        <div>
-                            <span className="font-medium">2025</span>
-                            <span>(7)</span>
-                        </div>
+                        <div className="text-gray-600 font-medium">Events Organised</div>
                     </div>
+
                 </div>
             </div>
 
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">3 Events</div>
-                    <div className="text-lg mb-4">organised</div>
-                    <div className="flex gap-2 flex-wrap">
-                        <div>
-                            <span className="font-medium">2024</span>
-                            <span>(3)</span>
-                        </div>
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        147
                     </div>
+                    <div className="text-gray-600 font-medium">Academic Resources</div>
+                    <div className="mt-2 text-sm text-gray-500">Notes & Materials</div>
                 </div>
             </div>
 
-            <div className="bg-black/2 border-dashed border-black border-2 p-2 rounded">
-                <div className="flex flex-col items-center">
-                    <div className="text-center text-3xl font-bold my-5">17</div>
-                    <div className="text-lg">Interview Stories</div>
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        786
+                    </div>
+                    <div className="text-gray-600 font-medium">Network Size</div>
+                    <div className="mt-2 text-sm text-gray-500">Connections eager to help</div>
+                </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-gray-600 font-medium">People placed in</div>
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        36+
+                    </div>
+                    <div className="text-sm text-gray-500">Companies to guide you</div>
+                </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        {data['leadCount']}
+                    </div>
+                    <div className="text-gray-600 font-medium">AC Leads</div>
+                    <div className="mt-2 text-sm text-gray-500">Guiding the community</div>
+                </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6
+                transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group border border-gray-100">
+                <div className="flex flex-col items-center  justify-center h-full">
+                    <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600
+                        bg-clip-text text-transparent group-hover:from-AC_Orange group-hover:to-orange-600
+                        transition-all duration-300">
+                        11
+                    </div>
+                    <div className="text-gray-600 font-medium mb-4">OPC Conducted</div>
+                    <div className="flex gap-3 flex-wrap justify-center">
+                        <div className="bg-orange-50 px-3 py-1 rounded-full">
+                            <span className="font-semibold text-AC_Orange">2024</span>
+                            <span className="text-gray-600 ml-1">(5)</span>
+                        </div>
+                        <div className="bg-orange-50 px-3 py-1 rounded-full">
+                            <span className="font-semibold text-AC_Orange">2025</span>
+                            <span className="text-gray-600 ml-1">(7)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -1,11 +1,12 @@
 import express from "express";
 import paperController from "../controllers/paperController";
+import authControllerUser from "../controllers/authControllerUser";
 
 const router = express.Router();
 
 
 //Paper request
-router.post("/uploadPaper", paperController.createPaper);
+router.post("/uploadPaper", authControllerUser.protect, paperController.createPaper);
 
 //Get all paper requests
 router.get("/getAllPaperRequests", paperController.getAllPaperRequests);

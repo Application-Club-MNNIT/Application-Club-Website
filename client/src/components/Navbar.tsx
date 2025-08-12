@@ -7,9 +7,8 @@ import {RootState} from "../redux/store.js";
 import {PiCatLight} from "react-icons/pi";
 
 const Navbar = () => {
-    // TODO: Define a user type in global types.ts file
     const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);
-    // const user = false; // just temporarily for seeing how the user screen looks;
+    const isAdmin = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified && state.auth.isLead);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -23,30 +22,95 @@ const Navbar = () => {
     }
 
     const underlineIfActive = ({isActive}) =>
-        `cursor-pointer ${isActive ? "box-border transition-all border-black border-b-2" : ""}`;
+        `cursor-pointer ${isActive ? "box-border transition-all border-b-2 border-white" : ""}`;
 
     const links = (
         <>
             <NavLink to="" className={underlineIfActive}>
                 Home
             </NavLink>
+
+            {/* Public Routes */}
+            <NavLink to="/leaderboard" className={underlineIfActive}>
+                Leaderboard
+            </NavLink>
+            <NavLink to="/opcLeaderboard" className={underlineIfActive}>
+                OPC Leaderboard
+            </NavLink>
+
+            {/* Auth Routes */}
             {!user && (
-                <NavLink to="/login" className={underlineIfActive}>
-                    Login
-                </NavLink>
+                <>
+                    <NavLink to="/login" className={underlineIfActive}>
+                        Login
+                    </NavLink>
+                    <NavLink to="/signup" className={underlineIfActive}>
+                        Signup
+                    </NavLink>
+                </>
             )}
-            {!user && (
-                <NavLink to="/signup" className={underlineIfActive}>
-                    Signup
-                </NavLink>
-            )}
+
+            {/* Private Routes (Logged in users) */}
             {user && (
-                <NavLink to="/seniors" className={underlineIfActive}>
-                    Seniors
-                </NavLink>
+                <>
+                    <NavLink to="/profile" className={underlineIfActive}>
+                        Profile
+                    </NavLink>
+                    <NavLink to="/seniors" className={underlineIfActive}>
+                        Seniors
+                    </NavLink>
+                    <NavLink to="/addPaper" className={underlineIfActive}>
+                        Add Paper
+                    </NavLink>
+                    <NavLink to="/listPapers" className={underlineIfActive}>
+                        View Papers
+                    </NavLink>
+                </>
             )}
+
+            {/* Admin Only Routes */}
+            {isAdmin && (
+                <div className="relative group">
+                    <span className="cursor-pointer">Admin</span>
+                    <div
+                        className="absolute hidden group-hover:block right-0 mt-2 py-2 w-48 bg-neutral-800 rounded-lg shadow-xl">
+                        <NavLink to="/leadDashboard/addPotd" className="block px-4 py-2 hover:bg-neutral-700">
+                            Add POTD
+                        </NavLink>
+                        <NavLink to="/leadDashboard/allLeads" className="block px-4 py-2 hover:bg-neutral-700">
+                            All Leads
+                        </NavLink>
+                        <NavLink to="/leadDashboard/potdStatus" className="block px-4 py-2 hover:bg-neutral-700">
+                            POTD Status
+                        </NavLink>
+                        <NavLink to="/leadDashboard/sheetStatus" className="block px-4 py-2 hover:bg-neutral-700">
+                            Sheet Status
+                        </NavLink>
+                        <NavLink to="/leadDashboard/juniorsStatus" className="block px-4 py-2 hover:bg-neutral-700">
+                            Juniors Status
+                        </NavLink>
+                        <NavLink to="/leadDashboard/addSeniorInterview"
+                                 className="block px-4 py-2 hover:bg-neutral-700">
+                            Add Senior Interview
+                        </NavLink>
+                        <NavLink to="/leadDashboard/teachersDashboard" className="block px-4 py-2 hover:bg-neutral-700">
+                            Manage Teachers
+                        </NavLink>
+                        <NavLink to="/leadDashboard/subjectDashboard" className="block px-4 py-2 hover:bg-neutral-700">
+                            Manage Subjects
+                        </NavLink>
+                        <NavLink to="/leadDashboard/adminPapersPage" className="block px-4 py-2 hover:bg-neutral-700">
+                            Manage Papers
+                        </NavLink>
+                    </div>
+                </div>
+            )}
+
+            {/* Logout for logged in users */}
             {user && (
-                <span onClick={handleLogout}>Logout</span>
+                <span onClick={handleLogout} className="cursor-pointer">
+                    Logout
+                </span>
             )}
         </>
     );
@@ -57,7 +121,7 @@ const Navbar = () => {
                 <div className="p-1 bg-black rounded-md h-12 w-12 flex justify-center items-center">
                     <img src={ACLogo} alt="AC Logo" className=""/>
                 </div>
-                <span className="flex gap-4">{links}</span>
+                <span className="flex items-center gap-6">{links}</span>
             </div>
 
             {/* keep the component below as it is, it is a loading bar that is activated whenever page is under navigation */}
