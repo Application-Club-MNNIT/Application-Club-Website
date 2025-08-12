@@ -188,6 +188,7 @@ node_modules
 package-lock.json
 *.log
 *.gz
+pnpm-lock.yaml
 
 # Coveralls
 .nyc_output

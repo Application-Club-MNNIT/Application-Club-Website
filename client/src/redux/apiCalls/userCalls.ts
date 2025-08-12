@@ -3,11 +3,18 @@ import {
     loginFailed,
     loginSuccess,
     logoutSuccess,
+    otpVerified,
     resetAll,
+    verifyPlatformFail,
+    verifyPlatformSuccess
 } from "../authSlice.js";
+
 import {toast} from "react-toastify";
 import to from "await-to-js";
 import {Dispatch} from "@reduxjs/toolkit";
+import ISignupResponse from "../../interfaces/ISignupResponse";
+import {dictionaryUpdate} from "../dictionarySlice.js";
+import {updateProfile} from "../userSlice.js";
 
 export const login: (dispatch: Dispatch, body: any) => Promise<{
     status: boolean,
@@ -16,10 +23,10 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
 
     //please notice: how a toast is being created. toast is that "popup". we are storing id as we will update it later
     const id = toast.loading("Logging you in");
-    
+
     // api call
     //please notice: to(...) returns [err, res] containing error or response. if api call gives error, err has something otherwise res has something. simple. ?
-    const [err, res]: any[] = await to(backend.post("/user/login", body));
+    const [err, res]: [any, ISignupResponse] = await to(backend.post("/user/login", body));
     if (err) {
         dispatch(loginFailed());
         const message = err.response?.data?.message || err.response?.data || err.message || "Some error occurred please try again later";
@@ -31,9 +38,10 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
         });
         return {status: false, message};
     } else {
-        // please notice: how dispatch is being used
-        // update state if login successfully
-        dispatch(loginSuccess({user: res.data.user}));
+
+        // TODO: user should probably be username, I'm not sure.
+        // Must check again after authSlice is implemented
+        dispatch(loginSuccess(res.data.user));
         toast.update(id, {
             render: "Login success!",
             type: "success",
@@ -45,34 +53,175 @@ export const login: (dispatch: Dispatch, body: any) => Promise<{
 };
 
 
-//please notice: below is code i copied from previous projects, make appropriate changes. good luck
-export const signup = async (dispatch, formData) => {
-    dispatch(resetAll());
-    dispatch(startFetch());
+export const getRandomString = async () => {
+    const id = toast.loading("Generating verification strings...");
+
+    const [err, res]: any[] = await to(backend.post("/user/getCodingPlatformVerificationString"));
+
+    if (err) {
+        const message = err.response?.data?.message || err.response?.data || err.message || "Some error occurred, please try again later";
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+        return {status: false, message, unverifiedPlatforms: []};
+    } else {
+
+        toast.update(id, {
+            render: "Verification strings generated successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return {status: true, message: "Verification strings generated successfully!", res};
+    }
+};
+
+
+export const verifyHandle: (
+    dispatch: Dispatch,
+    body: IPlatformVerifyData
+) => Promise<{ status: boolean; message: string; verified: boolean }> = async (
+    dispatch: Dispatch,
+    body: IPlatformVerifyData
+) => {
+    const id = toast.loading("Verifying handle...");
+
+    const [err, res]: [any, any] = await to(backend.post("/user/verifyCodingPlatform", body));
+
+    if (err) {
+        const message =
+            err.response?.data?.message || err.response?.data || err.message || "Verification failed. Please try again.";
+
+        toast.update(id, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+        });
+
+        return {status: false, message, verified: false};
+    } else {
+        toast.update(id, {
+            render: "Handle verified successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+        });
+
+        return {status: true, message: "Handle verified successfully!", verified: true};
+    }
+};
+
+export const isUsernameAvailable = async (username: string) => {
+    let [err, res]: any[] = await to(backend.post("/user/isUsernameAvailable", {username}));
+    if (err) {
+        console.error("Error while checking username availability: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res.data.available;
+    }
+}
+
+export const getHomeStats = async () => {
+    let [err, res]: any[] = await to(backend.get("/user/getHomeStats"));
+    if (err) {
+        console.error("Error while getting home stats: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res;
+    }
+}
+
+export const getSheetPotdDaysData = async () => {
+    let [err, res]: any[] = await to(backend.get("/user/getSheetPotdDaysData"));
+    if (err) {
+        console.error("Error while getting getSheetPotdDaysData: ", err.response?.data?.message || err.response?.data || err.message);
+        return false;
+    } else {
+        return res.data.userData;
+    }
+}
+
+export const signup = async (dispatch: Dispatch, formData: ISignUpFormData) => {
+    // Performing data validation
     const id = toast.loading("Signing you in");
-    // Making it any[] for now , might have to change it later
-    const [err, response]: any[] = await to(
+    if (!formData.username || !formData.name || !formData.email || !formData.phone || !formData.password) {
+        toast.update(id, {
+            render: "All fields are required!",
+            type: "error",
+            isLoading: false,
+            autoClose: 2000,
+        });
+        return false;
+    }
+
+    dispatch(resetAll());
+    const [err, response]: [any, ISignupResponse] = await to(
         backend.post("/user/signup", formData)
     );
     if (err || ((response.status / 100) | 0) !== 2) {
         const errorMessage =
             err.response?.data?.message ||
-            err.response.data ||
+            err.response?.data ||
             "Some error occurred! please try again later.";
         toast.update(id, {
             render: errorMessage,
             type: "error",
             isLoading: false,
-            autoClose: 0,
+            autoClose: 2000,
         });
         return false;
     } else {
-        dispatch(loginSuccess({user: response.data.user}));
+        dispatch(loginSuccess({...response.data.user, password: formData.password}));
         toast.update(id, {
             render: "Signup successful!",
             type: "success",
             isLoading: false,
-            autoClose: 1000,
+            autoClose: 2000,
+        });
+        return true;
+    }
+};
+
+export const verifyOTP = async (dispatch: Dispatch<any>, formData: { email: string, otp: number }) => {
+    // Performing data validation
+    const id = toast.loading("Verifying OTP");
+    if (!formData.email || !formData.otp) {
+        toast.update(id, {
+            render: "Invalid Email or OTP",
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+        });
+        return false;
+    }
+
+    const [err, response]: [any, ISignupResponse] = await to(
+        backend.post("/user/verifyEmail", formData)
+    );
+    if (err || ((response.status / 100) | 0) !== 2) {
+        const errorMessage =
+            err.response?.data?.message ||
+            err.response?.data ||
+            "Some error occurred! Please try again later.";
+        toast.update(id, {
+            render: errorMessage,
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+        });
+        return false;
+    } else {
+        dispatch(otpVerified());
+        toast.update(id, {
+            render: "Signup successful!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
         });
         return true;
     }
@@ -103,3 +252,31 @@ export const logoutUser = async (dispatch: Dispatch) => {
         return {status: true, message: errorMessage};
     }
 };
+
+export const getDictionary = async (dispatch: Dispatch) => {
+    const response = await backend.get("/user/getDictionary");
+    dispatch(dictionaryUpdate(response.data["dictionary"]));
+    return {status: true, message: "Dictionary retrieved!", dictionary: response.data["dictionary"]};
+}
+//
+// export const getProfileData = async (dispatch: Dispatch) => {
+//     const response = await backend.post("/user/getProfileData");
+//     dispatch(updateProfile(response.data["user"]));
+//     return {status: true, message: "Profile retrieved!", profileData: response.data["user"]};
+//
+// }
+
+export const getSubmissions = async (platform: string, page: number) => {
+    const response = await backend.get(`/user/getSubmissions/${platform}?page=${page || 1}`);
+    return response.data.data;
+}
+
+
+export const getAllPotds = async () => {
+    const response = await backend.get("/user/getAllPotds");
+    return response.data;
+}
+export const getSheetQuestions = async (sheetName: string) => {
+    const response = await backend.get(`/user/getSheetQuestions/${sheetName}`);
+    return response.data;
+}

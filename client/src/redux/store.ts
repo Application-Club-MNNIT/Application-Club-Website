@@ -13,6 +13,7 @@ import {
     REHYDRATE,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import dictionaryReducer from "./dictionarySlice.js";
 
 // Configuration for Redux persist
 const persistConfig = {
@@ -25,6 +26,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth: authReducer,
     auxiliary: auxiliaryReducer,
+    dictionary: dictionaryReducer,
 });
 
 // Create persisted reducer using persistReducer from redux-persist

@@ -50,6 +50,46 @@ router.post(
     authController.logout
 )
 
+router.get(
+    "/getDictionary",
+    userController.getDictionary
+)
+
+router.post(
+    "/getProfileData",
+    authController.protect,
+    userController.getProfileData
+)
+
+router.get(
+    "/getSubmissions/:platform",
+    authController.protect,
+    userController.getSubmissionData
+)
+
+router.get(
+    "/getAllPotds",
+    authController.protect,
+    userController.getAllPotds
+)
+
+router.get(
+    "/getSheetQuestions/:sheetName",
+    authController.protect,
+    userController.getSheetQuestions
+)
+
+router.get(
+    "/getHomeStats",
+    userController.getHomeStats
+)
+
+router.get(
+    "/getSheetPotdDaysData",
+    authController.protect,
+    userController.getSheetPotdDaysData
+)
+
 //
 // //for logging in
 // router.post(
@@ -73,5 +113,3 @@ router.get("/test", catchAsync(async (req: Request, res: Response, next: NextFun
 
 export default router;
 
-
-module.exports = router;

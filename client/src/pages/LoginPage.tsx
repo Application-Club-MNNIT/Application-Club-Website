@@ -11,7 +11,6 @@ import {login} from "../redux/apiCalls/userCalls.js";
 
 const LoginPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const [loginCredential, setLoginCredential] = useState<string>();
@@ -36,8 +35,8 @@ const LoginPage: React.FC = () => {
             </button>
 
             <AnimatedWrapper>
-                <div
-                    className="flex justify-center items-center flex-col bg-neutral-900 text-white p-8 sm:p-10 min-w-[95vw] sm:min-w-[400px] md:min-w-[450px] lg:min-w-[500px] rounded-lg shadow-lg">
+                <form onSubmit={handleSubmit}
+                      className="flex justify-center items-center flex-col bg-neutral-900 text-white p-8 sm:p-10 min-w-[95vw] sm:min-w-[400px] md:min-w-[450px] lg:min-w-[500px] rounded-lg shadow-lg">
                     <h2 className="text-center text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 text-white font-poltawski">
                         LOGIN
                     </h2>
@@ -84,14 +83,12 @@ const LoginPage: React.FC = () => {
                     </div>
 
                     <button type="submit"
-                            onClick={handleSubmit}
                             className="w-[160px] h-[45px] bg-[#2DBAAAF0] hover:bg-teal-600 text-white font-semibold py-3 rounded-2xl text-lg">
                         Submit
                     </button>
-                </div>
+                </form>
             </AnimatedWrapper>
         </div>
-
     );
 };
 
