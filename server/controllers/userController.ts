@@ -204,13 +204,16 @@ const getSubmissionData = catchAsync(async (req: Request, res: Response, next: N
 
     console.log(req.user);
 
+    // Create projection object with proper typing
+    const projection: Record<string, any> = {
+        [`${platform}.submissions`]: {$slice: [skip, pageSize]}, // paginate here
+        [`${platform}.username`]: 1,
+        [`${platform}.verified`]: 1,
+    };
+
     const user = await User.findOne(
         {_id: req.user.id},
-        {
-            [`${platform}.submissions`]: {$slice: [skip, pageSize]}, // paginate here
-            [`${platform}.username`]: 1,
-            [`${platform}.verified`]: 1,
-        }
+        projection
     ) as IUser;
 
     res.status(200).json({
