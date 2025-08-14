@@ -7,7 +7,7 @@ export interface Subject {
     _id: string;
     name: string;
     subjectCode: string;
-    course: string;
+    course: "MCA" | "MSC";
 }
 
 export const getAllSubjects = async () => {

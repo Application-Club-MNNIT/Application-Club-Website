@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.ts",
+    "start": "node dist/server.js",
     "dev": "nodemon server.ts",
-    "build": "npm i --force"
+    "build": "tsc"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -39,6 +39,7 @@
     "@types/node": "^22.13.4",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
   }
 }
