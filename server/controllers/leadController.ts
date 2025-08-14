@@ -2,7 +2,6 @@ import {Request, Response, NextFunction} from "express";
 import Potd, {IPotd} from "../model/PotdModel";
 import catchAsync from "../util/catchAsync";
 import AppError from "../util/appError";
-import {RequestWithUser} from "../types";
 import {getQuestionId} from "../util/getQuestionId";
 import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
@@ -10,7 +9,7 @@ import CodeforcesDictionary from "../model/CodeforcesDictionary";
 import axios from "axios";
 import User from "../model/UserModel";
 
-const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const addPotd = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
@@ -22,7 +21,9 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
     const juniorsBranch = user.branch;
 
     // Get the questionId
-    const [questionId, platform, slug] = await getQuestionId(questionLink);
+    const result = await getQuestionId(questionLink);
+    if (!result) return next(new AppError("Invalid question details", 400));
+    const [questionId, platform, slug] = result;
     if (!questionId) return next(new AppError("Invalid question details", 400));
 
     //add to dictionary
@@ -30,14 +31,15 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
         leetcode: LeetcodeDictionary,
         codeforces: CodeforcesDictionary,
         gfg: GfgDictionary,
-    };
-    const Dictionary = DictionaryMap[platform];
+    } as const;
+    type Platform = keyof typeof DictionaryMap;
+    const Dictionary = DictionaryMap[platform as Platform];
     const alreadyExists = await Dictionary.findOne({questionId: questionId.substring(1)});
     if (!alreadyExists)
         await Dictionary.create({questionId: questionId.substring(1), slug});
 
     // Find the existing Potd document or create a new one
-    let potdDoc: IPotd = await Potd.findOne({batch: juniorsBatch, branch: juniorsBranch});
+    let potdDoc: IPotd | null = await Potd.findOne({batch: juniorsBatch, branch: juniorsBranch});
 
     if (!potdDoc) {
         potdDoc = await Potd.create({
@@ -64,7 +66,7 @@ const addPotd = catchAsync(async (req: RequestWithUser, res: Response, next: Nex
 });
 
 
-const getAllLeads = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getAllLeads = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
@@ -75,7 +77,7 @@ const getAllLeads = catchAsync(async (req: RequestWithUser, res: Response, next:
     })
 });
 
-const getAllPotdSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getAllPotdSubmissionData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
@@ -86,7 +88,7 @@ const getAllPotdSubmissionData = catchAsync(async (req: RequestWithUser, res: Re
     })
 })
 
-const getSheetSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getSheetSubmissionData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
@@ -98,7 +100,7 @@ const getSheetSubmissionData = catchAsync(async (req: RequestWithUser, res: Resp
     res.status(200).json({status: "success", users});
 })
 
-const getJuniorsData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getJuniorsData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user.isLead) return next(new AppError("User is not a LeadPage", 400));
 
@@ -125,7 +127,7 @@ const getJuniorsData = catchAsync(async (req: RequestWithUser, res: Response, ne
     res.status(200).json({status: "success", users});
 })
 //
-// const specialSignup = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+// const specialSignup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 //     if (!req.user.isLead) return next(new AppError("User is not a LeadPage", 400));
 //
 //     const {username, name, email, phone, password, leetcode, codeforces, gfg, github} = req.body;

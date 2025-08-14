@@ -7,7 +7,7 @@ import {
     TOP_USERS_COUNT
 } from '../util/fetchers/github';
 import {
-    fetchMultipleCodeforcesRatings,
+    fetchMultipleCodeforcesRatings, FormattedCodeforcesUser,
     getCodeforcesLeaderboard,
     setCodeforcesLeaderboardCache,
     TOP_USERS_COUNT as CF_TOP_USERS_COUNT
@@ -84,7 +84,8 @@ export const getGithubCommitsLeaderboard = catchAsync(async (req: Request, res: 
                 verified: user.github.verified
             };
         } catch (error) {
-            console.error(`Error fetching commits for ${user.github.username}:`, error.message);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            console.error(`Error fetching commits for ${user.github.username}:`, errorMessage);
             return {
                 username: user.username,
                 githubUsername: user.github.username,
@@ -144,10 +145,11 @@ export const getUserGithubCommits = catchAsync(async (req: Request, res: Respons
             }
         });
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         res.status(500).json({
             status: 'error',
             message: 'Failed to fetch GitHub commit count',
-            error: error.message
+            error: errorMessage
         });
     }
 });
@@ -198,6 +200,7 @@ export const getCodeforcesRatingLeaderboard = catchAsync(async (req: Request, re
                 username: user.username,
                 codeforcesUsername: user.codeforces.username,
                 rating: cfData?.rating || 0,
+                maxRating: cfData?.rating || 0, //todo: maxRating was added to comply with FormattedCodeforcesUser interface
                 rank: cfData?.rank || 'unrated',
                 name: cfData?.name || null,
                 verified: user.codeforces.verified
@@ -224,10 +227,11 @@ export const getCodeforcesRatingLeaderboard = catchAsync(async (req: Request, re
         });
     } catch (error) {
         console.error('Error generating Codeforces leaderboard:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         res.status(500).json({
             status: 'error',
             message: 'Failed to generate Codeforces leaderboard',
-            error: error.message
+            error: errorMessage
         });
     }
 });

@@ -5,18 +5,17 @@ import User from "../model/UserModel";
 import {Request, Response, NextFunction, CookieOptions} from "express";
 import {IUser} from "../model/UserModel";
 import {sendEmail} from "../util/email";
-import {RequestWithUser} from "../types";
 
 //returns a jwt token created using given id
 const signToken = (id: any) => {
-    return jwt.sign({id: id}, process.env.JWT_SECRET);
+    return jwt.sign({id: id}, process.env.JWT_SECRET as string);
 };
 
 //creates a jwt token using user's _id, put it into a cookie and send it as response
 const createSendToken = (user: IUser, status: number, res: Response) => {
     const token = signToken(user._id);
 
-    user.password = undefined;
+    user.password = "";
 
     //set cookies
     const options =
@@ -93,12 +92,11 @@ const signup = catchAsync(async (req: Request, res: Response, next: NextFunction
         otp
     });
 
-    user.password = undefined;
-    user.otp = undefined;
-    user._id = undefined;
-    user.past14Days = undefined;
-    user.sheets = undefined;
-    user.potds = undefined;
+    user.password = "";
+    user.otp = 0;
+    user._id = "";
+    user.past14Days = [];
+    user.sheets = [];
 
     await sendEmail({
         email: email,
@@ -137,7 +135,7 @@ const verifyEmail = catchAsync(async (req: Request, res: Response, next: NextFun
 //makes sure that user is logged in == has a valid bearer token
 //if all is good, that user is added to the req
 //this protection does not require all coding profiles to be verified
-const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunction) => {
+const shallowProtect = catchAsync(async (req: Request, _, next: NextFunction) => {
     let token = req.cookies.jwt;
 
     if (!token)
@@ -163,8 +161,13 @@ const shallowProtect = catchAsync(async (req: RequestWithUser, _, next: NextFunc
     next();
 });
 
-const protect = [shallowProtect, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const protect = [shallowProtect, catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({_id: req.user.id}).select("leetcode.verified gfg.verified codeforces.verified leetcode.username gfg.username codeforces.username");
+    if (!user)
+        return res.status(404).json({
+            status: "fail",
+            message: "User not found"
+        });
 
     if (!user.leetcode.username || !user.leetcode.verified || !user.gfg.username || !user.gfg.verified || !user.codeforces.username || !user.codeforces.verified) {
         return res.status(400).json({

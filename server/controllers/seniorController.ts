@@ -4,14 +4,8 @@ import Senior from "../model/Senior";
 import User from "../model/UserModel";
 import AppError from "../util/appError";
 import {Types} from "mongoose";
-import {IUser} from "../model/UserModel";
-import {Document} from "mongoose";
 
-export interface AuthenticatedRequest extends Request {
-    user?: Document<unknown, {}, IUser> & IUser;
-}
-
-export const getAllSeniors = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const getAllSeniors = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const loggedInUserId = req.user._id;
     const searchQuery = req.query.company?.toString();
 
@@ -36,7 +30,7 @@ export const getAllSeniors = catchAsync(async (req: AuthenticatedRequest, res: R
     res.status(200).json({status: "success", data: formattedSeniors});
 });
 
-export const getSeniorById = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const getSeniorById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const loggedInUserId = req.user._id;
 
 
@@ -55,7 +49,7 @@ export const getSeniorById = catchAsync(async (req: AuthenticatedRequest, res: R
     });
 });
 
-export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const followSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const userId = req.user._id;
 
@@ -105,6 +99,14 @@ export const followSenior = catchAsync(async (req: AuthenticatedRequest, res: Re
     });
 });
 
+interface IInterview {
+    date: Date;
+    company: string;
+    role: string;
+    questionTypes?: string[];
+    interviewExperience?: string;
+    adviceToJuniors?: string;
+}
 
 export const addSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
@@ -124,7 +126,7 @@ export const addSenior = catchAsync(async (req: Request, res: Response, next: Ne
     // Validate the format of interview dates if necessary
     if (interviews.length > 0) {
         const invalidInterview = interviews.find(
-            (interview) => !interview.date || !interview.company || !interview.role
+            (interview: IInterview) => !interview.date || !interview.company || !interview.role
         );
         if (invalidInterview) {
             return res.status(400).json({
@@ -133,7 +135,7 @@ export const addSenior = catchAsync(async (req: Request, res: Response, next: Ne
         }
 
         // Remove undefined optional fields
-        interviews.forEach((interview) => {
+        interviews.forEach((interview: IInterview) => {
             if (!interview.questionTypes) delete interview.questionTypes;
             if (!interview.interviewExperience) delete interview.interviewExperience;
             if (!interview.adviceToJuniors) delete interview.adviceToJuniors;

@@ -1,17 +1,17 @@
 import axios from "axios";
 
-export async function getQuestionId(questionLink: string): Promise<[string, string, string]> {
+export async function getQuestionId(questionLink: string): Promise<[string, string, string] | null> {
 
     let platform: string;
     if (questionLink.includes("geeksforgeeks")) platform = "gfg";
     else if (questionLink.includes("leetcode.com")) platform = "leetcode";
-
-    if (!platform) return null;
+    else return null;
 
     let questionId: string;
     let slug: string;
     if (platform == "gfg") [questionId, slug] = await getGfgQuesionId(questionLink);
     else if (platform == "leetcode") [questionId, slug] = await getLeetcodeQuestionId(questionLink);
+    else return null;
 
     return [questionId, platform, slug];
 }
