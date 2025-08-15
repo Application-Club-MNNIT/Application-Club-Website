@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
-import {getAllTeachers, addTeacher, removeTeacher, Teacher} from "../redux/apiCalls/teacherAPI";
+import {addTeacher, getAllTeachers, removeTeacher, Teacher} from "../redux/apiCalls/teacherAPI";
 
 const TeacherPage: React.FC = () => {
     const [teachers, setTeachers] = useState<Teacher[]>([]);

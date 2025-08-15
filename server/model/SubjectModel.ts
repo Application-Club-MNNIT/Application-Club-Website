@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, Types} from "mongoose";
+import mongoose, {Document, Schema} from "mongoose";
 
 interface ISubject extends Document {
     _id: mongoose.Types.ObjectId;

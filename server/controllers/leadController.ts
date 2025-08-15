@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import Potd, {IPotd} from "../model/PotdModel";
 import catchAsync from "../util/catchAsync";
 import AppError from "../util/appError";

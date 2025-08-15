@@ -1,4 +1,4 @@
-import mongoose, {Document} from "mongoose";
+import mongoose from "mongoose";
 
 const gfgDictionary = new mongoose.Schema({
     questionId: {

@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import AnimatedWrapper from "./AnimatedWrapper";
-import {MouseEffectBackground} from "./MouseEffectBackground.js";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
-import {loginSuccess, resetAll} from "../redux/authSlice";
-import {login, signup, verifyOTP} from "../redux/apiCalls/userCalls";
+import {resetAll} from "../redux/authSlice";
+import {signup, verifyOTP} from "../redux/apiCalls/userCalls";
 import {useNavigate} from "react-router-dom";
 
 const OTP_LENGTH = 5;

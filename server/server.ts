@@ -1,6 +1,7 @@
 // things related to server are here '>'
 import path from "path";
 import dotenv from "dotenv";
+import app from "./app";
 
 dotenv.config({path: path.join(__dirname, "config.env")});
 
@@ -24,8 +25,6 @@ if (!DB) {
 mongoose.connect(DB).then(() => {
     console.log("Connected to database!");
 });
-
-import app from "./app";
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

@@ -1,12 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import userIcon from "../assets/images/icons/user.png";
 import lockIcon from "../assets/images/icons/lock.png";
 import {HiEye, HiEyeOff} from "react-icons/hi";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store.js";
-import {useNavigate} from "react-router-dom";
 import {login} from "../redux/apiCalls/userCalls.js";
 
 const LoginPage: React.FC = () => {

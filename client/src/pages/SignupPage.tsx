@@ -5,7 +5,7 @@ import passwordLogo from "../assets/SignUpformLogo/passwordLogo.png";
 import mobileLogo from "../assets/SignUpformLogo/tempImage5qyAJv 1 (2).png";
 import gsuiteLogo from "../assets/SignUpformLogo/tempImageRnhnz3 1.png";
 import nameLogo from "../assets/SignUpformLogo/tempImageChspc3 1 (1).png";
-import {FaCheck, FaTimes, FaEye, FaEyeSlash} from 'react-icons/fa'; // Import check, cross, and eye icons
+import {FaCheck, FaEye, FaEyeSlash, FaTimes} from 'react-icons/fa'; // Import check, cross, and eye icons
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {isUsernameAvailable as isUsernameAvailableApi, signup} from "../redux/apiCalls/userCalls.js";

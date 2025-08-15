@@ -1,13 +1,13 @@
-import {Request, Response, NextFunction} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import User from '../model/UserModel';
 import {
-    totalCommitsFetcher,
     getGithubLeaderboard,
     setGithubLeaderboardCache,
-    TOP_USERS_COUNT
+    TOP_USERS_COUNT,
+    totalCommitsFetcher
 } from '../util/fetchers/github';
 import {
-    fetchMultipleCodeforcesRatings, FormattedCodeforcesUser,
+    fetchMultipleCodeforcesRatings,
     getCodeforcesLeaderboard,
     setCodeforcesLeaderboardCache,
     TOP_USERS_COUNT as CF_TOP_USERS_COUNT

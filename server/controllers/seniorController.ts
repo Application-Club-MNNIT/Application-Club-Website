@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import catchAsync from "../util/catchAsync";
 import Senior from "../model/Senior";
 import User from "../model/UserModel";

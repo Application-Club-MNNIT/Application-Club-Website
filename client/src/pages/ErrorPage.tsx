@@ -1,6 +1,5 @@
 import React from "react";
-import {useNavigate, useRouteError} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useRouteError} from "react-router-dom";
 
 const ErrorPage = () => {
     const error: any = useRouteError();

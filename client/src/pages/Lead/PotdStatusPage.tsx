@@ -1,6 +1,5 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getAllPotds} from "../../redux/apiCalls/userCalls.js";
-import React from "react";
 import {useSelector} from "react-redux";
 import {RootState} from "../../redux/store.js";
 import {generateLink} from "../../util/generateLink.js";

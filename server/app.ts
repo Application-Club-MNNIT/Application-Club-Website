@@ -1,8 +1,22 @@
 import express from "express";
 import morgan from "morgan"; //a middleware that logs requests onto the console
-const app = express();
 import cookieParser from "cookie-parser";
 import cors from "cors"; //prevents cors blockage
+//defining routers
+// todo: routes here
+import userRoutes from "./routes/userRouters";
+import leadRoutes from "./routes/leadRouters";
+import teacherRoutes from "./routes/teacherRouters";
+import paperRoutes from "./routes/paperRoutes";
+import subjectRoutes from "./routes/subjectRoutes";
+import seniorRoutes from "./routes/seniorRouters";
+import leaderboardRoutes from "./routes/leaderboardroutes";
+//for undefined routs
+import AppError from "./util/appError";
+//in case of operational error this middleware function will be called to return relevant error message
+import globalErrorController from "./controllers/errorController";
+
+const app = express();
 
 const allowedOrigins = [
     "http://localhost:5173", // Development Frontend
@@ -46,31 +60,16 @@ app.get("/test", async (req, res, next) => {
 });
 
 
-//defining routers
-// todo: routes here
-import userRoutes from "./routes/userRouters";
-import leadRoutes from "./routes/leadRouters";
-import teacherRoutes from "./routes/teacherRouters";
-import paperRoutes from "./routes/paperRoutes";
-import subjectRoutes from "./routes/subjectRoutes";
-
 app.use("/user", userRoutes);
 app.use("/lead", leadRoutes);
 
 
-import seniorRoutes from "./routes/seniorRouters";
-
 app.use("/seniors", seniorRoutes);
-
-import leaderboardRoutes from "./routes/leaderboardroutes";
 
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/paper", paperRoutes);
 app.use("/subject", subjectRoutes);
-
-//for undefined routs
-import AppError from "./util/appError";
 
 app.all("*", (req, res, next) => {
     next(
@@ -80,9 +79,6 @@ app.all("*", (req, res, next) => {
         )
     );
 });
-
-//in case of operational error this middleware function will be called to return relevant error message
-import globalErrorController from "./controllers/errorController";
 
 app.use(globalErrorController);
 export default app;

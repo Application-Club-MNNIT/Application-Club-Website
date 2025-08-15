@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, Types} from "mongoose";
+import mongoose, {Document, Schema, Types} from "mongoose";
 
 interface IPaper extends Document {
     course: "MCA" | "MSC";

@@ -1,6 +1,6 @@
 import AppError from "../util/appError";
 import {Error as MongooseError} from "mongoose";
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 
 // MongoDB error handlers
 const handleCastErrorDB = (err: MongooseError.CastError) => {

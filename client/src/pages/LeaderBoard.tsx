@@ -1,7 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Trophy, Github, Code2, Calendar} from 'lucide-react';
+import React, {useEffect, useState} from 'react';
+import {Calendar, Code2, Github, Trophy} from 'lucide-react';
 import AnimatedWrapper from "../components/AnimatedWrapper";
-import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import {backend} from '../AxiosRequests/backendRequestAxios';
 
 // Types for our leaderboard data

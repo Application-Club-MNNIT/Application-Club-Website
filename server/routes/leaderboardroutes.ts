@@ -1,5 +1,10 @@
 import express from 'express';
-import { getGithubCommitsLeaderboard, getUserGithubCommits, getCodeforcesRatingLeaderboard, getPotdLeaderboard } from '../controllers/leaderboardController';
+import {
+    getCodeforcesRatingLeaderboard,
+    getGithubCommitsLeaderboard,
+    getPotdLeaderboard,
+    getUserGithubCommits
+} from '../controllers/leaderboardController';
 
 const router = express.Router();
 

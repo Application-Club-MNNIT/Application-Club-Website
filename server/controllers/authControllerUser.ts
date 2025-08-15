@@ -1,9 +1,8 @@
 import catchAsync from "../util/catchAsync";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import AppError from "../util/appError";
-import User from "../model/UserModel";
-import {Request, Response, NextFunction, CookieOptions} from "express";
-import {IUser} from "../model/UserModel";
+import User, {IUser} from "../model/UserModel";
+import {CookieOptions, NextFunction, Request, Response} from "express";
 import {sendEmail} from "../util/email";
 
 //returns a jwt token created using given id
@@ -18,18 +17,20 @@ const createSendToken = (user: IUser, status: number, res: Response) => {
     user.password = "";
 
     //set cookies
-    const options =
+    const options: CookieOptions =
         process.env.NODE_ENV === "development"
             ? {
                 expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRY_DAYS) * 24 * 60 * 60 * 1000),
                 httpOnly: true,
                 secure: false,
+                sameSite: "lax",
             }
             : {
                 expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRY_DAYS) * 24 * 60 * 60 * 1000),
                 httpOnly: true,
                 secure: true,
-                domain: process.env.FRONTEND_DOMAIN,
+                sameSite: "none", // Required for cross-site cookies
+                domain: process.env.FRONTEND_DOMAIN, // ".applicationclubmnnit.com"
             };
 
     res.cookie("jwt", token, options);
@@ -205,14 +206,23 @@ const login = catchAsync(async (req: Request, res: Response, next: NextFunction)
 
 
 const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const options: CookieOptions = {
-        expires: new Date(0), // Set expiration time to the past
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure in production
-        sameSite: "lax", // "None" if using cross-origin with HTTPS
-        path: "/", // Ensure deletion across all paths
-        domain: process.env.NODE_ENV === "production" ? ".applicationclubmnnit.com" : "localhost",
-    };
+    const options: CookieOptions =
+        process.env.NODE_ENV === "development"
+            ? {
+                expires: new Date(0), // Set expiration time to the past
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                path: "/",
+            }
+            : {
+                expires: new Date(0), // Set expiration time to the past
+                httpOnly: true,
+                secure: true,
+                sameSite: "none", // Required for cross-site cookies
+                path: "/",
+                domain: process.env.FRONTEND_DOMAIN, // ".applicationclubmnnit.com"
+            };
 
     res.cookie("jwt", "", options);
 

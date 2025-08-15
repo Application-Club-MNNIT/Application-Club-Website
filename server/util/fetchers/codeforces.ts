@@ -1,9 +1,4 @@
-import {Request, Response, NextFunction} from "express";
 import axios from "axios";
-import catchAsync from "../catchAsync"
-import AppError from "../appError";
-import {log} from "node:console";
-import {IUser} from "../../model/UserModel";
 
 // Type definitions for Codeforces API responses and our data structures
 interface CodeforcesUser {

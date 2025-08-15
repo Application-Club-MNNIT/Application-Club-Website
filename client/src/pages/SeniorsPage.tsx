@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {fetchAllSeniors, toggleFollowSenior} from "../redux/apiCalls/seniorCalls";
