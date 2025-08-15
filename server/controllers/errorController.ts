@@ -1,8 +1,9 @@
 import AppError from "../util/appError";
 import {Error as MongooseError} from "mongoose";
+import {NextFunction, Request, Response} from "express";
 
-
-const handleCastErrorDB = (err) => {
+// MongoDB error handlers
+const handleCastErrorDB = (err: MongooseError.CastError) => {
     const message = `Invalid ${err.path}: ${err.value}.`;
     return new AppError(message, 400);
 };
@@ -13,20 +14,30 @@ const handleValidationErrorDB = (err: MongooseError.ValidationError) => {
     return new AppError(message, 400);
 }
 
-const handleDuplicateFieldsDB = (err) => {
+interface MongoError {
+    code: number;
+    errmsg: string;
+}
+
+const handleDuplicateFieldsDB = (err: MongoError) => {
     const message = `Duplicate field value: (${(err.errmsg.match(/(["'])(\\?.)*?\1/) || [err])[0]}. Please use another value.`;
     return new AppError(message, 400);
 }
 
-const handleJWTError = (err) => {
+interface JWTError {
+    name: string;
+    message: string;
+}
+
+const handleJWTError = (err: JWTError) => {
     return new AppError("Invalid token, please login again.", 401);
 }
 
-const handleJWTExpiredError = (err) => {
+const handleJWTExpiredError = (err: JWTError) => {
     return new AppError('Your token has expired, please login again!', 401);
 }
 
-export default (err, req, res, next) => {
+export default (err: any, req: Request, res: Response, next: NextFunction) => {
 
     console.log(err);
 

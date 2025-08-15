@@ -1,20 +1,11 @@
 import {backend} from "../../AxiosRequests/backendRequestAxios.js";
-import {
-    loginFailed,
-    loginSuccess,
-    logoutSuccess,
-    otpVerified,
-    resetAll,
-    verifyPlatformFail,
-    verifyPlatformSuccess
-} from "../authSlice.js";
+import {loginFailed, loginSuccess, logoutSuccess, otpVerified, resetAll} from "../authSlice.js";
 
 import {toast} from "react-toastify";
 import to from "await-to-js";
 import {Dispatch} from "@reduxjs/toolkit";
 import ISignupResponse from "../../interfaces/ISignupResponse";
 import {dictionaryUpdate} from "../dictionarySlice.js";
-import {updateProfile} from "../userSlice.js";
 
 export const login: (dispatch: Dispatch, body: any) => Promise<{
     status: boolean,

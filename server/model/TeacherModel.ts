@@ -1,20 +1,20 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, {Document, Schema} from "mongoose";
 
 interface ITeacher extends Document {
-  name: string;
-  email:string;
+    name: string;
+    email: string;
 }
 
 const TeacherSchema = new Schema<ITeacher>({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-} , {timestamps:true});
+    name: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+}, {timestamps: true});
 
 const Teacher = mongoose.model<ITeacher>("Teacher", TeacherSchema);
 

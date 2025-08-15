@@ -1,14 +1,13 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import catchAsync from "../util/catchAsync";
 import AppError from "../util/appError";
 import mongoose from "mongoose";
 
 import QuestionPaperUploadRequestModel from "../model/PaperModel";
-import {RequestWithUser} from "../types";
 
 
 //Store paper request by user for admins approval
-const createPaper = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const createPaper = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const {course, subject, academicSession, year, semester, teacher, examType, driveLink} = req.body;
     const uploadedBy = req.user._id;
     if (!course || !subject || !teacher || !uploadedBy || !driveLink) {

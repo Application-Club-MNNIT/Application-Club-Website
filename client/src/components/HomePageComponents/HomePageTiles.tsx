@@ -1,4 +1,3 @@
-import Days14LineGraph from "../graphs/Days14LineGraph.js";
 import React from "react";
 
 function HomePageTiles({data}) {

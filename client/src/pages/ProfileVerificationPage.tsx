@@ -7,18 +7,15 @@ import VerifyIcon from "../assets/images/icon/verify.png";
 import TickIcon from "../assets/images/icon/tick.png";
 import AnimatedWrapper from "../components/AnimatedWrapper.js";
 import {MouseEffectBackground} from "../components/MouseEffectBackground.js";
-import {useLoaderData} from "react-router-dom";
+import {useLoaderData, useNavigate} from "react-router-dom";
 import {verifyHandle} from "../redux/apiCalls/userCalls";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
-import {useNavigate} from "react-router-dom";
 
 const ProfileVerificationPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const data = useLoaderData().res.data;
+    const data = useLoaderData()['res'].data;
     const randomName: string = data.randomString;
     const [verifiedPlatforms, setVerifiedPlatforms] = useState(data.verifiedPlatforms || []);
     const [unverifiedPlatforms, setUnverifiedPlatforms] = useState(data.unverifiedPlatforms || []);

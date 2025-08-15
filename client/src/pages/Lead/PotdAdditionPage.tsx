@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {backend} from "../../AxiosRequests/backendRequestAxios.js";
 import {addPotd} from "../../redux/apiCalls/leadCalls.js";
 
 interface Potd {

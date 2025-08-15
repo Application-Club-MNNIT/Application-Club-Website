@@ -70,7 +70,7 @@ export interface IUser extends Document {
 
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
 
-    changePasswordAfter(JWTTimeStamp: number): boolean;
+    changePasswordAfter(JWTTimeStamp: number | undefined): boolean;
 }
 
 
@@ -105,7 +105,7 @@ const userSchema = new mongoose.Schema({
         minlength: [3, "username must be at least 3 characters long"],
         maxlength: [15, "username must be at max 15 characters long"],
         validate: {
-            validator: function (value) {
+            validator: function (value: string) {
                 return /^[a-zA-Z0-9_]+$/.test(value);
             },
             message: "username can only contain alphabets, numbers, and underscores!"
@@ -127,7 +127,7 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         required: [true, "Email is required!"],
         validate: {
-            validator: function (value) {
+            validator: function (value: string) {
                 return validator.isEmail(value) && value.endsWith("@mnnit.ac.in");
             },
             message: "Please enter MNNIT GSuit id."

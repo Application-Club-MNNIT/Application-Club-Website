@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
 import {getAllPaperRequests, Paper} from "../redux/apiCalls/paperAPI";
-import {updatePaperStatus, deletePaper} from "../redux/apiCalls/adminPaperAPI";
+import {deletePaper, updatePaperStatus} from "../redux/apiCalls/adminPaperAPI";
 import {format} from "date-fns";
-import {FaTrash, FaCheck, FaTimes} from "react-icons/fa";
+import {FaCheck, FaTimes, FaTrash} from "react-icons/fa";
 
 const AdminPapersPage: React.FC = () => {
     const [papers, setPapers] = useState<Paper[]>([]);

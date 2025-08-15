@@ -1,8 +1,7 @@
 import userController from "./../controllers/userController"; //this format, instead of using path, helps intellisense
 import authController from "../controllers/authControllerUser";
 import rateLimit from "express-rate-limit";
-import express, {Request, Response, NextFunction} from "express";
-import {sendEmail} from "../util/email";
+import express, {NextFunction, Request, Response} from "express";
 import catchAsync from "../util/catchAsync";
 
 const router = express.Router();

@@ -1,10 +1,9 @@
 import React, {Fragment} from "react";
-import {Link, NavLink, useNavigate, useNavigation} from "react-router-dom";
+import {NavLink, useNavigate, useNavigation} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {logoutUser} from "../redux/apiCalls/userCalls.js";
 import ACLogo from "../assets/images/logos/discord_emoji.png";
 import {RootState} from "../redux/store.js";
-import {PiCatLight} from "react-icons/pi";
 
 const Navbar = () => {
     const user = useSelector((state: RootState) => state.auth.isLoggedIn && state.auth.verified);

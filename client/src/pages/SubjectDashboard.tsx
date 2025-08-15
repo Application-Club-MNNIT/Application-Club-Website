@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
-import {getAllSubjects, addSubject, removeSubject, Subject} from "../redux/apiCalls/subjectAPI";
+import {addSubject, getAllSubjects, removeSubject, Subject} from "../redux/apiCalls/subjectAPI";
 
 const VALID_COURSES = ["MCA", "MSC"] as const;
 type CourseType = typeof VALID_COURSES[number];

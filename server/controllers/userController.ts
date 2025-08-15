@@ -1,13 +1,12 @@
 import catchAsync from "../util/catchAsync";
 import axios from "axios";
 import AppError from "../util/appError";
-import {RequestWithUser} from "../types";
 import {NextFunction, Request, Response} from "express";
-import User from "../model/UserModel";
+import User, {IUser} from "../model/UserModel";
 import LeetcodeDictionary from "../model/LeetcodeDictionary";
 import GfgDictionary from "../model/GfgDictionary";
 import CodeforcesDictionary from "../model/CodeforcesDictionary";
-import Potd from "../model/PotdModel";
+import Potd, {IPotd} from "../model/PotdModel";
 import Sheet from "../model/Sheet";
 import mongoose from "mongoose";
 
@@ -17,13 +16,26 @@ const globalDataSchema = new mongoose.Schema({}, {strict: false});
 const GlobalData = mongoose.model('globaldatas', globalDataSchema);
 
 //cache
-let dictionary;
+interface DictionaryItem {
+    [questionId: string]: string;
+}
+
+interface Dictionary {
+    leetcode: DictionaryItem;
+    gfg: DictionaryItem;
+    codeforces: DictionaryItem;
+}
+
+let dictionary: Dictionary;
 const initializeDictionary = async (): Promise<void> => {
     const leetcodeDocs = await LeetcodeDictionary.find({}).select("-_id -__v");
     const gfgDocs = await GfgDictionary.find({}).select("-_id -__v");
     const codeforcesDocs = await CodeforcesDictionary.find({}).select("-_id -__v");
 
-    const leetcode = {}, gfg = {}, codeforces = {};
+    const leetcode: DictionaryItem = {};
+    const gfg: DictionaryItem = {};
+    const codeforces: DictionaryItem = {};
+
     leetcodeDocs.forEach(doc => leetcode[doc.questionId] = doc.slug);
     gfgDocs.forEach(doc => gfg[doc.questionId] = doc.slug);
     codeforcesDocs.forEach(doc => codeforces[doc.questionId] = doc.slug);
@@ -33,7 +45,7 @@ const initializeDictionary = async (): Promise<void> => {
 }
 setTimeout(() => initializeDictionary(), 10000);
 
-const getLeetcodeName = async (username: string): Promise<string> => {
+const getLeetcodeName = async (username: string): Promise<string | null> => {
     try {
         const query = `
     query userPublicProfile($username: String!) { 
@@ -63,7 +75,7 @@ const getLeetcodeName = async (username: string): Promise<string> => {
     }
 }
 
-const getGfgName = async (username: string): Promise<string> => {
+const getGfgName = async (username: string): Promise<string | null> => {
     try {
         const response = await axios.get(`https://authapi.geeksforgeeks.org/api-get/user-profile-info/?handle=${username}`);
         return response.data.data?.name;
@@ -72,7 +84,7 @@ const getGfgName = async (username: string): Promise<string> => {
     }
 }
 
-const getCodeforcesName = async (username: string): Promise<string> => {
+const getCodeforcesName = async (username: string): Promise<string | null> => {
     try {
         const response = await axios.get(`https://codeforces.com/api/user.info?handles=${username}&checkHistoricHandles=false`);
         return response.data.result[0]?.firstName;
@@ -81,7 +93,7 @@ const getCodeforcesName = async (username: string): Promise<string> => {
     }
 }
 
-const getGithubName = async (username: string): Promise<string> => {
+const getGithubName = async (username: string): Promise<string | null> => {
     try {
         const response = await axios.get(`https://api.github.com/users/${username}`);
         return response.data.name;
@@ -101,19 +113,19 @@ const isUsernameAvailable = catchAsync(async (req: Request, res: Response, next:
     });
 });
 
-const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const user = req.user;
+const verifyCodingProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as IUser;
     const platform: string = req.body.platform;
     const username: string = req.body.username;
 
     if (!platform || !username) return next(new AppError("username or platform not provided!", 400));
-
     if (!["leetcode", "gfg", "codeforces", "github"].includes(platform)) return next(new AppError(`This platform "${platform}" is not our concern at the moment.`, 400));
-    console.log(user)
-    if (user[platform].verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
-    if (!user.profileVerificationData.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
 
-    let name: string;
+    const platformKey = platform as keyof typeof user;
+    if (user[platformKey]?.verified) return next(new AppError(`User has already verified a username for ${platform}.`, 401));
+    if (!user.profileVerificationData?.randomName) return next(new AppError("Name to check with was not found in the database!", 400));
+
+    let name: string | null = null;
     if (platform === "leetcode")
         name = await getLeetcodeName(username);
     else if (platform === "gfg")
@@ -125,8 +137,9 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
 
     if (!name) return next(new AppError("Check your username and try again", 400));
     if (name !== user.profileVerificationData.randomName) return next(new AppError(`Name mismatch (actual: ${name})`, 400));
-    user[platform].username = username;
-    user[platform].verified = true;
+
+    user[platformKey].username = username;
+    user[platformKey].verified = true;
     await user.save();
 
     res.status(200).json({
@@ -135,28 +148,28 @@ const verifyCodingProfile = catchAsync(async (req: RequestWithUser, res: Respons
     });
 });
 
-const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWithUser, res: Response) => {
-    const user = await User.findOne({_id: req.user._id}).select("profileVerificationData leetcode gfg codeforces github");
+const makeUserCodingProfileVerificationReady = catchAsync(async (req: Request, res: Response) => {
+    const user = await User.findOne({_id: req.user._id}).select("profileVerificationData leetcode gfg codeforces github") as IUser;
 
     const lastRequestTimestamp: number = user.profileVerificationData?.lastRequestTimestamp || 0;
     const fifteenMinutesInMs = 15 * 60 * 1000;
     const hasFifteenMinutesPassed = Date.now() - lastRequestTimestamp >= fifteenMinutesInMs;
 
-    let randomString: string = null;
+    let randomString: string | null | undefined = null;
 
     const unverifiedPlatforms: string[] = [];
     const verifiedPlatforms = [];
     for (const platform of ['leetcode', 'gfg', 'codeforces', 'github'])
-        if (!user[platform].verified) {
+        if (!user[platform as keyof typeof user].verified) {
             unverifiedPlatforms.push(platform);
         } else {
-            verifiedPlatforms.push({platform, username: user[platform].username});
+            verifiedPlatforms.push({platform, username: user[platform as keyof typeof user].username});
         }
 
     if (unverifiedPlatforms.length > 0)
         if (hasFifteenMinutesPassed) {
             console.log("one")
-            user.profileVerificationData.randomName = ((length = 8) => {
+            user.profileVerificationData.randomName = ((length = 8): string => {
                 console.log("one.1")
                 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -179,7 +192,7 @@ const makeUserCodingProfileVerificationReady = catchAsync(async (req: RequestWit
 
 });
 
-const getSubmissionData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getSubmissionData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const platform = req.params.platform?.toLowerCase(); // leetcode, gfg, codeforces
     const page = parseInt(req.query.page as string) || 1;
 
@@ -191,28 +204,31 @@ const getSubmissionData = catchAsync(async (req: RequestWithUser, res: Response,
 
     console.log(req.user);
 
+    // Create projection object with proper typing
+    const projection: Record<string, any> = {
+        [`${platform}.submissions`]: {$slice: [skip, pageSize]}, // paginate here
+        [`${platform}.username`]: 1,
+        [`${platform}.verified`]: 1,
+    };
+
     const user = await User.findOne(
         {_id: req.user.id},
-        {
-            [`${platform}.submissions`]: {$slice: [skip, pageSize]}, // paginate here
-            [`${platform}.username`]: 1,
-            [`${platform}.verified`]: 1,
-        }
-    );
+        projection
+    ) as IUser;
 
     res.status(200).json({
         status: "success",
         data: {
             platform,
-            submissions: user[platform].submissions,
-            username: user[platform].username,
-            verified: user[platform].verified,
+            submissions: user[platform as keyof typeof user].submissions,
+            username: user[platform as keyof typeof user].username,
+            verified: user[platform as keyof typeof user].verified,
         }
     })
 
 });
 
-const getProfileData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getProfileData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.user.id);
     const user = await User.findOne({_id: req.user.id}).select("" +
         "username name email regNumber branch batch phone leetcode gfg codeforces github past14Days sheets potds"
@@ -224,18 +240,18 @@ const getProfileData = catchAsync(async (req: RequestWithUser, res: Response, ne
     })
 });
 
-const getDictionary = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getDictionary = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
         status: "success",
         dictionary
     })
 });
 
-const getAllPotds = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getAllPotds = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
 
     let potds = [];
-    const potdDoc = await Potd.findOne({batch: user.batch + 1, branch: user.branch});
+    const potdDoc = await Potd.findOne({batch: user.batch + 1, branch: user.branch}) as IPotd;
     if (user.isLead) {
         potds = potdDoc.potds;
     } else {
@@ -256,7 +272,7 @@ const getAllPotds = catchAsync(async (req: RequestWithUser, res: Response, next:
     })
 })
 
-const getSheetQuestions = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getSheetQuestions = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const sheetName = req.params.sheetName;
     const sheet = await Sheet.findOne({name: sheetName});
     res.status(200).json({
@@ -266,7 +282,7 @@ const getSheetQuestions = catchAsync(async (req: RequestWithUser, res: Response,
 })
 
 
-const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getHomeStats = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const mcaUserCount = await User.countDocuments({verified: true, branch: "MCA"});
     const mscUserCount = await User.countDocuments({verified: true, branch: "MSC"});
     const leadCount = await User.countDocuments({verified: true, isLead: true});
@@ -281,13 +297,22 @@ const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next
             return date.toLocaleDateString('en-CA');
         }).reverse();
 
-        const statsMap = dates.reduce((acc, date) => {
+        interface StatsMap {
+            [key: string]: number;
+        }
+
+        const statsMap: StatsMap = dates.reduce((acc: StatsMap, date) => {
             acc[date] = 0;
             return acc;
         }, {});
 
+        interface DayStats {
+            date: string;
+            uniqueQuestionsSolved: number;
+        }
+
         globalStats.forEach(doc => {
-            (doc as any).past14Days?.forEach(day => {
+            (doc as any).past14Days?.forEach((day: DayStats) => {
                 if (statsMap.hasOwnProperty(day.date)) {
                     statsMap[day.date] += (day.uniqueQuestionsSolved || 0);
                 }
@@ -299,7 +324,6 @@ const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next
             uniqueQuestionsSolved: statsMap[date] || 10
         }));
     })();
-
     const dsaToday = past14DaysData[past14DaysData.length - 1].uniqueQuestionsSolved;
     const dsaPast14Days = past14DaysData.reduce((sum, day) => sum + day.uniqueQuestionsSolved, 0)
 
@@ -316,7 +340,7 @@ const getHomeStats = catchAsync(async (req: RequestWithUser, res: Response, next
     })
 })
 
-const getSheetPotdDaysData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+const getSheetPotdDaysData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
 
     const userData = await User.findOne(

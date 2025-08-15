@@ -1,8 +1,8 @@
 import catchAsync from "../util/catchAsync";
 import AppError from "../util/appError";
 import Teacher from "../model/TeacherModel";
-import {Request, Response, NextFunction, CookieOptions} from "express";
-import { DeleteResult } from "mongoose";
+import {NextFunction, Request, Response} from "express";
+import {DeleteResult} from "mongoose";
 
 //to add teacher 
 const addTeacher = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -16,8 +16,7 @@ const addTeacher = catchAsync(async (req: Request, res: Response, next: NextFunc
         $or: [{email}]
     });
 
-    if(existingTeacher)
-    {
+    if (existingTeacher) {
         res.status(400).json({
             status: "failure",
             message: `Teacher with ${email} already exists!`,
@@ -45,14 +44,13 @@ const deleteTeacher = catchAsync(async (req: Request, res: Response, next: NextF
 
     // check if the teacher exists
     const teacher = await Teacher.findById(teacherId);
-    if(!teacher)
+    if (!teacher)
         return next(new AppError("Teacher not found!", 400));
 
     // teacher found now delete it
-    const result:DeleteResult = await teacher.deleteOne();
+    const result: DeleteResult = await teacher.deleteOne();
 
-    if(result.acknowledged && result.deletedCount === 1)
-    {
+    if (result.acknowledged && result.deletedCount === 1) {
         res.status(201).json({
             status: "success",
             message: "Teacher deleted!",
@@ -74,7 +72,7 @@ const getTeacherById = catchAsync(async (req: Request, res: Response, next: Next
 
     // check if the teacher exists
     const teacher = await Teacher.findById(teacherId);
-    if(!teacher)
+    if (!teacher)
         return next(new AppError("Teacher not found!", 400));
 
     res.status(201).json({

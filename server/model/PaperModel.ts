@@ -1,7 +1,7 @@
-import mongoose, {Schema, Document, Types} from "mongoose";
+import mongoose, {Document, Schema, Types} from "mongoose";
 
 interface IPaper extends Document {
-    course: string;
+    course: "MCA" | "MSC";
     subject: Types.ObjectId;
     academicSession: string;
     year: number;
@@ -71,17 +71,15 @@ const PaperSchema = new Schema<IPaper>({
     }
 
 }, {timestamps: true});
-
 // Validation Middleware
 PaperSchema.pre("validate", async function (next) {
     // Validate course
-    const validCourses = ["MCA", "MSC"];
-    if (!validCourses.includes(this.course)) {
+    const validCourses = ["MCA", "MSC"] as const;
+    if (!validCourses.includes(this.course as typeof validCourses[number])) {
         return next(new Error("Course must be either MCA or MSC."));
     }
-
     // Define max years for each course
-    const maxYears = {
+    const maxYears: Record<typeof validCourses[number], number> = {
         MCA: 3,
         MSC: 2
     };
@@ -92,7 +90,7 @@ PaperSchema.pre("validate", async function (next) {
     }
 
     // Each year has two semesters
-    const validSemesters = {
+    const validSemesters: { [key: number]: number[] } = {
         1: [1, 2],
         2: [3, 4],
         3: [5, 6]
@@ -113,7 +111,6 @@ PaperSchema.pre("validate", async function (next) {
 
     next();
 });
-
 
 const Paper = mongoose.model<IPaper>(
     "Paper",

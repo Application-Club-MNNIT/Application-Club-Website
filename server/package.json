@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.ts",
+    "start": "node dist/server.js",
     "dev": "nodemon server.ts",
-    "build": "npm i --force"
+    "build": "tsc"
   },
   "dependencies": {
+    "@types/node": "^24.2.1",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -26,9 +27,7 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.4",
-    "validator": "^13.12.0"
-  },
-  "devDependencies": {
+    "validator": "^13.12.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
@@ -36,9 +35,10 @@
     "@types/github-username-regex": "^1.0.2",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.13.4",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
-    "ts-node": "^10.9.2"
-  }
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  },
+  "devDependencies": {}
 }

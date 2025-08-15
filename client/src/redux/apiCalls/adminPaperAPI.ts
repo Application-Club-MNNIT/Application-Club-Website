@@ -2,7 +2,6 @@ import {backend} from "../../AxiosRequests/backendRequestAxios";
 import {toast} from "react-toastify";
 import to from "await-to-js";
 import {AxiosError} from "axios";
-import {Paper} from "./paperAPI";
 
 export const updatePaperStatus = async (paperId: string, status: "pending" | "approved" | "rejected") => {
     const toastId = toast.loading("Updating paper status...");

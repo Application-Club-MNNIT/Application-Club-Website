@@ -1,11 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
 import {createPaperRequest} from "../redux/apiCalls/paperAPI";
 import {getAllSubjects, Subject} from "../redux/apiCalls/subjectAPI";
 import {getAllTeachers, Teacher} from "../redux/apiCalls/teacherAPI";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
 
 const EXAM_TYPES = ["Mid-Sem", "End-Sem", "Practical", "Other"] as const;
 const COURSES = ["MCA", "MSC"] as const;

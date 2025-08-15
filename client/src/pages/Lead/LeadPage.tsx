@@ -1,5 +1,4 @@
-import React, {useEffect} from "react";
-import {getAllLeads} from "../../redux/apiCalls/leadCalls.js";
+import React from "react";
 import {Link, Outlet} from "react-router-dom";
 
 function LeadPage() {

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.js";
 import "./index.css";
-// import "flowbite";
+import "flowbite";
 
 import {Provider} from "react-redux"; //redux state provider
 import {persistor, store} from "./redux/store.js"; //persistor to keep data in local storage

@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import * as d3 from "d3";
 
 const LineChart = ({data}) => {
