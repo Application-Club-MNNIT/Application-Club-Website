@@ -82,12 +82,31 @@ const SubmissionSchema = new mongoose.Schema({
 }, {_id: false});
 
 const PlatformSchema = new mongoose.Schema({
-    username: {type: String, unique: true, sparse: true},
+    username: {type: String}, // Remove unique and sparse from here
     submissions: {type: [SubmissionSchema], default: []},
     verified: {type: Boolean, default: false},
     lastSubmissionTimestamp: {type: Number, required: true, min: 0, default: 0},
     lastRequestTimestamp: {type: Number, required: true, min: 0, default: 0}
 }, {_id: false});
+
+// Add the partial filter index
+PlatformSchema.index(
+    {username: 1},
+    {unique: true, partialFilterExpression: {username: {$type: "string"}}}
+);
+
+// Create GitHub schema with partial filter index
+const GitHubSchema = new mongoose.Schema({
+    username: {type: String},
+    verified: {type: Boolean, default: false},
+    randomName: {type: String}
+}, {_id: false});
+
+// Add the partial filter index for GitHub
+GitHubSchema.index(
+    {username: 1},
+    {unique: true, partialFilterExpression: {username: {$type: "string"}}}
+);
 
 const defaultPlatform = {
     username: null,
@@ -168,11 +187,7 @@ const userSchema = new mongoose.Schema({
         default: defaultPlatform
     },
     github: {
-        type: new mongoose.Schema({
-            username: {type: String, unique: true, sparse: true},
-            verified: {type: Boolean, default: false},
-            randomName: {type: String}
-        }, {_id: false}),
+        type: GitHubSchema,
         select: false,
         default: {
             username: null,
