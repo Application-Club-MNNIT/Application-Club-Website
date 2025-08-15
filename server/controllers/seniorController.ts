@@ -18,28 +18,20 @@ export const getAllSeniors = catchAsync(async (req: Request, res: Response, next
             },
         }
         : {};
-    console.log("filter", filter);
-    console.log("searchQuery", searchQuery);
     const seniors = await Senior.find(filter);
-    console.log("seniors", seniors);
     const formattedSeniors = seniors.map((senior) => ({
         ...senior.toObject(),
         isFollowing: loggedInUserId ? senior.followers.includes(new Types.ObjectId(loggedInUserId as string)) : false,
     }));
-
     res.status(200).json({status: "success", data: formattedSeniors});
 });
 
 export const getSeniorById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const loggedInUserId = req.user._id;
-
-
     const senior = await Senior.findById(req.params.id).populate("interviews followers").exec();
-
     if (!senior) {
         return res.status(404).json({status: "fail", message: "Senior not found"});
     }
-
     res.status(200).json({
         status: "success",
         data: {
@@ -110,6 +102,8 @@ interface IInterview {
 
 export const addSenior = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
+    const createdBy = req.user.email;
+
     const {
         name,
         regNumber,
@@ -153,6 +147,7 @@ export const addSenior = catchAsync(async (req: Request, res: Response, next: Ne
         name,
         regNumber,
         linkedin,
+        createdBy,
         batch,
         branch,
         interviews, // Array of interviews

@@ -8,6 +8,7 @@ export interface ISenior extends Document {
     branch: string;
     followers: mongoose.Types.ObjectId[];
     isTopMentor: boolean;
+    createdBy: mongoose.Types.ObjectId;
     interviews: {
         date: Date;
         company: string;
@@ -28,7 +29,11 @@ const SeniorSchema = new Schema<ISenior>({
     branch: {type: String, required: true},
     followers: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
     isTopMentor: {type: Boolean, default: false},
-
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
     interviews: [
         {
             date: {type: Date},

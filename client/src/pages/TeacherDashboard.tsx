@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
 import {addTeacher, getAllTeachers, removeTeacher, Teacher} from "../redux/apiCalls/teacherAPI";
+import {CgClose} from "react-icons/cg";
 
 const TeacherPage: React.FC = () => {
     const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -136,8 +137,10 @@ const TeacherPage: React.FC = () => {
                                         </div>
                                         <button
                                             onClick={() => handleRemoveTeacher(teacher._id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
-                                            Remove
+                                            title="delete"
+                                            className="bg-red-500 hover:bg-red-600 text-white rounded-full transition relative bottom-4 flex items-center justify-center p-0.5 cursor-pointer"
+                                        >
+                                            <CgClose/>
                                         </button>
                                     </li>
                                 ))}

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {MouseEffectBackground} from "../components/MouseEffectBackground";
 import AnimatedWrapper from "../components/AnimatedWrapper";
 import {addSubject, getAllSubjects, removeSubject, Subject} from "../redux/apiCalls/subjectAPI";
+import {CgClose} from "react-icons/cg";
 
 const VALID_COURSES = ["MCA", "MSC"] as const;
 type CourseType = typeof VALID_COURSES[number];
@@ -146,7 +147,7 @@ const SubjectDashboard: React.FC = () => {
                                 {filteredSubjects.map((subject) => (
                                     <li
                                         key={subject._id}
-                                        className="flex justify-between items-center p-3 bg-neutral-800 rounded-lg"
+                                        className="flex justify-between items-center p-3 bg-neutral-800 rounded-lg relative"
                                     >
                                         <div>
                                             <h3 className="text-lg font-medium">{subject.name.toUpperCase()}</h3>
@@ -158,9 +159,10 @@ const SubjectDashboard: React.FC = () => {
                                         </div>
                                         <button
                                             onClick={() => handleRemoveSubject(subject._id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+                                            title="delete"
+                                            className="bg-red-500 hover:bg-red-600 text-white rounded-full transition relative bottom-4 flex items-center justify-center p-0.5 cursor-pointer"
                                         >
-                                            Remove
+                                            <CgClose/>
                                         </button>
                                     </li>
                                 ))}

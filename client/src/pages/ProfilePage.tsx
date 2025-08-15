@@ -12,8 +12,6 @@ function ProfilePage() {
     //there is no way to tell yet how many pages are there
 
     const sheetPotdDaysData = useLoaderData()['sheetPotdDaysData']
-    console.log(sheetPotdDaysData)
-
     const submissionData = useLoaderData() as IUserState;
     const dictionary = useSelector((state: RootState) => state.dictionary.data);
     const profileData = useSelector((state: RootState) => state.auth);
@@ -49,11 +47,11 @@ function ProfilePage() {
                         </div>
                         <div className="space-y-2">
                             <p className="text-gray-500">Registration Number</p>
-                            <p className="font-semibold text-gray-800">{profileData.regNumber}</p>
+                            <p className="font-semibold text-gray-800">{profileData.regNumber.toUpperCase()}</p>
                         </div>
                         <div className="space-y-2">
                             <p className="text-gray-500">Branch</p>
-                            <p className="font-semibold text-gray-800">{profileData.branch}</p>
+                            <p className="font-semibold text-gray-800">{profileData.branch.toUpperCase()}</p>
                         </div>
                         <div className="space-y-2">
                             <p className="text-gray-500">Batch</p>

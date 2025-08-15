@@ -6,6 +6,7 @@ import {DeleteResult} from "mongoose";
 
 //to add teacher 
 const addTeacher = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const createdBy: string = req.user.email;
     const name: string = req.body.name;
     const email: string = req.body.email;
 
@@ -26,7 +27,8 @@ const addTeacher = catchAsync(async (req: Request, res: Response, next: NextFunc
 
     const teacher = await Teacher.create({
         name,
-        email
+        email,
+        createdBy
     });
 
     res.status(201).json({
