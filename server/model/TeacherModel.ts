@@ -3,7 +3,7 @@ import mongoose, {Document, Schema} from "mongoose";
 interface ITeacher extends Document {
     name: string;
     email: string;
-    createdBy: mongoose.Types.ObjectId;
+    createdBy: string;
 }
 
 const TeacherSchema = new Schema<ITeacher>({
@@ -15,8 +15,7 @@ const TeacherSchema = new Schema<ITeacher>({
         type: String,
         required: true,
     }, createdBy: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: String,
         required: true
     }
 }, {timestamps: true});

@@ -5,7 +5,7 @@ interface ISubject extends Document {
     name: string;
     subjectCode: string;
     course: string;
-    createdBy: mongoose.Types.ObjectId;
+    createdBy: string;
 }
 
 const SubjectSchema = new Schema<ISubject>({
@@ -30,8 +30,7 @@ const SubjectSchema = new Schema<ISubject>({
         enum: ["MCA", "MSC"],
         required: true
     }, createdBy: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: String,
         required: true
     }
 });
