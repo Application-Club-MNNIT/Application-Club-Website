@@ -5,46 +5,48 @@ import { HiUsers } from "react-icons/hi";
 
 function WinnersTile({ data }) {
   return (
-    <div className="relative group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 hover:bg-gradient-to-b hover:from-white hover:to-orange-50/30 overflow-hidden">
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0 bg-gradient-to-br from-AC_Orange/10 via-transparent to-AC_Green/10"></div>
+    <div className="relative group bg-gradient-to-br from-[#fdfaf5] via-[#fefbf7] to-[#fdfaf5] rounded-xl shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 overflow-hidden border border-yellow-600/20">
+      {/* Glow / dark effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <div className="absolute inset-0 bg-gradient-to-tr from-yellow-900/5 via-transparent to-yellow-700/10"></div>
       </div>
 
-      <div className="relative flex flex-col items-center py-3">
+      <div className="relative flex flex-col items-center py-4 px-3">
         {/* Top achievement bar */}
         <div
-          className="w-full bg-gradient-to-r from-AC_Orange/90 to-AC_Orange mb-3 -mt-3 px-3 py-2 text-center
-                    group-hover:from-AC_Orange group-hover:to-AC_Orange/90 group-hover:shadow-lg transition-all duration-300"
+          className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 mb-4 -mt-4 px-3 py-2 text-center
+                    group-hover:from-yellow-600 group-hover:to-yellow-500 group-hover:shadow-md transition-all duration-500 rounded-b-lg"
         >
-          <div className="text-white font-semibold group-hover:text-white/95">
+          <div className="text-white font-bold tracking-wide text-lg font-serif drop-shadow-sm">
             {data.text1}
           </div>
-          <div className="text-white/90 text-sm mt-0.5">{data.text2}</div>
+          <div className="text-white/90 text-sm mt-0.5 italic">
+            {data.text2}
+          </div>
         </div>
 
         {/* Team name if exists */}
         {data.team && (
-          <div className="flex items-center gap-1.5 mb-2 px-2 py-1 bg-gray-50 rounded-full text-sm">
-            <HiUsers className="text-AC_Orange" />
-            <span className="text-gray-700 font-medium">{data.team}</span>
+          <div className="flex items-center gap-2 mb-3 px-3 py-1.5 bg-yellow-100 border border-yellow-400/40 rounded-full text-sm">
+            <HiUsers className="text-yellow-600" />
+            <span className="text-yellow-900 font-medium">{data.team}</span>
           </div>
         )}
 
         {/* Names List */}
-        <div className="w-full space-y-1.5">
+        <div className="w-full space-y-2">
           {data.names.map((name, index) => (
             <div
               key={index}
-              className="flex items-center justify-between gap-2 py-1.5 px-3 rounded-md
-                             hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-transparent
-                             transition-all duration-300"
+              className="flex items-center justify-between gap-2 py-2 px-3 rounded-md
+                         hover:bg-gradient-to-r hover:from-yellow-50 hover:to-transparent
+                         transition-all duration-500"
             >
-              <div className="flex items-center gap-1.5">
-                <span className="text-AC_Orange text-xs opacity-75 group-hover:opacity-100">
-                  ◆
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-600 text-xs opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                  ✦
                 </span>
-                <span className="text-gray-700 text-sm group-hover:text-gray-800 transition-colors duration-300">
+                <span className="text-gray-800 text-sm group-hover:text-yellow-900 transition-colors duration-300 font-medium">
                   {name.value}
                 </span>
               </div>
@@ -52,11 +54,11 @@ function WinnersTile({ data }) {
                 href={`https://www.linkedin.com/in/${name.linkedin}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2 py-1 rounded-full text-gray-600
-                                hover:bg-blue-50/80 hover:text-[#0A66C2] transition-all duration-300"
+                className="flex items-center gap-1 px-2 py-1 rounded-full text-gray-700 text-xs
+                            hover:bg-yellow-600 hover:text-white transition-all duration-500 shadow-sm hover:shadow-md"
               >
                 <CiLinkedin size={14} />
-                <span className="text-[10px] font-medium">Connect</span>
+                <span className="font-semibold">Connect</span>
               </a>
             </div>
           ))}
@@ -68,8 +70,8 @@ function WinnersTile({ data }) {
             href={data.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-gray-600
-                        hover:text-AC_Orange transition-colors duration-300"
+            className="mt-3 flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-gray-700
+                        hover:text-yellow-700 transition-colors duration-500"
           >
             {data.link.includes("instagram.com") ? (
               <>
@@ -88,8 +90,8 @@ function WinnersTile({ data }) {
 
       {/* Bottom accent line */}
       <div
-        className="absolute bottom-0 h-0.5 w-full bg-gradient-to-r from-AC_Green/60 via-AC_Green to-AC_Green/60
-                group-hover:from-AC_Green/80 group-hover:via-AC_Green group-hover:to-AC_Green/80
+        className="absolute bottom-0 h-0.5 w-full bg-gradient-to-r from-yellow-400/60 via-yellow-500 to-yellow-400/60
+                group-hover:from-yellow-600 group-hover:via-yellow-700 group-hover:to-yellow-600
                 group-hover:h-1 transition-all duration-500"
       ></div>
     </div>
