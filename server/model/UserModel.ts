@@ -187,7 +187,11 @@ const userSchema = new mongoose.Schema({
         default: defaultPlatform
     },
     github: {
-        type: GitHubSchema,
+        type: new mongoose.Schema({
+            username: {type: String, unique: true, sparse: true},
+            verified: {type: Boolean, default: false},
+            randomName: {type: String}
+        }, {_id: false}),
         select: false,
         default: {
             username: null,

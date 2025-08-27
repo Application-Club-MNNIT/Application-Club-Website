@@ -148,7 +148,7 @@ const shallowProtect = catchAsync(async (req: Request, _, next: NextFunction) =>
     // check if user still exists => to check the case if user has jwt token but the user was deleted!
     const freshUser = await User.findOne({_id: decoded.id})
         .select("+leetcode +gfg +codeforces +github +profileVerificationData");
-    
+
     if (!freshUser)
         return next(new AppError("The user belonging to this token does not exist.", 401));
 
