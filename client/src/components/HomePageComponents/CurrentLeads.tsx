@@ -1,90 +1,84 @@
 import React from "react";
-import {CiLinkedin} from "react-icons/ci";
+import { CiLinkedin } from "react-icons/ci";
 
 function CurrentLeads() {
 
     const currentLeads = [
         {
-            name: "Jigyasu Saini",
-            linkedin: "https://www.linkedin.com/in/jigyasusaini/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D4D03AQGffVrStKDTDA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1690862751291?e=1757548800&v=beta&t=6FO0jfDOxVZxFKPn0o7xSMYqe1RHncTUYF1FA3Km1YE",
-            titles: ["AC Web Head"]
+            name: "Desh Deepak Kushwaha",
+            linkedin: "https://www.linkedin.com/in/deshdeepakkushwaha/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Abhishek Singh",
-            linkedin: "https://www.linkedin.com/in/itsabh15hek/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D4D03AQE2vDzIeJiaOw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1696839799518?e=1757548800&v=beta&t=5lqjaixMXltnnht999SaMYKuhmdmdBCDcx8IiGcazos",
-            titles: ["AC Web Head"]
+            name: "Sanyam Goel",
+            linkedin: "https://linkedin.com/in/iamsanyamgoel",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Hariom Joshi",
-            linkedin: "https://www.linkedin.com/in/hariom2705/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQEzyVbKQBWdOA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1724636619797?e=1757548800&v=beta&t=UULbCMDwQTNrAMCBULr88o1ra9c-d3vnMm6-RLEJUV0",
-            titles: ["AC Web Head"]
+            name: "Manish Sharma",
+            linkedin: "https://www.linkedin.com/in/manish-sharma26/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Arpit Rathore",
-            linkedin: "https://www.linkedin.com/in/arpit1234/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQFp9VmEXyyvSg/profile-displayphoto-shrink_800_800/B56Zap_6hLGUAk-/0/1746608827008?e=1757548800&v=beta&t=tt7AR9zDgG0q8mHvsMmHHlxZ91RsRihlU4VMq2n3_2I",
-            titles: ["TPR"]
+            name: "Chinmay Borah",
+            linkedin: "https://www.linkedin.com/in/chinmay-borah2003?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            profileImage: "../assets/default.png"
+        }, {
+            name: "Amisha Joshi",
+            linkedin: "https://www.linkedin.com/in/amisha-joshi013/",
+            profileImage: "../assets/default.png"
+        }, {
+            name: "Gouri",
+            linkedin: "https://www.linkedin.com/in/gouriminocha/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Khushi Verma",
-            linkedin: "https://www.linkedin.com/in/khushi-verma-687215291/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGMhDscS_kHlA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1714806344347?e=1757548800&v=beta&t=PigFdHQAM3OwXPPwrjyMO3mLT7pP-qqjK15RJKc-bEk",
-            titles: ["TPR"]
+            name: "Deepika",
+            linkedin: "https://www.linkedin.com/in/deepika-agrawal-785723324",
+            profileImage: "../assets/default.png"
+        }, {
+            name: "Sujeet",
+            linkedin: "https://www.linkedin.com/in/sujeetmahto",
+            profileImage: "../assets/default.png"
+        },
+
+        {
+            name: "Bankim",
+            linkedin: "https://linkedin.com/in/bankim-ch",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Siddharth Srivastava",
-            linkedin: "https://www.linkedin.com/in/sidsrivas/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGPMBTki7gb2w/profile-displayphoto-crop_800_800/B56Zh9W8J5HcAI-/0/1754449823378?e=1757548800&v=beta&t=l_4w3YcmElMXFl0LU9bdQDdVdA8gJIuah_o7vFEpVQk"
+            name: "Dev Nathani",
+            linkedin: "https://www.linkedin.com/in/dev-nathani/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Abhinav Awasthi",
-            linkedin: "https://www.linkedin.com/in/abhinav-awasthi-232a85291/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D4D03AQEnb7ndP64IEQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1714801708011?e=1757548800&v=beta&t=RwU_CoWI-iL2ncHgdKAZB_J02N7twdnYxziVKoAszZw"
+            name: "Aaditya Sehgal",
+            linkedin: "https://www.linkedin.com/in/aaditya01sehgal/",
+            profileImage: "../assets/default.png"
+        }, {
+            name: "Adhiraj Sinha",
+            linkedin: "https://www.linkedin.com/in/adhiraj24/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Anubhav Krishna",
-            linkedin: "https://www.linkedin.com/in/anubhavkrishna20/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQFpa_2xJsZvdQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1721995596090?e=1757548800&v=beta&t=YwfBS5jKaZj4wqAVmahWOjynBhAgcA0AKc7rtkE3X5o"
+            name: "Shahid",
+            linkedin: "https://www.linkedin.com/in/shahidtk01",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Bhuwan Pradhan",
-            linkedin: "https://www.linkedin.com/in/bhuwan-pradhan/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQEj7skiuJcw0w/profile-displayphoto-shrink_800_800/B56ZQwurcUH0Ac-/0/1735984331651?e=1757548800&v=beta&t=0zcrGnxnLWwydzl4aEU3rND6IPNjJ3mWv4fhxWYEDgg"
+            name: "Pushkar Shinde",
+            linkedin: "https://www.linkedin.com/in/pushkar-shinde-636973221/",
+            profileImage: "../assets/default.png"
         },
         {
-            name: "Jashanpreet Singh",
-            linkedin: "https://www.linkedin.com/in/jashanpreetsingh1096/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGmWppq8y34aQ/profile-displayphoto-shrink_800_800/B56ZP44OguHIAg-/0/1735047309887?e=1757548800&v=beta&t=SmqK4qFQjDLSifCvRkEMmS3tH1MorSKpJXQX6KwE6KE"
+            name: "Amritesh Mishra",
+            linkedin: "https://www.linkedin.com/in/amritesh-mishra-a578ab324/",
+            profileImage: "../assets/default.png"
         },
-        {
-            name: "Sneha Agarwal",
-            linkedin: "https://www.linkedin.com/in/snehaagrawal12/",
-            profileImage: "https://media.licdn.com/dms/image/v2/C4D03AQH8N3Y4ChmhuA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1658042473687?e=1757548800&v=beta&t=lXI12CAQzw893JdP1bvlLQwlwg0VaPB-4OMqpVYxr94"
-        },
-        {
-            name: "Pranay Dubey",
-            linkedin: "https://www.linkedin.com/in/pranaydubey272/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQFrDgIeDcigBA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1719391110742?e=1757548800&v=beta&t=oZrH-Hojq7Z4Hxca1lygvPEvihOHnlMoCIukQTz6ps8"
-        },
-        {
-            name: "Syed Saqib Ali",
-            linkedin: "https://www.linkedin.com/in/syedsaqibali88/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D4D03AQGjR_CGQvJLnA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1702302809219?e=1757548800&v=beta&t=xyNZzXA4PdOC3hDbOc3kvU4rzMw_YhkToCDl84lai84"
-        },
-        {
-            name: "Utkarsh Awasthi",
-            linkedin: "https://www.linkedin.com/in/utkarsh619/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D5603AQF8wodj_liPrw/profile-displayphoto-shrink_800_800/B56ZTni199GUAc-/0/1739051459271?e=1757548800&v=beta&t=CvuCXq7sFE1YhTUlGqNgXIMqAhAnfz7nEF58t5Iotas"
-        },
-        {
-            name: "Trishita Kesarwani",
-            linkedin: "https://www.linkedin.com/in/trishita-kesarwani/",
-            profileImage: "https://media.licdn.com/dms/image/v2/D4D03AQG9ortbfPeeAw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1694602811904?e=1757548800&v=beta&t=vCVNUgHASoQ8grJEN5FY21H_pbnfG_oOQequP_dXf5s"
-        }
+
     ];
+
 
     return (
         <div className="py-12 bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-800">
@@ -135,20 +129,20 @@ function CurrentLeads() {
                                     >
                                         {lead.name}
                                     </h3>
-
-                                    {/* Titles/Roles */}
+                                    {/* 
+                                    Titles/Roles
                                     {lead.titles && (
                                         <div className="flex flex-wrap gap-1 justify-center mb-2">
                                             {lead.titles.map(title => (
                                                 <span key={title}
-                                                      className="text-[10px] font-medium px-2 py-0.5 rounded-full
+                                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full
                                                     bg-AC_Orange/10 text-AC_Orange border border-AC_Orange/20"
                                                 >
                                                     {title}
                                                 </span>
                                             ))}
                                         </div>
-                                    )}
+                                    )} */}
 
                                     {/* LinkedIn Link */}
                                     <a
@@ -158,7 +152,7 @@ function CurrentLeads() {
                                         className="inline-flex items-center gap-1 text-neutral-400 hover:text-AC_Orange
                                             transition-colors duration-300 group-hover:scale-105"
                                     >
-                                        <CiLinkedin size={16}/>
+                                        <CiLinkedin size={16} />
                                         <span className="text-[10px] font-medium">Connect</span>
                                     </a>
                                 </div>

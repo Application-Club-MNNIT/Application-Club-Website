@@ -8,6 +8,7 @@
     "build": "npm i --force"
   },
   "dependencies": {
+    "application-club-website": "file:..",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
