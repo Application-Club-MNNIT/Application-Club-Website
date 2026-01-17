@@ -27,7 +27,7 @@ const HomePage = () => {
         },
         {
             text1: "Runner Up",
-            text2: "Devjam",
+            text2: "Devjam 2k25",
             team: "Mummy Ke Laadale",
             link: "https://www.instagram.com/p/DGOZpd3zeSU/?igsh=MWdibGNsZTJqbG5pOA",
             names: [

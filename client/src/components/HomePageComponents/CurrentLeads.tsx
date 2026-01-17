@@ -1,80 +1,82 @@
 import React from "react";
 import { CiLinkedin } from "react-icons/ci";
 
+import defaultProfileImage from "../../assets/default.png";
+
 function CurrentLeads() {
 
     const currentLeads = [
         {
             name: "Desh Deepak Kushwaha",
             linkedin: "https://www.linkedin.com/in/deshdeepakkushwaha/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Sanyam Goel",
             linkedin: "https://linkedin.com/in/iamsanyamgoel",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Manish Sharma",
             linkedin: "https://www.linkedin.com/in/manish-sharma26/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Chinmay Borah",
             linkedin: "https://www.linkedin.com/in/chinmay-borah2003?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         }, {
             name: "Amisha Joshi",
             linkedin: "https://www.linkedin.com/in/amisha-joshi013/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         }, {
-            name: "Gouri",
+            name: "Gouri Minocha",
             linkedin: "https://www.linkedin.com/in/gouriminocha/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
-            name: "Deepika",
+            name: "Deepika Agrawal",
             linkedin: "https://www.linkedin.com/in/deepika-agrawal-785723324",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         }, {
-            name: "Sujeet",
+            name: "Sujeet Mahto",
             linkedin: "https://www.linkedin.com/in/sujeetmahto",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
 
         {
-            name: "Bankim",
+            name: "Bankim Chandra Das",
             linkedin: "https://linkedin.com/in/bankim-ch",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Dev Nathani",
             linkedin: "https://www.linkedin.com/in/dev-nathani/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Aaditya Sehgal",
             linkedin: "https://www.linkedin.com/in/aaditya01sehgal/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         }, {
             name: "Adhiraj Sinha",
             linkedin: "https://www.linkedin.com/in/adhiraj24/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Shahid",
             linkedin: "https://www.linkedin.com/in/shahidtk01",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Pushkar Shinde",
             linkedin: "https://www.linkedin.com/in/pushkar-shinde-636973221/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
         {
             name: "Amritesh Mishra",
             linkedin: "https://www.linkedin.com/in/amritesh-mishra-a578ab324/",
-            profileImage: "../assets/default.png"
+            profileImage: defaultProfileImage
         },
 
     ];
