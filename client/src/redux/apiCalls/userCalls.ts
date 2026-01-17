@@ -129,8 +129,18 @@ export const isUsernameAvailable = async (username: string) => {
 export const getHomeStats = async () => {
     let [err, res]: any[] = await to(backend.get("/user/getHomeStats"));
     if (err) {
-        console.error("Error while getting home stats: ", err.response?.data?.message || err.response?.data || err.message);
-        return false;
+        console.error("Error while getting home stats: ", err. response?.data?.message || err. response?.data || err.message);
+        // Return default data instead of false
+        return {
+            data: {
+                mcaUserCount: 0,
+                mscUserCount: 0,
+                dsaToday: 0,
+                dsaPast14Days: 0,
+                leadCount: 0,
+                past14DaysData: []
+            }
+        };
     } else {
         return res;
     }
